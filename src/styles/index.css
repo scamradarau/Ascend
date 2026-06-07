@@ -41,18 +41,20 @@ body {
   --exp: #7cfc00;
 }
 
+/* Rune — a lush mystic-jade realm: misty cliffs, ruined temples, waterfalls,
+   cherry blossoms and drifting spirit lights. Teal + blossom, not desert-brown. */
 [data-theme='rune'] {
-  --bg: #140d07;
-  --bg-2: #1c130a;
-  --panel: rgba(43, 29, 16, 0.86);
-  --panel-solid: #2b1d10;
-  --edge: rgba(212, 175, 55, 0.35);
-  --edge-strong: rgba(212, 175, 55, 0.7);
-  --accent: #d4af37;
-  --accent-2: #e0701a;
-  --text: #f3e7c9;
-  --muted: #b79b6a;
-  --exp: #8fd14f;
+  --bg: #0e1a1b;
+  --bg-2: #122321;
+  --panel: rgba(15, 28, 28, 0.82);
+  --panel-solid: #102020;
+  --edge: rgba(90, 210, 190, 0.3);
+  --edge-strong: rgba(90, 210, 190, 0.6);
+  --accent: #49c9aa;
+  --accent-2: #e891b0;
+  --text: #e9f4f0;
+  --muted: #9bbcb4;
+  --exp: #8fe06a;
 }
 
 /* Olympus — Temple of Time: luminous aurora sky behind dark "marble glass"
@@ -91,9 +93,10 @@ body {
 
 .rune-bg {
   background:
-    radial-gradient(900px 600px at 80% -10%, rgba(224, 112, 26, 0.18), transparent 60%),
-    radial-gradient(900px 700px at 10% 110%, rgba(212, 175, 55, 0.12), transparent 55%),
-    linear-gradient(180deg, #1c130a 0%, #100a05 100%);
+    radial-gradient(900px 520px at 60% 4%, rgba(224, 214, 196, 0.16), transparent 60%),
+    radial-gradient(820px 600px at 12% 100%, rgba(73, 201, 170, 0.14), transparent 58%),
+    radial-gradient(700px 520px at 88% 90%, rgba(232, 145, 176, 0.10), transparent 60%),
+    linear-gradient(180deg, #233032 0%, #1a2725 45%, #101b1a 100%);
 }
 
 .starfield::before,

@@ -148,7 +148,7 @@ export default function Settings() {
           {(
             [
               { id: 'cosmos', icon: '🌌', name: 'Cosmos', desc: 'Sci-fi / cosmic' },
-              { id: 'rune', icon: '⚔️', name: 'Rune', desc: 'Fantasy / MMO' },
+              { id: 'rune', icon: '🌿', name: 'Rune', desc: 'Mystic fantasy realm' },
               { id: 'olympus', icon: '🏛️', name: 'Olympus', desc: 'Ancient Greece' },
             ] as const
           ).map((t) => (

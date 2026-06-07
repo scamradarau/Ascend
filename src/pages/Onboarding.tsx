@@ -188,8 +188,8 @@ export default function Onboarding() {
                   <Choice
                     active={a.theme === 'rune'}
                     onClick={() => set({ theme: 'rune' })}
-                    title="⚔️ Rune"
-                    desc="Classic MMO / fantasy"
+                    title="🌿 Rune"
+                    desc="Mystic fantasy realm"
                   />
                   <Choice
                     active={a.theme === 'olympus'}

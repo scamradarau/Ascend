@@ -1,88 +1,127 @@
-// Medieval MMORPG backdrop for the Rune theme — distant castle, rolling
-// plains, drifting clouds and a couple of banners. Pure SVG, fixed behind
-// the UI. Only rendered when the Rune theme is active.
+// Rune backdrop — a lush mystic-jade vista: misty cliffs, a ruined temple
+// with columns and a broken arch, waterfalls, cherry-blossom & autumn foliage,
+// layered fog and drifting blue spirit-lights. Fixed behind the dark glass UI.
+
 export default function RuneScenery() {
+  // deterministic-ish spirit motes
+  const motes = [
+    { l: '14%', t: '62%', d: '0s', s: 6 },
+    { l: '22%', t: '74%', d: '1.1s', s: 4 },
+    { l: '30%', t: '55%', d: '2.2s', s: 5 },
+    { l: '44%', t: '70%', d: '0.6s', s: 7 },
+    { l: '52%', t: '60%', d: '1.7s', s: 4 },
+    { l: '63%', t: '76%', d: '2.6s', s: 6 },
+    { l: '71%', t: '58%', d: '0.9s', s: 5 },
+    { l: '83%', t: '70%', d: '1.9s', s: 7 },
+    { l: '38%', t: '48%', d: '3s', s: 3 },
+    { l: '58%', t: '46%', d: '2.1s', s: 3 },
+  ]
+
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {/* sky gradient */}
+      {/* hazy sky */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(180deg, #2a1c10 0%, #3b2613 30%, #5a3a1b 62%, #6b4a22 100%)',
+            'radial-gradient(1000px 520px at 58% 2%, rgba(236,226,206,0.35), transparent 60%), linear-gradient(180deg, #3a4042 0%, #2c3a38 45%, #182422 100%)',
         }}
       />
-      {/* sun haze */}
-      <div
-        className="absolute left-1/2 top-[12%] h-72 w-72 -translate-x-1/2 rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(255,210,120,0.35), transparent 60%)' }}
-      />
 
-      <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMax slice" viewBox="0 0 1440 800">
+      <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMax slice" viewBox="0 0 1440 820">
         <defs>
-          <linearGradient id="hillFar" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#4e6b3a" />
-            <stop offset="1" stopColor="#3a5230" />
+          <linearGradient id="rMountFar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4a5d5a" />
+            <stop offset="100%" stopColor="#344744" stopOpacity="0" />
           </linearGradient>
-          <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#3c5a2c" />
-            <stop offset="1" stopColor="#26401c" />
+          <linearGradient id="rCliff" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#3a4a44" />
+            <stop offset="100%" stopColor="#16201d" />
           </linearGradient>
-          <linearGradient id="castle" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#7a6a55" />
-            <stop offset="1" stopColor="#4a3f33" />
+          <linearGradient id="rStone" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#cdd6d2" />
+            <stop offset="100%" stopColor="#6b7a76" />
           </linearGradient>
+          <linearGradient id="rFall" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(220,240,238,0.0)" />
+            <stop offset="30%" stopColor="rgba(220,240,238,0.7)" />
+            <stop offset="100%" stopColor="rgba(220,240,238,0.15)" />
+          </linearGradient>
+          <radialGradient id="rSun" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="rgba(245,236,214,0.55)" />
+            <stop offset="100%" stopColor="rgba(245,236,214,0)" />
+          </radialGradient>
         </defs>
 
-        {/* clouds */}
-        <g fill="#f3e7c9" opacity="0.18">
-          <ellipse cx="280" cy="150" rx="120" ry="34" />
-          <ellipse cx="380" cy="135" rx="90" ry="28" />
-          <ellipse cx="1100" cy="120" rx="140" ry="36" />
-          <ellipse cx="1000" cy="140" rx="80" ry="24" />
+        {/* soft sun bloom */}
+        <ellipse cx="840" cy="60" rx="360" ry="200" fill="url(#rSun)" />
+
+        {/* distant hazy mountains */}
+        <path d="M0 360 Q300 250 560 330 T1080 300 T1440 340 L1440 520 L0 520 Z" fill="url(#rMountFar)" opacity="0.5" />
+        <path d="M0 430 Q360 330 760 400 T1440 380 L1440 560 L0 560 Z" fill="url(#rMountFar)" opacity="0.35" />
+
+        {/* central cliff with ruined temple */}
+        <g>
+          {/* cliff mass */}
+          <path d="M520 300 L900 300 L940 560 Q730 600 540 560 Z" fill="url(#rCliff)" />
+          {/* broken arch */}
+          <path d="M610 300 Q620 232 690 230 Q760 232 770 300 L752 300 Q744 252 690 250 Q636 252 628 300 Z" fill="url(#rStone)" stroke="#5a6864" strokeWidth="1.5" />
+          {/* standing columns */}
+          {[800, 832, 864].map((x, i) => (
+            <g key={i}>
+              <rect x={x} y="206" width="14" height="96" fill="url(#rStone)" />
+              <rect x={x - 2} y="200" width="18" height="7" fill="#e6ece9" />
+            </g>
+          ))}
+          <rect x="794" y="196" width="84" height="8" fill="url(#rStone)" />
+          {/* waterfalls off the cliff */}
+          <rect x="560" y="300" width="26" height="260" fill="url(#rFall)" />
+          <rect x="890" y="300" width="30" height="270" fill="url(#rFall)" />
         </g>
 
-        {/* distant castle on a hill */}
-        <g opacity="0.5">
-          <path d="M560 470 Q720 360 880 470 L880 520 L560 520 Z" fill="url(#hillFar)" />
-          <g fill="url(#castle)" stroke="#2c2419" strokeWidth="2">
-            {/* keep + towers */}
-            <rect x="675" y="378" width="90" height="92" />
-            <rect x="640" y="360" width="30" height="110" />
-            <rect x="770" y="360" width="30" height="110" />
-            <rect x="700" y="345" width="42" height="40" />
-            {/* battlements */}
-            {[640, 652, 664, 700, 712, 724, 770, 782, 794].map((x, i) => (
-              <rect key={i} x={x} y={i % 3 === 0 ? 352 : 370} width="10" height="10" />
-            ))}
-            {/* gate */}
-            <path d="M705 470 L705 440 Q720 425 735 440 L735 470 Z" fill="#241d14" />
-          </g>
-          {/* flags */}
-          <g fill="#b3402a">
-            <path d="M655 360 L655 340 L675 348 L655 356 Z" />
-            <path d="M785 360 L785 340 L805 348 L785 356 Z" />
-          </g>
-        </g>
+        {/* foreground cliffs with foliage */}
+        <path d="M0 470 Q150 420 300 470 L320 820 L0 820 Z" fill="url(#rCliff)" />
+        <path d="M1180 430 Q1320 400 1440 460 L1440 820 L1140 820 Z" fill="url(#rCliff)" />
+        {/* autumn + blossom foliage clumps */}
+        {[
+          ['#c66a3a', 120, 452], ['#d98a3a', 200, 470], ['#e891b0', 250, 448],
+          ['#5a7d52', 60, 480], ['#e891b0', 1240, 430], ['#c66a3a', 1320, 452],
+          ['#5a7d52', 1390, 470], ['#d98a3a', 1190, 460],
+        ].map(([c, x, y], i) => (
+          <ellipse key={i} cx={x as number} cy={y as number} rx="40" ry="22" fill={c as string} opacity="0.7" />
+        ))}
 
-        {/* rolling plains */}
-        <path d="M0 560 Q360 480 720 540 T1440 520 L1440 800 L0 800 Z" fill="url(#hillFar)" />
-        <path d="M0 640 Q420 560 840 620 T1440 600 L1440 800 L0 800 Z" fill="url(#hillNear)" />
-        <path d="M0 720 Q500 670 980 710 T1440 700 L1440 800 L0 800 Z" fill="#1c3014" />
-
-        {/* foreground banners */}
-        <g stroke="#3a2a16" strokeWidth="4">
-          <line x1="120" y1="800" x2="120" y2="600" />
-          <path d="M120 605 L185 605 L172 640 L185 675 L120 675 Z" fill="#7a1f1f" stroke="#3a1010" strokeWidth="2" />
-          <line x1="1320" y1="800" x2="1320" y2="600" />
-          <path d="M1320 605 L1255 605 L1268 640 L1255 675 L1320 675 Z" fill="#1f3a5a" stroke="#10202f" strokeWidth="2" />
-        </g>
+        {/* mist bands for depth */}
+        <path d="M0 540 Q360 510 760 540 T1440 535 L1440 600 L0 600 Z" fill="#dfeae8" opacity="0.16" />
+        <path d="M0 640 Q420 605 860 640 T1440 632 L1440 720 L0 720 Z" fill="#dfeae8" opacity="0.22" />
+        <path d="M0 730 Q380 700 820 732 T1440 726 L1440 820 L0 820 Z" fill="#cfdedb" opacity="0.3" />
       </svg>
 
-      {/* darken bottom for legibility */}
+      {/* drifting spirit-lights */}
+      {motes.map((m, i) => (
+        <div
+          key={i}
+          className="absolute animate-floaty rounded-full"
+          style={{
+            left: m.l,
+            top: m.t,
+            width: m.s,
+            height: m.s,
+            background: 'radial-gradient(circle, #d6fbff, #5fd3e0)',
+            boxShadow: '0 0 10px 2px rgba(95,211,224,0.7)',
+            animationDelay: m.d,
+            opacity: 0.85,
+          }}
+        />
+      ))}
+
+      {/* gentle veil so the dark glass panels & white text read clearly */}
       <div
         className="absolute inset-0"
-        style={{ background: 'linear-gradient(180deg, rgba(20,13,7,0.1) 0%, rgba(20,13,7,0.55) 70%, rgba(16,10,5,0.85) 100%)' }}
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(10,20,20,0.42) 0%, rgba(10,20,20,0.34) 45%, rgba(10,20,20,0.56) 100%)',
+        }}
       />
     </div>
   )
