@@ -1,0 +1,322 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  background: #070a18;
+  color: #e8ecff;
+  overflow-x: hidden;
+}
+
+/* ----------------------------------------------------------------
+   THEME ROOTS  — Cosmos (default) and Rune
+-----------------------------------------------------------------*/
+[data-theme='cosmos'] {
+  --bg: #070a18;
+  --bg-2: #0a0f24;
+  --panel: rgba(13, 18, 36, 0.82);
+  --panel-solid: #0d1224;
+  --edge: rgba(34, 211, 238, 0.22);
+  --edge-strong: rgba(34, 211, 238, 0.55);
+  --accent: #22d3ee;
+  --accent-2: #a855f7;
+  --text: #e8ecff;
+  --muted: #8ea0d8;
+  --exp: #7cfc00;
+}
+
+[data-theme='rune'] {
+  --bg: #140d07;
+  --bg-2: #1c130a;
+  --panel: rgba(43, 29, 16, 0.86);
+  --panel-solid: #2b1d10;
+  --edge: rgba(212, 175, 55, 0.35);
+  --edge-strong: rgba(212, 175, 55, 0.7);
+  --accent: #d4af37;
+  --accent-2: #e0701a;
+  --text: #f3e7c9;
+  --muted: #b79b6a;
+  --exp: #8fd14f;
+}
+
+/* ----------------------------------------------------------------
+   BACKDROPS
+-----------------------------------------------------------------*/
+.cosmos-bg {
+  background:
+    radial-gradient(900px 520px at 82% 8%, rgba(168, 85, 247, 0.22), transparent 60%),
+    radial-gradient(820px 520px at 8% 88%, rgba(34, 211, 238, 0.20), transparent 58%),
+    radial-gradient(700px 500px at 60% 75%, rgba(236, 72, 153, 0.12), transparent 60%),
+    radial-gradient(1100px 700px at 80% -10%, rgba(168, 85, 247, 0.16), transparent 60%),
+    radial-gradient(1400px 900px at 50% 45%, rgba(20, 30, 70, 0.5), transparent 70%),
+    linear-gradient(180deg, #070a18 0%, #05070f 100%);
+}
+
+.rune-bg {
+  background:
+    radial-gradient(900px 600px at 80% -10%, rgba(224, 112, 26, 0.18), transparent 60%),
+    radial-gradient(900px 700px at 10% 110%, rgba(212, 175, 55, 0.12), transparent 55%),
+    linear-gradient(180deg, #1c130a 0%, #100a05 100%);
+}
+
+.starfield::before,
+.starfield::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 60%, #cfe5ff, transparent),
+    radial-gradient(1px 1px at 40% 80%, #fff, transparent),
+    radial-gradient(2px 2px at 85% 25%, #b6f3ff, transparent),
+    radial-gradient(1px 1px at 55% 15%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 30% 65%, #e7c8ff, transparent),
+    radial-gradient(1px 1px at 90% 80%, #fff, transparent),
+    radial-gradient(1px 1px at 12% 50%, #fff, transparent);
+  opacity: 0.5;
+  animation: twinkle 4s ease-in-out infinite;
+}
+.starfield::after {
+  background-size: 200% 200%;
+  opacity: 0.25;
+  animation-delay: 1.5s;
+}
+
+/* ----------------------------------------------------------------
+   REDUCED MOTION — respect the OS setting and a manual toggle.
+-----------------------------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+/* keep decorative streaks invisible (not frozen mid-screen) when motion is off */
+.reduce-motion .shooting-star {
+  display: none;
+}
+
+/* shooting stars (used by CosmosScenery) */
+@keyframes shoot {
+  0% {
+    transform: translate(0, 0) rotate(18deg);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  34% {
+    transform: translate(118vw, 42vh) rotate(18deg);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.shooting-star {
+  position: absolute;
+  height: 2px;
+  width: 150px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #ffffff);
+  filter: drop-shadow(0 0 6px rgba(182, 243, 255, 0.9));
+  opacity: 0;
+}
+.shooting-star.ss1 {
+  top: 12%;
+  left: -180px;
+  animation: shoot 8s ease-in infinite;
+  animation-delay: 2s;
+}
+.shooting-star.ss2 {
+  top: 36%;
+  left: -180px;
+  width: 110px;
+  animation: shoot 11s ease-in infinite;
+  animation-delay: 6.5s;
+}
+
+/* grid overlay for the sci-fi look */
+.grid-overlay {
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* ----------------------------------------------------------------
+   COMPONENT LAYER
+-----------------------------------------------------------------*/
+@layer components {
+  .panel {
+    @apply rounded-2xl border backdrop-blur-md;
+    background: var(--panel);
+    border-color: var(--edge);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 10px 40px rgba(0, 0, 0, 0.55);
+  }
+
+  .panel-tight {
+    @apply rounded-xl border backdrop-blur-md;
+    background: var(--panel);
+    border-color: var(--edge);
+  }
+
+  .hud-corner {
+    position: relative;
+  }
+  .hud-corner::before,
+  .hud-corner::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--accent);
+    opacity: 0.8;
+  }
+  .hud-corner::before {
+    top: -1px;
+    left: -1px;
+    border-right: 0;
+    border-bottom: 0;
+  }
+  .hud-corner::after {
+    bottom: -1px;
+    right: -1px;
+    border-left: 0;
+    border-top: 0;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 font-display font-bold uppercase tracking-wider transition-all duration-150 select-none;
+    font-size: 0.85rem;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #04101a;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 26px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+  .btn-ghost {
+    border: 1px solid var(--edge-strong);
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .btn-ghost:hover {
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide;
+    border: 1px solid var(--edge);
+    color: var(--muted);
+  }
+
+  .stat-label {
+    @apply font-display uppercase tracking-[0.2em];
+    color: var(--muted);
+  }
+
+  .glow-text {
+    text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+
+  .input {
+    @apply w-full rounded-lg px-4 py-3 outline-none transition;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--edge);
+    color: var(--text);
+  }
+  .input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+}
+
+/* EXP bar fill texture */
+.exp-fill {
+  background: linear-gradient(90deg, var(--exp), color-mix(in srgb, var(--exp) 60%, #fff 5%));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--exp) 70%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+.exp-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s linear infinite;
+}
+
+/* scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* selection */
+::selection {
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: #fff;
+}

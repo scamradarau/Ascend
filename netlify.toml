@@ -1,0 +1,14 @@
+# Netlify build configuration for Ascend (Vite static SPA).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback — harmless with hash routing, and future-proofs a switch to
+# browser routing so deep links resolve to index.html.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

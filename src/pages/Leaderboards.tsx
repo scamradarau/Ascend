@@ -1,0 +1,259 @@
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useGame, usePlayerLevel } from '../store/useGame'
+import { useAuth } from '../store/auth'
+import { getAllPlayers, type PlayerRow, type TraitStat } from '../store/leaderboard'
+import { rankForLevel } from '../data/ranks'
+import { levelFromTotalExp } from '../data/leveling'
+import { traitById } from '../data/traits'
+import { attributeById } from '../data/attributes'
+import { REWARD_INFO } from '../data/leaderboard'
+import Avatar from '../components/Avatar'
+import { PixelTitle, Pill } from '../components/ui'
+
+type Board = 'legendary' | 'stat' | 'quests'
+
+const TABS: { id: Board; label: string; metric: string }[] = [
+  { id: 'legendary', label: 'Legendary', metric: 'Overall level' },
+  { id: 'stat', label: 'Stat', metric: 'Trait levels' },
+  { id: 'quests', label: 'Quests', metric: 'Quests this month' },
+]
+
+type Ranked = PlayerRow & { pos: number; isMe: boolean }
+
+export default function Leaderboards() {
+  const navigate = useNavigate()
+  const [board, setBoard] = useState<Board>('legendary')
+  const authUser = useAuth((s) => s.user)
+  const profile = useGame((s) => s.profile)
+  const activeTraits = useGame((s) => s.activeTraits)
+  const questsThisMonth = useGame((s) => s.questsThisMonth)
+  const trust = useGame((s) => s.trust)
+  const avatar = useGame((s) => s.avatar)
+  const earnedBadges = useGame((s) => s.earnedBadges)
+  const streak = useGame((s) => s.streak)
+  const { level } = usePlayerLevel()
+
+  const players = useMemo(() => {
+    const rows = getAllPlayers()
+    if (authUser) {
+      const traits: TraitStat[] = activeTraits.map((t) => {
+        const def = traitById(t.id)
+        return {
+          id: t.id,
+          name: def?.name ?? t.id,
+          attribute: def?.attribute ?? 'mind',
+          level: levelFromTotalExp(t.exp || 0).level,
+        }
+      })
+      const me: PlayerRow = {
+        id: authUser.id,
+        username: authUser.username,
+        handle: profile?.handle || authUser.username,
+        level,
+        statLevel: traits.reduce((m, t) => Math.max(m, t.level), 0),
+        quests: questsThisMonth,
+        trust,
+        region: profile?.region || '—',
+        age: profile?.age ?? '',
+        streak,
+        avatar,
+        traits,
+        badges: earnedBadges,
+      }
+      const idx = rows.findIndex((r) => r.id === authUser.id)
+      if (idx >= 0) rows[idx] = me
+      else rows.push(me)
+    }
+    return rows
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser, level, questsThisMonth, trust, activeTraits, profile, avatar, earnedBadges, streak])
+
+  const ranked: Ranked[] = useMemo(() => {
+    const metric = (r: PlayerRow) =>
+      board === 'quests' ? r.quests : board === 'stat' ? r.statLevel : r.level
+    return [...players]
+      .sort((a, b) => metric(b) - metric(a))
+      .map((r, i) => ({ ...r, pos: i + 1, isMe: r.id === authUser?.id }))
+  }, [players, board, authUser])
+
+  const info = REWARD_INFO[board]
+  const empty = ranked.length === 0
+  const podium = ranked.slice(0, 3)
+  // deck-style order: 2nd, 1st, 3rd
+  const podiumOrder = [podium[1], podium[0], podium[2]].filter(Boolean) as Ranked[]
+  const value = (e: Ranked) => (board === 'quests' ? e.quests : board === 'stat' ? e.statLevel : e.level)
+
+  return (
+    <div>
+      <div className="mb-6">
+        <PixelTitle className="text-xs text-[var(--accent)]">LEADERBOARDS</PixelTitle>
+        <h1 className="mt-2 font-display text-2xl font-bold text-white">Climb the ladder</h1>
+        <p className="mt-1 text-sm text-[var(--muted)]">
+          Three boards, ranking real players. Tap any player to view their build.
+        </p>
+      </div>
+
+      <div className="mb-5 flex gap-2">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setBoard(t.id)}
+            className={`flex-1 rounded-lg border px-4 py-3 text-center transition ${
+              board === t.id
+                ? 'border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] shadow-glow'
+                : 'border-white/8 hover:border-white/25'
+            }`}
+          >
+            <div className="font-display text-sm font-bold uppercase tracking-wide text-white">{t.label}</div>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">{t.metric}</div>
+          </button>
+        ))}
+      </div>
+
+      {/* ---------------- PODIUM (class-portrait heads) ---------------- */}
+      {!empty && (
+        <div className="panel mb-5 grid grid-cols-3 items-end gap-1 p-3 sm:gap-6 sm:p-5">
+          {podiumOrder.map((e) => {
+            const isFirst = e.pos === 1
+            return (
+              <button
+                key={e.id}
+                onClick={() => navigate(`/app/player/${e.id}`)}
+                className={`group flex flex-col items-center ${isFirst ? '-mt-4' : ''}`}
+              >
+                <div
+                  className={`relative ${isFirst ? 'scale-110' : 'opacity-95'} transition group-hover:scale-[1.15]`}
+                >
+                  <Avatar config={e.avatar} size={isFirst ? 120 : 92} animated={false} />
+                  <div
+                    className={`absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full border px-2 py-0.5 font-pixel text-[10px] ${
+                      e.pos === 1
+                        ? 'border-cosmos-gold bg-black/70 text-cosmos-gold'
+                        : 'border-[var(--edge)] bg-black/70 text-[var(--accent)]'
+                    }`}
+                  >
+                    {e.pos === 1 ? '👑 1' : e.pos}
+                  </div>
+                </div>
+                <div className="mt-3 font-display text-sm font-bold text-white">{e.handle}</div>
+                <div className="text-[10px] uppercase tracking-wide text-[var(--muted)]">
+                  {rankForLevel(e.level).title}
+                </div>
+                <div className="font-pixel text-xs text-[var(--accent)]">
+                  {board === 'quests' ? `${e.quests} q` : `Lv${value(e)}`}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
+        <div className="panel hud-corner overflow-hidden">
+          <div className="grid grid-cols-[44px_1fr_auto] gap-3 border-b border-white/8 px-5 py-3 text-[10px] uppercase tracking-widest text-[var(--muted)]">
+            <span>#</span>
+            <span>Player</span>
+            <span>{board === 'quests' ? 'Quests' : board === 'stat' ? 'Top' : 'Level'}</span>
+          </div>
+
+          {empty ? (
+            <div className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
+              <span className="text-4xl">🏔️</span>
+              <p className="font-display text-lg font-bold text-white">The ladder is wide open</p>
+              <p className="max-w-sm text-sm text-[var(--muted)]">
+                No one has climbed yet. Complete verified quests to claim the founder’s spot.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-white/5">
+              {ranked.map((e) => (
+                <button
+                  key={e.id}
+                  onClick={() => navigate(`/app/player/${e.id}`)}
+                  className={`grid w-full grid-cols-[44px_1fr_auto] items-center gap-3 px-5 py-3 text-left transition hover:bg-white/[0.03] ${
+                    e.isMe ? 'bg-[color-mix(in_srgb,var(--accent)_12%,transparent)]' : ''
+                  }`}
+                >
+                  <span
+                    className={`font-pixel text-sm ${
+                      e.pos === 1 ? 'text-cosmos-gold' : e.pos <= 3 ? 'text-[var(--accent)]' : 'text-[var(--muted)]'
+                    }`}
+                  >
+                    {e.pos}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <div className="shrink-0">
+                      <Avatar config={e.avatar} size={40} animated={false} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 font-display font-bold text-white">
+                        {e.handle}
+                        {e.isMe && <Pill tone="exp">You</Pill>}
+                      </div>
+                      <div className="text-[10px] uppercase tracking-wide text-[var(--muted)]">
+                        {rankForLevel(e.level).title} · {e.region}
+                      </div>
+                      {/* STAT board: show individual trait levels */}
+                      {board === 'stat' && e.traits.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {e.traits.map((t) => {
+                            const attr = attributeById(t.attribute as any)
+                            return (
+                              <span
+                                key={t.id}
+                                className="inline-flex items-center gap-1 rounded border border-white/10 px-1.5 py-0.5 text-[10px] text-[var(--muted)]"
+                              >
+                                <span style={{ color: attr.color }}>{attr.icon}</span>
+                                {t.name} <span className="text-[var(--accent)]">Lv{t.level}</span>
+                              </span>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <span className="font-pixel text-sm text-[var(--accent)]">
+                    {board === 'quests' ? e.quests : `Lv${board === 'stat' ? e.statLevel : e.level}`}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <div className="panel hud-corner p-5">
+            <span className="font-pixel text-xs text-cosmos-gold">{info.title}</span>
+            <p className="mt-3 text-sm leading-relaxed text-slate-300">{info.body}</p>
+            <div className="mt-4 flex items-center justify-between text-xs">
+              <span className="uppercase tracking-widest text-[var(--muted)]">Rotation</span>
+              <Pill tone="gold">{info.rotation}</Pill>
+            </div>
+          </div>
+          <div className="panel p-5 text-center">
+            <div className="text-xs uppercase tracking-widest text-[var(--muted)]">Rewards pool</div>
+            <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+              {[
+                ['💵', 'Cash'],
+                ['💳', 'Gift Cards'],
+                ['📱', 'Tech'],
+                ['📚', 'Books'],
+                ['🎫', 'Memberships'],
+                ['✈️', 'Flights'],
+              ].map(([icon, label]) => (
+                <div key={label} className="rounded-lg border border-white/8 bg-white/[0.02] p-2">
+                  <div className="text-xl">{icon}</div>
+                  <div className="text-[10px] text-[var(--muted)]">{label}</div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-[10px] text-[var(--muted)]">
+              Funded via sponsorships — rewards rotate to keep the ladder fair.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

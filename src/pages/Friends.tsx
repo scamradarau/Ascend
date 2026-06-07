@@ -1,0 +1,148 @@
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useGame } from '../store/useGame'
+import { useAuth } from '../store/auth'
+import { getAllPlayers, type PlayerRow } from '../store/leaderboard'
+import { rankForLevel } from '../data/ranks'
+import Avatar from '../components/Avatar'
+import { PixelTitle, Pill, Toast } from '../components/ui'
+
+function PlayerMini({
+  p,
+  action,
+}: {
+  p: PlayerRow
+  action: React.ReactNode
+}) {
+  const navigate = useNavigate()
+  const rank = rankForLevel(p.level)
+  return (
+    <div className="panel flex items-center gap-3 p-3">
+      <button onClick={() => navigate(`/app/player/${p.id}`)} className="shrink-0">
+        <Avatar config={p.avatar} size={56} animated={false} />
+      </button>
+      <button
+        onClick={() => navigate(`/app/player/${p.id}`)}
+        className="flex-1 text-left"
+      >
+        <div className="font-display font-bold text-white">{p.handle}</div>
+        <div className="text-[11px] uppercase tracking-wide text-[var(--muted)]">
+          {rank.title} · Lv {p.level} · {p.region}
+        </div>
+      </button>
+      {action}
+    </div>
+  )
+}
+
+export default function Friends() {
+  const authUser = useAuth((s) => s.user)
+  const friends = useGame((s) => s.friends)
+  const addFriend = useGame((s) => s.addFriend)
+  const removeFriend = useGame((s) => s.removeFriend)
+  const [query, setQuery] = useState('')
+  const [toast, setToast] = useState<string | null>(null)
+  const flash = (m: string) => {
+    setToast(m)
+    setTimeout(() => setToast(null), 1800)
+  }
+
+  const players = useMemo(() => getAllPlayers().filter((p) => p.id !== authUser?.id), [authUser])
+  const friendRows = players.filter((p) => friends.includes(p.id))
+  const others = players.filter((p) => !friends.includes(p.id))
+  const matches = query.trim()
+    ? others.filter((p) => p.handle.toLowerCase().includes(query.trim().toLowerCase()))
+    : others
+
+  return (
+    <div>
+      <div className="mb-6">
+        <PixelTitle className="text-xs text-[var(--accent)]">FRIENDS</PixelTitle>
+        <h1 className="mt-2 font-display text-2xl font-bold text-white">Your circle</h1>
+        <p className="mt-1 text-sm text-[var(--muted)]">
+          Add friends, view their builds, and keep each other accountable on the climb.
+        </p>
+      </div>
+
+      {/* search / add */}
+      <div className="panel mb-6 p-4">
+        <label className="stat-label mb-1.5 block text-xs">Find players by handle</label>
+        <input
+          className="input"
+          placeholder="Search handle…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* my friends */}
+        <div>
+          <div className="mb-3 flex items-center justify-between">
+            <span className="font-pixel text-xs text-[var(--accent)]">MY FRIENDS</span>
+            <Pill tone="exp">{friendRows.length}</Pill>
+          </div>
+          <div className="space-y-2">
+            {friendRows.length === 0 && (
+              <div className="panel p-6 text-center text-sm text-[var(--muted)]">
+                No friends yet — add some from the list on the right.
+              </div>
+            )}
+            {friendRows.map((p) => (
+              <PlayerMini
+                key={p.id}
+                p={p}
+                action={
+                  <button
+                    onClick={() => {
+                      removeFriend(p.id)
+                      flash(`Removed ${p.handle}`)
+                    }}
+                    className="btn btn-ghost text-[11px]"
+                  >
+                    Remove
+                  </button>
+                }
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* discover */}
+        <div>
+          <div className="mb-3 flex items-center justify-between">
+            <span className="font-pixel text-xs text-[var(--accent)]">DISCOVER PLAYERS</span>
+            <Pill>{matches.length}</Pill>
+          </div>
+          <div className="space-y-2">
+            {matches.length === 0 && (
+              <div className="panel p-6 text-center text-sm text-[var(--muted)]">
+                {others.length === 0
+                  ? 'No other players have signed up yet. Invite your friends to Ascend!'
+                  : 'No players match that search.'}
+              </div>
+            )}
+            {matches.map((p) => (
+              <PlayerMini
+                key={p.id}
+                p={p}
+                action={
+                  <button
+                    onClick={() => {
+                      addFriend(p.id)
+                      flash(`Added ${p.handle}`)
+                    }}
+                    className="btn btn-primary text-[11px]"
+                  >
+                    + Add
+                  </button>
+                }
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      <Toast message={toast} />
+    </div>
+  )
+}

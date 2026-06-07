@@ -1,0 +1,162 @@
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useGame, usePlayerLevel } from '../store/useGame'
+import { useAuth } from '../store/auth'
+import { rankForLevel } from '../data/ranks'
+import { PixelTitle } from './ui'
+import RuneScenery from './RuneScenery'
+import CosmosScenery from './CosmosScenery'
+
+const NAV = [
+  { to: '/app/character', label: 'Character', icon: '🧬' },
+  { to: '/app/traits', label: 'Traits', icon: '🧠' },
+  { to: '/app/quests', label: 'Quests', icon: '📜' },
+  { to: '/app/leaderboards', label: 'Leaderboard', icon: '🏆' },
+  { to: '/app/inventory', label: 'Inventory', icon: '🎒' },
+  { to: '/app/shop', label: 'Shop', icon: '🛒' },
+  { to: '/app/guild', label: 'Guild', icon: '🛡️' },
+  { to: '/app/friends', label: 'Friends', icon: '👥' },
+  { to: '/app/guide', label: 'Codex', icon: '📖' },
+  { to: '/app/feedback', label: 'Feedback', icon: '💬' },
+  { to: '/app/settings', label: 'Settings', icon: '⚙️' },
+]
+
+export default function PlatformLayout() {
+  const theme = useGame((s) => s.theme)
+  const profile = useGame((s) => s.profile)
+  const streak = useGame((s) => s.streak)
+  const aether = useGame((s) => s.aether)
+  const trust = useGame((s) => s.trust)
+  const ownerMode = useGame((s) => s.ownerMode)
+  const logout = useAuth((s) => s.logout)
+  const { level } = usePlayerLevel()
+  const rank = rankForLevel(level)
+  const navigate = useNavigate()
+  const nav = ownerMode
+    ? [
+        ...NAV.slice(0, NAV.length - 1),
+        { to: '/app/admin', label: 'Owner', icon: '🛠️' },
+        NAV[NAV.length - 1],
+      ]
+    : NAV
+
+  return (
+    <div
+      className={`relative min-h-screen ${theme === 'cosmos' ? 'cosmos-bg' : 'rune-bg'}`}
+    >
+      {theme === 'rune' ? <RuneScenery /> : <CosmosScenery />}
+      <div
+        className={`grid-overlay pointer-events-none fixed inset-0 z-0 ${
+          theme === 'rune' ? 'opacity-20' : 'opacity-60'
+        }`}
+      />
+
+      {/* top navigation bar */}
+      <header className="sticky top-0 z-40 border-b border-[var(--edge)] bg-[var(--bg)]/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
+          <button
+            onClick={() => navigate('/app/character')}
+            className="group flex items-center gap-2"
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--edge-strong)] bg-black/40 shadow-glow">
+              <span className="font-pixel text-[var(--accent)]">A</span>
+            </div>
+            <PixelTitle className="hidden text-sm text-[var(--text)] sm:inline">
+              ASCEND
+            </PixelTitle>
+          </button>
+
+          {/* nav links */}
+          <nav className="no-scrollbar -mx-1 flex flex-1 items-center gap-1 overflow-x-auto px-1">
+            {nav.map((n) => (
+              <NavLink
+                key={n.to}
+                to={n.to}
+                className={({ isActive }) =>
+                  `flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
+                    isActive
+                      ? 'bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] text-[var(--accent)] shadow-glow'
+                      : 'text-[var(--muted)] hover:text-[var(--text)]'
+                  }`
+                }
+              >
+                <span aria-hidden>{n.icon}</span>
+                <span className="hidden md:inline">{n.label}</span>
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* aether + integrity */}
+          <button
+            onClick={() => navigate('/app/shop')}
+            className="hidden shrink-0 items-center gap-1 rounded-lg border border-cosmos-gold/40 bg-cosmos-gold/5 px-2.5 py-1.5 font-pixel text-[10px] text-cosmos-gold sm:flex"
+            title="Aether — spend in the Shop"
+          >
+            ◈ {aether}
+          </button>
+          <div
+            className="hidden shrink-0 items-center gap-1 rounded-lg border border-[var(--edge)] bg-black/30 px-2.5 py-1.5 text-[10px] lg:flex"
+            title="Integrity score — your anti-cheat trust rating"
+          >
+            <span className="uppercase tracking-wider text-[var(--muted)]">Integrity</span>
+            <span className={trust >= 80 ? 'text-exp' : trust >= 50 ? 'text-amber-300' : 'text-cosmos-magenta'}>
+              {trust}
+            </span>
+          </div>
+
+          {/* player chip */}
+          <button
+            onClick={() => navigate('/app/level')}
+            className="flex shrink-0 items-center gap-2 rounded-lg border border-[var(--edge)] bg-black/30 px-3 py-1.5"
+          >
+            <span className="hidden text-right sm:block">
+              <span className="block text-xs font-bold uppercase tracking-wide text-[var(--text)]">
+                {profile?.handle ?? 'Ascender'}
+              </span>
+              <span className="block text-[10px] uppercase tracking-wider text-[var(--accent)]">
+                {rank.title} · Lv {level}
+              </span>
+            </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-md border border-[var(--edge-strong)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] font-pixel text-[10px] text-black">
+              {level}
+            </div>
+          </button>
+
+          {/* logout */}
+          <button
+            onClick={() => {
+              logout()
+              navigate('/')
+            }}
+            title="Log out"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-sm text-[var(--muted)] transition hover:border-cosmos-magenta/50 hover:text-cosmos-magenta"
+          >
+            ⏻
+          </button>
+        </div>
+        {streak > 0 && (
+          <div className="border-t border-[var(--edge)] bg-black/20 px-4 py-1 text-center text-[11px] font-semibold uppercase tracking-widest text-exp">
+            🔥 {streak}-day streak — keep the chain alive
+          </div>
+        )}
+      </header>
+
+      <main className="relative z-10 mx-auto max-w-7xl px-4 py-6 sm:py-8">
+        <Outlet />
+      </main>
+
+      <footer className="relative z-10 border-t border-[var(--edge)] py-6 text-center text-xs text-[var(--muted)]">
+        ASCEND — Treating self improvement as game progression. ·{' '}
+        <span className="text-[var(--accent)]">Let’s get you to the endgame.</span>
+        <div className="mt-2">
+          <NavLink to="/app/guide" className="text-[var(--muted)] hover:text-[var(--accent)]">
+            Codex
+          </NavLink>{' '}
+          ·{' '}
+          <a href="#/privacy" className="text-[var(--muted)] hover:text-[var(--accent)]">
+            Privacy &amp; Confidentiality
+          </a>
+        </div>
+      </footer>
+    </div>
+  )
+}
