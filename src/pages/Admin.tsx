@@ -40,33 +40,18 @@ const REWARD_POOL = [
   ['IRL Cash', 'Treasury', 20, true],
 ]
 
-// seeded review items from other players (owner moderation demo)
-const SEED_QUEUE = [
-  {
-    id: 'seed1',
-    handle: 'PHAMELI',
-    label: 'Go to the gym',
-    method: 'geo-photo' as const,
-    status: 'flagged' as const,
-    reasons: ['GPS 14km from any registered gym', 'Photo brightness suggests indoor home'],
-  },
-  {
-    id: 'seed2',
-    handle: 'RAWRBERT',
-    label: 'Read 15 pages of Ikigai',
-    method: 'reading-check' as const,
-    status: 'flagged' as const,
-    reasons: ['Summary 98% match to web result', 'AI-written probability 0.91'],
-  },
-  {
-    id: 'seed3',
-    handle: 'SLEEPYDUMPLING',
-    label: 'Deep-work sprint',
-    method: 'focus-timer' as const,
-    status: 'pending' as const,
-    reasons: ['6 foreground interruptions'],
-  },
-]
+// Review queue from other players. Empty until real users submit proof;
+// it then populates from the backend. The current player's own pending/
+// flagged submissions always appear (see ownQueue below).
+interface SeedItem {
+  id: string
+  handle: string
+  label: string
+  method: keyof typeof VERIFICATION_METHODS
+  status: 'flagged' | 'pending'
+  reasons: string[]
+}
+const SEED_QUEUE: SeedItem[] = []
 
 export default function Admin() {
   const ownerMode = useGame((s) => s.ownerMode)

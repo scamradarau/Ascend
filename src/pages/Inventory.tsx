@@ -12,14 +12,15 @@ const STATUS_TONE: Record<string, string> = {
   flagged: 'text-cosmos-magenta',
 }
 
-// Cosmetic items earned by streaks/quests (deck: "Items ... cool effects")
+// Cosmetic items you can earn (deck: "Items ... cool effects"). Locked until
+// the listed feat is achieved — nothing is owned at the start.
 const ITEMS = [
-  { name: 'Ember of Focus', icon: '🔥', rarity: 'Rare', effect: 'Earned by 2h deep work, 7 days straight. Glowing aura on your avatar.', owned: true },
-  { name: 'Iron Crown', icon: '👑', rarity: 'Epic', effect: 'For reaching rank 1 on any leaderboard. Animated crown cosmetic.', owned: false },
-  { name: 'Scholar’s Tome', icon: '📕', rarity: 'Uncommon', effect: 'Finish a main-quest book. Floating tome companion.', owned: true },
+  { name: 'Ember of Focus', icon: '🔥', rarity: 'Rare', effect: 'Earn by deep-working 2h a day, 7 days straight. Glowing aura on your avatar.', owned: false },
+  { name: 'Iron Crown', icon: '👑', rarity: 'Epic', effect: 'Reach rank 1 on any leaderboard. Animated crown cosmetic.', owned: false },
+  { name: 'Scholar’s Tome', icon: '📕', rarity: 'Uncommon', effect: 'Finish a main-quest book. Floating tome companion.', owned: false },
   { name: 'Titan Plate', icon: '🛡️', rarity: 'Epic', effect: 'Complete the 8-week physique quest. Armoured avatar skin.', owned: false },
   { name: 'Phoenix Sigil', icon: '🪶', rarity: 'Legendary', effect: '30-day unbroken streak. Rebirth flame VFX.', owned: false },
-  { name: 'Void Lantern', icon: '🏮', rarity: 'Rare', effect: 'Meditate 20 days in a month. Calming particle effect.', owned: true },
+  { name: 'Void Lantern', icon: '🏮', rarity: 'Rare', effect: 'Meditate 20 days in a month. Calming particle effect.', owned: false },
 ]
 
 const RARITY_TONE: Record<string, string> = {

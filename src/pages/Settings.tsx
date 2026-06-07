@@ -144,23 +144,31 @@ export default function Settings() {
       {/* ---------------- THEME ---------------- */}
       <div className="panel mt-5 p-6">
         <span className="font-pixel text-xs text-[var(--accent)]">INTERFACE THEME</span>
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          {(['cosmos', 'rune'] as const).map((t) => (
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {(
+            [
+              { id: 'cosmos', icon: '🌌', name: 'Cosmos', desc: 'Sci-fi / cosmic' },
+              { id: 'rune', icon: '⚔️', name: 'Rune', desc: 'Fantasy / MMO' },
+              { id: 'olympus', icon: '🏛️', name: 'Olympus', desc: 'Ancient Greece' },
+            ] as const
+          ).map((t) => (
             <button
-              key={t}
-              onClick={() => setTheme(t)}
+              key={t.id}
+              onClick={() => setTheme(t.id)}
               className={`rounded-xl border p-5 text-left transition ${
-                theme === t ? 'border-[var(--accent)] shadow-glow' : 'border-white/10 hover:border-white/25'
+                theme === t.id ? 'border-[var(--accent)] shadow-glow' : 'border-white/10 hover:border-white/25'
               }`}
             >
-              <div className="text-2xl">{t === 'cosmos' ? '🌌' : '⚔️'}</div>
+              <div className="text-2xl">{t.icon}</div>
               <div className="mt-2 font-display font-bold uppercase tracking-wide text-white">
-                {t === 'cosmos' ? 'Cosmos' : 'Rune'}
+                {t.name}
               </div>
-              <div className="text-xs text-[var(--muted)]">
-                {t === 'cosmos' ? 'Sci-fi / cosmic' : 'Fantasy / MMO'}
-              </div>
-              {theme === t && <Pill tone="exp">Active</Pill>}
+              <div className="text-xs text-[var(--muted)]">{t.desc}</div>
+              {theme === t.id && (
+                <div className="mt-1">
+                  <Pill tone="exp">Active</Pill>
+                </div>
+              )}
             </button>
           ))}
         </div>

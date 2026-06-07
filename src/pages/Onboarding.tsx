@@ -178,7 +178,7 @@ export default function Onboarding() {
 
               <div>
                 <label className="stat-label mb-2 block text-xs">Choose your interface theme</label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   <Choice
                     active={a.theme === 'cosmos'}
                     onClick={() => set({ theme: 'cosmos' })}
@@ -190,6 +190,12 @@ export default function Onboarding() {
                     onClick={() => set({ theme: 'rune' })}
                     title="⚔️ Rune"
                     desc="Classic MMO / fantasy"
+                  />
+                  <Choice
+                    active={a.theme === 'olympus'}
+                    onClick={() => set({ theme: 'olympus' })}
+                    title="🏛️ Olympus"
+                    desc="Ancient Greece / mythic"
                   />
                 </div>
               </div>

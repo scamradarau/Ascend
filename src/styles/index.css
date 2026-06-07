@@ -55,6 +55,28 @@ body {
   --exp: #8fd14f;
 }
 
+/* Olympus — Temple of Time: luminous aurora sky behind dark "marble glass"
+   panels, with gold + aegean accents. Panels stay dark for legibility over
+   the bright scenery. */
+[data-theme='olympus'] {
+  --bg: #0b1430;
+  --bg-2: #101a3c;
+  --panel: rgba(15, 24, 52, 0.74);
+  --panel-solid: #0f1834;
+  --edge: rgba(232, 200, 120, 0.4);
+  --edge-strong: rgba(232, 200, 120, 0.75);
+  --accent: #ecc873;
+  --accent-2: #74d6df;
+  --text: #f6f1e2;
+  --muted: #b7c4e0;
+  --exp: #9be86a;
+}
+
+.olympus-bg {
+  background:
+    linear-gradient(180deg, #5fb8e6 0%, #8fd2e8 34%, #cdeef5 64%, #eef8fb 100%);
+}
+
 /* ----------------------------------------------------------------
    BACKDROPS
 -----------------------------------------------------------------*/

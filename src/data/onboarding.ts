@@ -13,7 +13,7 @@ export interface OnboardingAnswers {
   age: number | ''
   region: string
   occupation: string
-  theme: 'cosmos' | 'rune'
+  theme: 'cosmos' | 'rune' | 'olympus'
   // ambition / consent tier
   tier: 'low' | 'mid' | 'high'
   // self-assessment per attribute (1 = weak, 5 = strong)

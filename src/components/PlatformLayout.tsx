@@ -5,6 +5,7 @@ import { rankForLevel } from '../data/ranks'
 import { PixelTitle } from './ui'
 import RuneScenery from './RuneScenery'
 import CosmosScenery from './CosmosScenery'
+import OlympusScenery from './OlympusScenery'
 
 const NAV = [
   { to: '/app/character', label: 'Character', icon: '🧬' },
@@ -41,14 +42,20 @@ export default function PlatformLayout() {
       ]
     : NAV
 
+  const bgClass = theme === 'cosmos' ? 'cosmos-bg' : theme === 'rune' ? 'rune-bg' : 'olympus-bg'
+
   return (
-    <div
-      className={`relative min-h-screen ${theme === 'cosmos' ? 'cosmos-bg' : 'rune-bg'}`}
-    >
-      {theme === 'rune' ? <RuneScenery /> : <CosmosScenery />}
+    <div className={`relative min-h-screen ${bgClass}`}>
+      {theme === 'rune' ? (
+        <RuneScenery />
+      ) : theme === 'olympus' ? (
+        <OlympusScenery />
+      ) : (
+        <CosmosScenery />
+      )}
       <div
         className={`grid-overlay pointer-events-none fixed inset-0 z-0 ${
-          theme === 'rune' ? 'opacity-20' : 'opacity-60'
+          theme === 'cosmos' ? 'opacity-60' : 'opacity-10'
         }`}
       />
 

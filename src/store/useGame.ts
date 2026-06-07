@@ -58,7 +58,7 @@ const STARTING_TRUST = 100
 export interface GameState {
   onboarded: boolean
   acceptedTerms: boolean
-  theme: 'cosmos' | 'rune'
+  theme: 'cosmos' | 'rune' | 'olympus'
   reduceMotion: boolean
   profile: Profile | null
 
@@ -93,7 +93,7 @@ export interface GameState {
   friends: string[]
 
   // ---- actions ----
-  setTheme: (t: 'cosmos' | 'rune') => void
+  setTheme: (t: 'cosmos' | 'rune' | 'olympus') => void
   toggleReduceMotion: () => void
   acceptTerms: () => void
   completeOnboarding: (answers: OnboardingAnswers) => void
@@ -175,7 +175,7 @@ export const useGame = create<GameState>()(
       streak: 0,
       lastActiveDate: null,
       submissions: [],
-      earnedBadges: ['first-steps'],
+      earnedBadges: [],
       avatar: { ...DEFAULT_AVATAR },
       purchasedCosmetics: [],
       ownerMode: false,
@@ -216,7 +216,7 @@ export const useGame = create<GameState>()(
           streak: 0,
           lastActiveDate: null,
           submissions: [],
-          earnedBadges: ['first-steps'],
+          earnedBadges: [],
           avatar: { ...DEFAULT_AVATAR },
           purchasedCosmetics: [],
           pendingSleep: null,
@@ -441,7 +441,7 @@ export const useGame = create<GameState>()(
           streak: 0,
           lastActiveDate: null,
           submissions: [],
-          earnedBadges: ['first-steps'],
+          earnedBadges: [],
           avatar: { ...DEFAULT_AVATAR },
           purchasedCosmetics: [],
           ownerMode: false,

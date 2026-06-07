@@ -2,6 +2,7 @@ import type { Badge } from './types'
 
 // Badges & Achievements — earned via levelling traits and completing
 // quest milestones. Higher tiers unlock bigger real-world rewards.
+// Progress starts at 0 for every player; it fills as you actually earn it.
 export const BADGES: Badge[] = [
   {
     id: 'entrepreneur',
@@ -10,7 +11,7 @@ export const BADGES: Badge[] = [
     icon: '💼',
     reward: 'HIGH',
     requirements: [
-      { label: 'Own more than 1 business', done: 1, total: 2 },
+      { label: 'Own more than 1 business', done: 0, total: 2 },
       { label: 'Earn over $100k revenue in your business', done: 0, total: 1 },
       { label: 'Reach level 10 Diligence', done: 0, total: 1 },
     ],
@@ -22,8 +23,8 @@ export const BADGES: Badge[] = [
     icon: '🏆',
     reward: 'HIGH',
     requirements: [
-      { label: 'Reach rank 1 on the Legendary leaderboard', done: 1, total: 1 },
-      { label: 'Reach rank 1 on the Quests leaderboard', done: 1, total: 1 },
+      { label: 'Reach rank 1 on the Legendary leaderboard', done: 0, total: 1 },
+      { label: 'Reach rank 1 on the Quests leaderboard', done: 0, total: 1 },
       { label: 'Reach rank 1 on the Stat leaderboard', done: 0, total: 2 },
     ],
   },
@@ -34,9 +35,9 @@ export const BADGES: Badge[] = [
     icon: '⚙️',
     reward: 'MID',
     requirements: [
-      { label: 'Maintain a 30-day streak', done: 12, total: 30 },
-      { label: 'Reach level 10 Self-Discipline', done: 4, total: 10 },
-      { label: 'Complete 50 daily quests', done: 20, total: 50 },
+      { label: 'Maintain a 30-day streak', done: 0, total: 30 },
+      { label: 'Reach level 10 Self-Discipline', done: 0, total: 10 },
+      { label: 'Complete 50 daily quests', done: 0, total: 50 },
     ],
   },
   {
@@ -46,8 +47,8 @@ export const BADGES: Badge[] = [
     icon: '📚',
     reward: 'MID',
     requirements: [
-      { label: 'Finish 5 main-quest books', done: 1, total: 5 },
-      { label: 'Reach level 10 Focus', done: 8, total: 10 },
+      { label: 'Finish 5 main-quest books', done: 0, total: 5 },
+      { label: 'Reach level 10 Focus', done: 0, total: 10 },
     ],
   },
   {
@@ -58,7 +59,7 @@ export const BADGES: Badge[] = [
     reward: 'MID',
     requirements: [
       { label: 'Complete the 8-week Physique quest', done: 0, total: 1 },
-      { label: '100 logged training sessions', done: 31, total: 100 },
+      { label: '100 logged training sessions', done: 0, total: 100 },
     ],
   },
   {
@@ -70,7 +71,7 @@ export const BADGES: Badge[] = [
     requirements: [
       { label: 'Complete onboarding', done: 1, total: 1 },
       { label: 'Pick your first 3 traits', done: 1, total: 1 },
-      { label: 'Complete your first daily quest', done: 1, total: 1 },
+      { label: 'Complete your first daily quest', done: 0, total: 1 },
     ],
   },
   {
@@ -80,9 +81,9 @@ export const BADGES: Badge[] = [
     icon: '🤝',
     reward: 'MID',
     requirements: [
-      { label: 'Reach level 8 Networking', done: 2, total: 8 },
-      { label: 'Reach level 8 Communication', done: 1, total: 8 },
-      { label: 'Post 20 times in the Guild', done: 4, total: 20 },
+      { label: 'Reach level 8 Networking', done: 0, total: 8 },
+      { label: 'Reach level 8 Communication', done: 0, total: 8 },
+      { label: 'Post 20 times in the Guild', done: 0, total: 20 },
     ],
   },
   {
@@ -92,9 +93,9 @@ export const BADGES: Badge[] = [
     icon: '🧘',
     reward: 'MID',
     requirements: [
-      { label: 'Reach level 10 Mindfulness', done: 3, total: 10 },
+      { label: 'Reach level 10 Mindfulness', done: 0, total: 10 },
       { label: 'Reach level 10 Stoic Equanimity', done: 0, total: 10 },
-      { label: '300 minutes of verified meditation', done: 90, total: 300 },
+      { label: '300 minutes of verified meditation', done: 0, total: 300 },
     ],
   },
   {
@@ -104,9 +105,9 @@ export const BADGES: Badge[] = [
     icon: '🏃',
     reward: 'HIGH',
     requirements: [
-      { label: 'Reach level 10 Physique', done: 2, total: 10 },
+      { label: 'Reach level 10 Physique', done: 0, total: 10 },
       { label: 'Complete a verified 5K', done: 0, total: 1 },
-      { label: '90-day training streak', done: 12, total: 90 },
+      { label: '90-day training streak', done: 0, total: 90 },
     ],
   },
   {
@@ -116,8 +117,8 @@ export const BADGES: Badge[] = [
     icon: '🌌',
     reward: 'HIGH',
     requirements: [
-      { label: 'Reach level 5 in a Mind trait', done: 1, total: 5 },
-      { label: 'Reach level 5 in a Will trait', done: 1, total: 5 },
+      { label: 'Reach level 5 in a Mind trait', done: 0, total: 5 },
+      { label: 'Reach level 5 in a Will trait', done: 0, total: 5 },
       { label: 'Reach level 5 in a Heart trait', done: 0, total: 5 },
       { label: 'Reach level 5 in a Charisma trait', done: 0, total: 5 },
       { label: 'Reach level 5 in a Body trait', done: 0, total: 5 },
