@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
+import { useAuth, ageFromDob } from '../store/auth'
 import {
   DEFAULT_ANSWERS,
   REGIONS,
@@ -54,7 +55,15 @@ export default function Onboarding() {
   const navigate = useNavigate()
   const completeOnboarding = useGame((s) => s.completeOnboarding)
   const [step, setStep] = useState(0)
-  const [a, setA] = useState<OnboardingAnswers>({ ...DEFAULT_ANSWERS })
+  const [a, setA] = useState<OnboardingAnswers>(() => {
+    const authUser = useAuth.getState().user
+    const prefAge = ageFromDob(authUser?.dob)
+    return {
+      ...DEFAULT_ANSWERS,
+      handle: authUser?.username ?? DEFAULT_ANSWERS.handle,
+      age: prefAge ?? DEFAULT_ANSWERS.age,
+    }
+  })
 
   const set = (patch: Partial<OnboardingAnswers>) => setA((prev) => ({ ...prev, ...patch }))
 

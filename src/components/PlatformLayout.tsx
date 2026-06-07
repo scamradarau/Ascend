@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { rankForLevel } from '../data/ranks'
+import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
 import RuneScenery from './RuneScenery'
 import CosmosScenery from './CosmosScenery'
@@ -31,10 +32,12 @@ export default function PlatformLayout() {
   const trust = useGame((s) => s.trust)
   const ownerMode = useGame((s) => s.ownerMode)
   const logout = useAuth((s) => s.logout)
+  const authUser = useAuth((s) => s.user)
   const { level } = usePlayerLevel()
   const rank = rankForLevel(level)
   const navigate = useNavigate()
-  const nav = ownerMode
+  const showOwner = ownerMode && isOwnerEmail(authUser?.email)
+  const nav = showOwner
     ? [
         ...NAV.slice(0, NAV.length - 1),
         { to: '/app/admin', label: 'Owner', icon: '🛠️' },

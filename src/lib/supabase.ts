@@ -18,6 +18,13 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 
 export const isCloud = Boolean(url && anonKey)
 
+// Owner gating — only this email sees Owner Mode / the admin dashboard.
+// Set VITE_OWNER_EMAIL (locally in .env.local, in prod in Netlify env vars).
+export const OWNER_EMAIL = (import.meta.env.VITE_OWNER_EMAIL as string | undefined)?.toLowerCase()
+export function isOwnerEmail(email?: string | null): boolean {
+  return Boolean(OWNER_EMAIL && email && email.toLowerCase() === OWNER_EMAIL)
+}
+
 export const supabase: SupabaseClient | null = isCloud
   ? createClient(url!, anonKey!, {
       auth: { persistSession: true, autoRefreshToken: true },
@@ -43,12 +50,12 @@ export interface CloudProfile {
 }
 
 // ---- auth ----
-export async function cloudSignUp(email: string, password: string, handle: string) {
+export async function cloudSignUp(email: string, password: string, handle: string, dob?: string) {
   if (!supabase) return { error: 'Cloud not configured' as const }
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { handle } },
+    options: { data: { handle, dob } },
   })
   return { data, error: error?.message }
 }

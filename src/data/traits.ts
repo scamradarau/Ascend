@@ -201,8 +201,15 @@ export const TRAITS: Trait[] = [
     benefit: 'Consistency turns ambition into identity. It’s the difference between starting and becoming.',
     howToLevel: ['Track a streak you refuse to break.', 'Lower the bar on bad days, but never to zero.'],
     dailyTasks: [
-      { id: 'con-streak', label: 'Maintain your streak today', evidence: 'reflection', exp: 20 },
-      { id: 'con-log', label: 'Log today in your habit tracker', evidence: 'reflection', exp: 12 },
+      { id: 'con-streak', label: 'Maintain your streak today', evidence: 'reflection', verify: 'check-in', exp: 20 },
+      {
+        id: 'con-log',
+        label: 'Mark today’s habits done in your tracker',
+        evidence: 'reflection',
+        verify: 'check-in',
+        hint: 'Open your habit-tracker app (or a notebook) and tick off today’s habits, then confirm here.',
+        exp: 12,
+      },
     ],
     mainQuest: {
       title: 'Maintain a 30-day unbroken streak',

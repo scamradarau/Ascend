@@ -9,6 +9,7 @@ import {
   unlockLabel,
   type CosmeticSlot,
 } from '../data/cosmetics'
+import { isOwnerEmail } from '../lib/supabase'
 import Avatar from '../components/Avatar'
 import { PixelTitle, Pill } from '../components/ui'
 
@@ -204,7 +205,8 @@ export default function Settings() {
         </p>
       </div>
 
-      {/* ---------------- OWNER MODE ---------------- */}
+      {/* ---------------- OWNER MODE (owner account only) ---------------- */}
+      {isOwnerEmail(authUser?.email) && (
       <div className="panel mt-5 p-6">
         <span className="font-pixel text-xs text-cosmos-gold">OWNER MODE</span>
         <div className="mt-4 flex items-center justify-between gap-4">
@@ -225,6 +227,7 @@ export default function Settings() {
           </button>
         )}
       </div>
+      )}
 
       {/* ---------------- ACCESSIBILITY ---------------- */}
       <div className="panel mt-5 p-6">

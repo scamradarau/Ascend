@@ -6,7 +6,7 @@ import { traitById } from '../data/traits'
 import { levelFromTotalExp } from '../data/leveling'
 import type { VerificationResult, VerificationMethodId } from '../data/verification'
 import { DEFAULT_AVATAR, type AvatarConfig, type CosmeticSlot } from '../data/cosmetics'
-import { challengeById, periodKeyFor } from '../data/challenges'
+import { challengeById, periodKeyFor, monthKey } from '../data/challenges'
 
 // ----------------------------------------------------------------
 // Persistent game state
@@ -73,6 +73,7 @@ export interface GameState {
   dailyLog: DailyLog
   completedQuests: CompletedQuest[]
   questsThisMonth: number
+  questMonth: string // month-key the counter belongs to; resets when it changes
   streak: number
   lastActiveDate: string | null
   submissions: Submission[]
@@ -175,6 +176,7 @@ export const useGame = create<GameState>()(
       dailyLog: {},
       completedQuests: [],
       questsThisMonth: 0,
+      questMonth: '',
       streak: 0,
       lastActiveDate: null,
       submissions: [],
@@ -217,6 +219,7 @@ export const useGame = create<GameState>()(
           dailyLog: {},
           completedQuests: [],
           questsThisMonth: 0,
+          questMonth: '',
           streak: 0,
           lastActiveDate: null,
           submissions: [],
@@ -282,6 +285,10 @@ export const useGame = create<GameState>()(
 
         const { expGain, aetherGain, trust } = applyResultEconomy(state, payload.exp, result)
 
+        // monthly reset for the "quests this month" counter
+        const mk = monthKey()
+        const baseQ = state.questMonth === mk ? state.questsThisMonth : 0
+
         const submission: Submission = {
           id: key,
           traitId,
@@ -302,7 +309,8 @@ export const useGame = create<GameState>()(
           seasonXp: state.seasonXp + expGain,
           aether: state.aether + aetherGain,
           trust,
-          questsThisMonth: state.questsThisMonth + (result.status !== 'flagged' ? 1 : 0),
+          questsThisMonth: baseQ + (result.status !== 'flagged' ? 1 : 0),
+          questMonth: mk,
           streak,
           lastActiveDate: today,
           activeTraits: state.activeTraits.map((t) =>
@@ -365,7 +373,9 @@ export const useGame = create<GameState>()(
               : t,
           ),
           completedQuests: completed,
-          questsThisMonth: done ? state.questsThisMonth + 1 : state.questsThisMonth,
+          questsThisMonth:
+            (state.questMonth === monthKey() ? state.questsThisMonth : 0) + (done ? 1 : 0),
+          questMonth: monthKey(),
           submissions: [mkSub(result.status), ...state.submissions].slice(0, 120),
         })
       },
@@ -463,6 +473,7 @@ export const useGame = create<GameState>()(
           dailyLog: {},
           completedQuests: [],
           questsThisMonth: 0,
+          questMonth: '',
           streak: 0,
           lastActiveDate: null,
           submissions: [],

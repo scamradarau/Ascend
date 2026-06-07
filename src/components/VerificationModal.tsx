@@ -10,6 +10,7 @@ import TimerVerifier from './verifiers/TimerVerifier'
 import ReadingVerifier from './verifiers/ReadingVerifier'
 import JournalVerifier from './verifiers/JournalVerifier'
 import SleepVerifier from './verifiers/SleepVerifier'
+import CheckInVerifier from './verifiers/CheckInVerifier'
 
 interface Props {
   open: boolean
@@ -100,6 +101,9 @@ export function VerificationModal({ open, onClose, method, label, minMinutes, bo
       )}
       {method === 'sleep-window' && (
         <SleepVerifier method={method} label={label} onResult={handle} onCancel={onClose} />
+      )}
+      {method === 'check-in' && (
+        <CheckInVerifier method={method} label={label} onResult={handle} onCancel={onClose} />
       )}
     </Modal>
   )

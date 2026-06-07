@@ -17,6 +17,7 @@ export type VerificationMethodId =
   | 'reading-check' // dwell time + summary + paste-block + comprehension
   | 'journal' // reflection, min words, paste-block
   | 'sleep-window' // time-boxed night + morning check-ins
+  | 'check-in' // simple honest tap-to-confirm (for trivial daily habits)
 
 export interface VerificationMethod {
   id: VerificationMethodId
@@ -171,6 +172,20 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
       'No backfilling — both check-ins are timestamped live, same calendar cycle',
     ],
     trustReward: 2,
+    camera: false,
+    gps: false,
+  },
+  'check-in': {
+    id: 'check-in',
+    label: 'Quick Check-in',
+    icon: '✅',
+    blurb: 'A simple, honest tap to confirm you did it today.',
+    cheatVectors: ['Tapping without doing it'],
+    defenses: [
+      'One tap per day (no double-claims, no backfilling)',
+      'Kept light on purpose — for trivial daily habits where heavy proof would be overkill. Your integrity score still rides on honesty.',
+    ],
+    trustReward: 1,
     camera: false,
     gps: false,
   },

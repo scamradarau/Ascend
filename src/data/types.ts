@@ -28,6 +28,7 @@ export type VerifyMethod =
   | 'reading-check'
   | 'journal'
   | 'sleep-window'
+  | 'check-in'
 
 export interface DailyTask {
   id: string

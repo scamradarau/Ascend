@@ -30,6 +30,7 @@ export interface StoredAccount {
   id: string
   username: string
   email: string
+  dob?: string
   salt: string
   hash: string
   createdAt: string
@@ -39,9 +40,22 @@ export interface PublicUser {
   id: string
   username: string
   email: string
+  dob?: string
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// whole years from an ISO date (yyyy-mm-dd) to today
+export function ageFromDob(dob?: string): number | null {
+  if (!dob) return null
+  const d = new Date(dob)
+  if (isNaN(d.getTime())) return null
+  const now = new Date()
+  let age = now.getFullYear() - d.getFullYear()
+  const m = now.getMonth() - d.getMonth()
+  if (m < 0 || (m === 0 && now.getDate() < d.getDate())) age--
+  return age
+}
 
 // ---- password hashing ----
 function toHex(buf: ArrayBuffer): string {
@@ -140,6 +154,7 @@ interface AuthState {
     username: string,
     email: string,
     password: string,
+    dob?: string,
   ) => Promise<{ ok: boolean; error?: string }>
   login: (username: string, password: string) => Promise<{ ok: boolean; error?: string }>
   logout: () => void
@@ -171,7 +186,10 @@ export const useAuth = create<AuthState>((set) => ({
       if (u) {
         const handle = (u.user_metadata?.handle as string) || (u.email?.split('@')[0] ?? 'Ascender')
         await loadSaveFor(u.id)
-        set({ user: { id: u.id, username: handle, email: u.email ?? '' }, ready: true })
+        set({
+          user: { id: u.id, username: handle, email: u.email ?? '', dob: u.user_metadata?.dob as string | undefined },
+          ready: true,
+        })
       } else {
         set({ user: null, ready: true })
       }
@@ -180,17 +198,21 @@ export const useAuth = create<AuthState>((set) => ({
     const id = getSessionId()
     const acc = getAccounts().find((a) => a.id === id)
     set({
-      user: acc ? { id: acc.id, username: acc.username, email: acc.email ?? '' } : null,
+      user: acc ? { id: acc.id, username: acc.username, email: acc.email ?? '', dob: acc.dob } : null,
       ready: true,
     })
   },
 
-  signup: async (username, email, password) => {
+  signup: async (username, email, password, dob) => {
     username = username.trim()
     email = email.trim()
     if (username.length < 3) return { ok: false, error: 'Username must be at least 3 characters.' }
     if (!EMAIL_RE.test(email)) return { ok: false, error: 'Please enter a valid email address.' }
     if (password.length < 6) return { ok: false, error: 'Password must be at least 6 characters.' }
+    const age = ageFromDob(dob)
+    if (age === null) return { ok: false, error: 'Please enter your date of birth.' }
+    if (age < 13) return { ok: false, error: 'You must be at least 13 to sign up.' }
+    if (age > 120) return { ok: false, error: 'Please enter a valid date of birth.' }
 
     // ----- cloud signup -----
     if (isCloud && supabase) {
@@ -202,7 +224,7 @@ export const useAuth = create<AuthState>((set) => ({
         .maybeSingle()
       if (taken) return { ok: false, error: 'That username is taken.' }
 
-      const res = await cloudSignUp(email, password, username)
+      const res = await cloudSignUp(email, password, username, dob)
       if (res.error) return { ok: false, error: res.error }
       // ensure a session (if "confirm email" is off, signUp returns one)
       let user = res.data?.user ?? null
@@ -214,7 +236,7 @@ export const useAuth = create<AuthState>((set) => ({
       }
       if (!user) return { ok: false, error: 'Sign-up failed. Try again.' }
       await loadSaveFor(user.id)
-      set({ user: { id: user.id, username, email } })
+      set({ user: { id: user.id, username, email, dob } })
       return { ok: true }
     }
 
@@ -230,12 +252,12 @@ export const useAuth = create<AuthState>((set) => ({
     const id = uuid()
     saveAccounts([
       ...accounts,
-      { id, username, email, salt, hash, createdAt: new Date().toISOString() },
+      { id, username, email, dob, salt, hash, createdAt: new Date().toISOString() },
     ])
     setSessionId(id)
     useGame.getState().resetAll()
     await useGame.persist.rehydrate()
-    set({ user: { id, username, email } })
+    set({ user: { id, username, email, dob } })
     return { ok: true }
   },
 
@@ -251,7 +273,7 @@ export const useAuth = create<AuthState>((set) => ({
       const u = res.data.user
       const handle = (u.user_metadata?.handle as string) || (u.email?.split('@')[0] ?? 'Ascender')
       await loadSaveFor(u.id)
-      set({ user: { id: u.id, username: handle, email: u.email ?? '' } })
+      set({ user: { id: u.id, username: handle, email: u.email ?? '', dob: u.user_metadata?.dob as string | undefined } })
       return { ok: true }
     }
 
@@ -264,7 +286,7 @@ export const useAuth = create<AuthState>((set) => ({
     useGame.getState().resetAll()
     setSessionId(account.id)
     await useGame.persist.rehydrate()
-    set({ user: { id: account.id, username: account.username, email: account.email ?? '' } })
+    set({ user: { id: account.id, username: account.username, email: account.email ?? '', dob: account.dob } })
     return { ok: true }
   },
 

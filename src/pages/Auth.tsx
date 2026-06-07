@@ -12,6 +12,7 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
   const login = useAuth((s) => s.login)
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
+  const [dob, setDob] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [show, setShow] = useState(false)
@@ -32,7 +33,7 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
     setBusy(true)
     try {
       const res = isSignup
-        ? await signup(username, email, password)
+        ? await signup(username, email, password, dob)
         : await login(username, password)
       if (!res.ok) {
         setError(res.error ?? 'Something went wrong.')
@@ -97,6 +98,22 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
                   placeholder="you@example.com"
                   autoComplete="email"
                 />
+              </div>
+            )}
+            {isSignup && (
+              <div>
+                <label className="stat-label mb-1.5 block text-xs">Date of birth</label>
+                <input
+                  className="input"
+                  type="date"
+                  value={dob}
+                  onChange={(e) => setDob(e.target.value)}
+                  max={new Date().toISOString().slice(0, 10)}
+                  autoComplete="bday"
+                />
+                <p className="mt-1 text-[11px] text-[var(--muted)]/70">
+                  You must be at least 13. We use this to tailor your journey — it’s never shown publicly.
+                </p>
               </div>
             )}
             <div>

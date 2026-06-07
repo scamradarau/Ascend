@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
+import { useAuth } from '../store/auth'
+import { isOwnerEmail } from '../lib/supabase'
 import { VERIFICATION_METHODS } from '../data/verification'
 import { PixelTitle, Pill } from '../components/ui'
 
@@ -55,6 +57,7 @@ const SEED_QUEUE: SeedItem[] = []
 
 export default function Admin() {
   const ownerMode = useGame((s) => s.ownerMode)
+  const authUser = useAuth((s) => s.user)
   const submissions = useGame((s) => s.submissions)
   const reviewSubmission = useGame((s) => s.reviewSubmission)
   const profile = useGame((s) => s.profile)
@@ -67,7 +70,9 @@ export default function Admin() {
     [submissions],
   )
 
-  if (!ownerMode) return <Navigate to="/app/settings" replace />
+  // hard gate: only the configured owner account, even if a copied save has ownerMode on
+  if (!ownerMode || !isOwnerEmail(authUser?.email))
+    return <Navigate to="/app/settings" replace />
 
   const decideSeed = (id: string, d: 'approve' | 'reject') => {
     setSeedQueue((q) => q.filter((x) => x.id !== id))
