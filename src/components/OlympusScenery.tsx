@@ -30,12 +30,13 @@ function Temple({ x, y, s = 1, op = 1 }: { x: number; y: number; s?: number; op?
 export default function OlympusScenery() {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {/* bright sky */}
+      {/* sky — a richer, golden-hour aegean blue (dimmer than midday so the
+          dark glass panels and white text stay readable over it) */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(180deg, #4fb0e4 0%, #79c9e6 30%, #aee0ee 55%, #dff3f8 80%, #f2fbfd 100%)',
+            'linear-gradient(180deg, #173f63 0%, #275f88 32%, #356f96 60%, #2c5e80 100%)',
         }}
       />
 
@@ -123,10 +124,14 @@ export default function OlympusScenery() {
         ))}
       </svg>
 
-      {/* gentle top light so dark glass panels read against the bright sky */}
+      {/* dark veil so the dark-glass panels and white text read clearly while
+          the temples, moon and aurora still show through */}
       <div
         className="absolute inset-0"
-        style={{ background: 'linear-gradient(180deg, rgba(8,14,34,0.30) 0%, rgba(8,14,34,0.06) 22%, transparent 45%)' }}
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(7,12,30,0.50) 0%, rgba(7,12,30,0.42) 45%, rgba(7,12,30,0.62) 100%)',
+        }}
       />
     </div>
   )
