@@ -210,7 +210,7 @@ export const useGame = create<GameState>()(
           },
           totalExp: result.startingExp,
           seasonXp: 0,
-          aether: 250,
+          aether: 0,
           trust: STARTING_TRUST,
           activeTraits: active,
           archivedTraits: {},
