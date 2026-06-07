@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
-import { getAllPlayers, type PlayerRow, type TraitStat } from '../store/leaderboard'
+import { getAllPlayers, getAllPlayersCloud, type PlayerRow, type TraitStat } from '../store/leaderboard'
+import { isCloud } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
 import { levelFromTotalExp } from '../data/leveling'
 import { traitById } from '../data/traits'
@@ -34,8 +35,14 @@ export default function Leaderboards() {
   const streak = useGame((s) => s.streak)
   const { level } = usePlayerLevel()
 
+  // cloud rows (when the backend is configured); local otherwise
+  const [cloudRows, setCloudRows] = useState<PlayerRow[] | null>(null)
+  useEffect(() => {
+    if (isCloud) getAllPlayersCloud().then(setCloudRows).catch(() => setCloudRows([]))
+  }, [])
+
   const players = useMemo(() => {
-    const rows = getAllPlayers()
+    const rows = isCloud ? [...(cloudRows ?? [])] : getAllPlayers()
     if (authUser) {
       const traits: TraitStat[] = activeTraits.map((t) => {
         const def = traitById(t.id)
@@ -67,7 +74,7 @@ export default function Leaderboards() {
     }
     return rows
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authUser, level, questsThisMonth, trust, activeTraits, profile, avatar, earnedBadges, streak])
+  }, [authUser, level, questsThisMonth, trust, activeTraits, profile, avatar, earnedBadges, streak, cloudRows])
 
   const ranked: Ranked[] = useMemo(() => {
     const metric = (r: PlayerRow) =>

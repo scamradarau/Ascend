@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
-import { getPlayer } from '../store/leaderboard'
+import { getPlayer, getPlayerCloud, type PlayerRow } from '../store/leaderboard'
+import { isCloud } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
 import { attributeById } from '../data/attributes'
 import { BADGES } from '../data/badges'
@@ -17,7 +19,16 @@ export default function PlayerProfile() {
   const addFriend = useGame((s) => s.addFriend)
   const removeFriend = useGame((s) => s.removeFriend)
 
-  const p = id ? getPlayer(id) : null
+  const [cloudP, setCloudP] = useState<PlayerRow | null | undefined>(isCloud ? undefined : null)
+  useEffect(() => {
+    if (isCloud && id) getPlayerCloud(id).then(setCloudP).catch(() => setCloudP(null))
+  }, [id])
+
+  const p = isCloud ? cloudP ?? null : id ? getPlayer(id) : null
+
+  if (isCloud && cloudP === undefined) {
+    return <div className="panel p-10 text-center text-[var(--muted)]">Loading profile…</div>
+  }
   if (!p) {
     return (
       <div className="panel p-10 text-center">

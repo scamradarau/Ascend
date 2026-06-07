@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useGame } from './store/useGame'
 import { useAuth } from './store/auth'
+import { startCloudSync } from './store/cloudSync'
 import Landing from './pages/Landing'
 import Auth from './pages/Auth'
 import Disclaimers from './pages/Disclaimers'
@@ -45,9 +46,10 @@ export default function App() {
   const ready = useAuth((s) => s.ready)
   const { pathname } = useLocation()
 
-  // restore session on boot
+  // restore session on boot + start cloud mirroring (no-op in local mode)
   useEffect(() => {
     init()
+    startCloudSync()
   }, [init])
 
   useEffect(() => {

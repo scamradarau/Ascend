@@ -4,6 +4,7 @@ import { useAuth } from '../store/auth'
 import { useGame } from '../store/useGame'
 import { PixelTitle } from '../components/ui'
 import CosmosScenery from '../components/CosmosScenery'
+import { isCloud } from '../lib/supabase'
 
 export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
   const navigate = useNavigate()
@@ -18,6 +19,8 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
   const [busy, setBusy] = useState(false)
 
   const isSignup = mode === 'signup'
+  // in cloud mode you log in with email; locally with username
+  const emailLogin = !isSignup && isCloud
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -70,13 +73,16 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
 
           <form onSubmit={submit} className="mt-6 space-y-4">
             <div>
-              <label className="stat-label mb-1.5 block text-xs">Username</label>
+              <label className="stat-label mb-1.5 block text-xs">
+                {emailLogin ? 'Email' : 'Username'}
+              </label>
               <input
                 className="input"
+                type={emailLogin ? 'email' : 'text'}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="your handle"
-                autoComplete="username"
+                placeholder={emailLogin ? 'you@example.com' : 'your handle'}
+                autoComplete={emailLogin ? 'email' : 'username'}
                 autoFocus
               />
             </div>
@@ -158,7 +164,9 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
         </div>
 
         <p className="mt-4 text-center text-[11px] leading-relaxed text-[var(--muted)]/70">
-          🔒 Passwords are hashed (PBKDF2-SHA256) and stored locally on this device for this build.
+          {isCloud
+            ? '🔒 Secured by Supabase auth; your progress syncs privately across your devices.'
+            : '🔒 Passwords are hashed (PBKDF2-SHA256) and stored locally on this device for this build.'}{' '}
           Your save is private to your account. See our{' '}
           <Link to="/privacy" className="text-[var(--accent)] underline">
             Privacy &amp; Confidentiality

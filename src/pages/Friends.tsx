@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
-import { getAllPlayers, type PlayerRow } from '../store/leaderboard'
+import { getAllPlayers, getAllPlayersCloud, type PlayerRow } from '../store/leaderboard'
+import { isCloud } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
 import Avatar from '../components/Avatar'
 import { PixelTitle, Pill, Toast } from '../components/ui'
@@ -47,7 +48,15 @@ export default function Friends() {
     setTimeout(() => setToast(null), 1800)
   }
 
-  const players = useMemo(() => getAllPlayers().filter((p) => p.id !== authUser?.id), [authUser])
+  const [cloudRows, setCloudRows] = useState<PlayerRow[] | null>(null)
+  useEffect(() => {
+    if (isCloud) getAllPlayersCloud().then(setCloudRows).catch(() => setCloudRows([]))
+  }, [])
+
+  const players = useMemo(
+    () => (isCloud ? cloudRows ?? [] : getAllPlayers()).filter((p) => p.id !== authUser?.id),
+    [authUser, cloudRows],
+  )
   const friendRows = players.filter((p) => friends.includes(p.id))
   const others = players.filter((p) => !friends.includes(p.id))
   const matches = query.trim()

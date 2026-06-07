@@ -18,6 +18,7 @@ import { rankForLevel } from '../data/ranks'
 import type { AttributeId } from '../data/types'
 import { PixelTitle, ExpBar } from '../components/ui'
 import CosmosScenery from '../components/CosmosScenery'
+import { flushCloud } from '../store/cloudSync'
 
 const STEPS = ['Identity', 'Self-Assessment', 'Goals', 'Obstacles', 'Lifestyle', 'Commitment', 'Your Build']
 
@@ -67,6 +68,7 @@ export default function Onboarding() {
 
   const finish = () => {
     completeOnboarding(a)
+    flushCloud()
     navigate('/app/character')
   }
 

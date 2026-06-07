@@ -1,5 +1,13 @@
 import { create } from 'zustand'
 import { useGame } from './useGame'
+import {
+  isCloud,
+  supabase,
+  cloudSignUp,
+  cloudSignIn,
+  cloudSignOut,
+  loadCloudSave,
+} from '../lib/supabase'
 
 // ================================================================
 // AUTH — accounts, sessions & per-account saves.
@@ -127,7 +135,7 @@ function setSessionId(id: string | null) {
 interface AuthState {
   user: PublicUser | null
   ready: boolean
-  init: () => void
+  init: () => void | Promise<void>
   signup: (
     username: string,
     email: string,
@@ -137,11 +145,38 @@ interface AuthState {
   logout: () => void
 }
 
+// Load this account's save: pull from cloud if present, else fall back to
+// whatever is cached locally, else fresh.
+async function loadSaveFor(userId: string) {
+  setSessionId(null)
+  useGame.getState().resetAll()
+  setSessionId(userId)
+  if (isCloud) {
+    const data = await loadCloudSave(userId)
+    if (data) {
+      localStorage.setItem(`ascend-save-${userId}`, JSON.stringify({ state: data, version: 3 }))
+    }
+  }
+  await useGame.persist.rehydrate()
+}
+
 export const useAuth = create<AuthState>((set) => ({
   user: null,
   ready: false,
 
-  init: () => {
+  init: async () => {
+    if (isCloud && supabase) {
+      const { data } = await supabase.auth.getUser()
+      const u = data.user
+      if (u) {
+        const handle = (u.user_metadata?.handle as string) || (u.email?.split('@')[0] ?? 'Ascender')
+        await loadSaveFor(u.id)
+        set({ user: { id: u.id, username: handle, email: u.email ?? '' }, ready: true })
+      } else {
+        set({ user: null, ready: true })
+      }
+      return
+    }
     const id = getSessionId()
     const acc = getAccounts().find((a) => a.id === id)
     set({
@@ -156,6 +191,34 @@ export const useAuth = create<AuthState>((set) => ({
     if (username.length < 3) return { ok: false, error: 'Username must be at least 3 characters.' }
     if (!EMAIL_RE.test(email)) return { ok: false, error: 'Please enter a valid email address.' }
     if (password.length < 6) return { ok: false, error: 'Password must be at least 6 characters.' }
+
+    // ----- cloud signup -----
+    if (isCloud && supabase) {
+      // handle must be unique (profiles.handle); check before creating the user
+      const { data: taken } = await supabase
+        .from('profiles')
+        .select('id')
+        .ilike('handle', username)
+        .maybeSingle()
+      if (taken) return { ok: false, error: 'That username is taken.' }
+
+      const res = await cloudSignUp(email, password, username)
+      if (res.error) return { ok: false, error: res.error }
+      // ensure a session (if "confirm email" is off, signUp returns one)
+      let user = res.data?.user ?? null
+      if (!res.data?.session) {
+        const si = await cloudSignIn(email, password)
+        if (si.error)
+          return { ok: false, error: 'Account created — please confirm your email, then log in.' }
+        user = si.data?.user ?? user
+      }
+      if (!user) return { ok: false, error: 'Sign-up failed. Try again.' }
+      await loadSaveFor(user.id)
+      set({ user: { id: user.id, username, email } })
+      return { ok: true }
+    }
+
+    // ----- local signup -----
     const accounts = getAccounts()
     if (accounts.some((a) => a.username.toLowerCase() === username.toLowerCase()))
       return { ok: false, error: 'That username is taken.' }
@@ -165,17 +228,10 @@ export const useAuth = create<AuthState>((set) => ({
     const salt = randomSalt()
     const hash = await hashPassword(password, salt)
     const id = uuid()
-    const account: StoredAccount = {
-      id,
-      username,
-      email,
-      salt,
-      hash,
-      createdAt: new Date().toISOString(),
-    }
-    saveAccounts([...accounts, account])
-
-    // start a fresh save for this account
+    saveAccounts([
+      ...accounts,
+      { id, username, email, salt, hash, createdAt: new Date().toISOString() },
+    ])
     setSessionId(id)
     useGame.getState().resetAll()
     await useGame.persist.rehydrate()
@@ -183,15 +239,27 @@ export const useAuth = create<AuthState>((set) => ({
     return { ok: true }
   },
 
-  login: async (username, password) => {
-    username = username.trim()
-    const account = getAccounts().find((a) => a.username.toLowerCase() === username.toLowerCase())
+  // `identifier` is an email in cloud mode, a username in local mode
+  login: async (identifier, password) => {
+    identifier = identifier.trim()
+
+    // ----- cloud login -----
+    if (isCloud) {
+      const res = await cloudSignIn(identifier, password)
+      if (res.error || !res.data?.user)
+        return { ok: false, error: res.error || 'Incorrect email or password.' }
+      const u = res.data.user
+      const handle = (u.user_metadata?.handle as string) || (u.email?.split('@')[0] ?? 'Ascender')
+      await loadSaveFor(u.id)
+      set({ user: { id: u.id, username: handle, email: u.email ?? '' } })
+      return { ok: true }
+    }
+
+    // ----- local login -----
+    const account = getAccounts().find((a) => a.username.toLowerCase() === identifier.toLowerCase())
     if (!account) return { ok: false, error: 'No account with that username.' }
     const hash = await hashPassword(password, account.salt)
     if (hash !== account.hash) return { ok: false, error: 'Incorrect password.' }
-
-    // switch saves: clear session so reset doesn't clobber the other account,
-    // reset to defaults, point at this account, then rehydrate its save.
     setSessionId(null)
     useGame.getState().resetAll()
     setSessionId(account.id)
@@ -201,7 +269,7 @@ export const useAuth = create<AuthState>((set) => ({
   },
 
   logout: () => {
-    // clear session FIRST so the reset write goes nowhere
+    if (isCloud) void cloudSignOut()
     setSessionId(null)
     useGame.getState().resetAll()
     set({ user: null })
