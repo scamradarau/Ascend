@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { useGame } from '../store/useGame'
+import { useRef, useState } from 'react'
+import { useGame, usePlayerLevel } from '../store/useGame'
+import { rankForLevel } from '../data/ranks'
 import { PixelTitle, Pill } from '../components/ui'
 
 const CHANNELS = [
@@ -11,40 +12,52 @@ const CHANNELS = [
   { id: 'mindset', name: 'mindset', icon: '🧘' },
 ]
 
-const SEED: Record<string, { who: string; rank: string; text: string; when: string }[]> = {
-  general: [
-    { who: 'ALCHY', rank: 'WARLORD', text: 'Hit Lv51 today. The endgame is real — keep grinding, rookies. 🔥', when: '2h' },
-    { who: 'DOANIE', rank: 'WIZARD', text: 'Anyone else doing the Eat That Frog quest? The first chapter rewired my mornings.', when: '4h' },
-    { who: 'NELANA', rank: 'ARCHER', text: 'Confidence trait just hit Lv13. Did the comfort-zone challenges and asked for a raise. Got it.', when: '6h' },
-  ],
-  wins: [
-    { who: 'PHUOCIE', rank: 'SWORDSMAN', text: '7-day gym streak locked in. Ember of Focus unlocked ✨', when: '1h' },
-    { who: 'RAWRBERT', rank: 'ROGUE', text: 'Finished my first main quest book. Scholar badge incoming.', when: '3h' },
-  ],
-  accountability: [
-    { who: 'INTERNUDE', rank: 'KNIGHT', text: 'Posting my schedule for the week. Hold me to it. 🗓️', when: '30m' },
-    { who: 'PHAMELI', rank: 'THIEF', text: 'Missed yesterday. Not missing twice. Back on the chain today.', when: '5h' },
-  ],
-  gym: [{ who: 'ALCHY', rank: 'WARLORD', text: 'Push day done. Real-time proof posted. Who’s next?', when: '2h' }],
-  books: [{ who: 'DOANIE', rank: 'WIZARD', text: 'Atomic Habits > motivation. Systems win. Summary posted in proof log.', when: '8h' }],
-  mindset: [{ who: 'REAMIC', rank: 'CLERIC', text: '10 min meditation daily for 3 weeks. The calm is unreal.', when: '12h' }],
+interface Msg {
+  who: string
+  rank: string
+  text: string
+  when: string
+  image?: string // data URL (local, session-only in this build)
 }
 
 export default function Guild() {
   const profile = useGame((s) => s.profile)
+  const { level } = usePlayerLevel()
+  const myRank = rankForLevel(level).title.toUpperCase()
   const [channel, setChannel] = useState('general')
   const [draft, setDraft] = useState('')
-  const [extra, setExtra] = useState<typeof SEED[string]>([])
+  // messages are per-channel, start empty (community is brand new at launch)
+  const [byChannel, setByChannel] = useState<Record<string, Msg[]>>({})
+  const [pendingImage, setPendingImage] = useState<string | null>(null)
+  const fileRef = useRef<HTMLInputElement | null>(null)
 
-  const messages = [...(SEED[channel] ?? []), ...extra]
+  const messages = byChannel[channel] ?? []
+
+  const pickImage = (file?: File | null) => {
+    if (!file) return
+    if (!file.type.startsWith('image/')) return
+    if (file.size > 4 * 1024 * 1024) {
+      alert('Image too large (max 4MB).')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => setPendingImage(reader.result as string)
+    reader.readAsDataURL(file)
+  }
 
   const send = () => {
-    if (draft.trim().length === 0) return
-    setExtra((p) => [
-      ...p,
-      { who: profile?.handle ?? 'You', rank: 'YOU', text: draft.trim(), when: 'now' },
-    ])
+    if (draft.trim().length === 0 && !pendingImage) return
+    const msg: Msg = {
+      who: profile?.handle ?? 'You',
+      rank: myRank,
+      text: draft.trim(),
+      when: 'now',
+      image: pendingImage ?? undefined,
+    }
+    setByChannel((prev) => ({ ...prev, [channel]: [...(prev[channel] ?? []), msg] }))
     setDraft('')
+    setPendingImage(null)
+    if (fileRef.current) fileRef.current.value = ''
   }
 
   return (
@@ -77,9 +90,9 @@ export default function Guild() {
             </button>
           ))}
           <div className="mt-3 rounded-lg border border-white/8 bg-black/30 p-3 text-center">
-            <div className="font-pixel text-sm text-exp">12,408</div>
+            <div className="font-pixel text-sm text-exp">1</div>
             <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
-              ascenders online
+              ascender online
             </div>
           </div>
         </div>
@@ -92,36 +105,86 @@ export default function Guild() {
             </span>
             <Pill tone="exp">live</Pill>
           </div>
+
           <div className="flex-1 space-y-4 overflow-y-auto p-5">
-            {messages.map((m, i) => (
-              <div key={i} className="flex gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/40 font-pixel text-[10px] text-[var(--accent)]">
-                  {m.who.slice(0, 2).toUpperCase()}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-display font-bold text-white">{m.who}</span>
-                    <span className="rounded border border-white/10 px-1.5 text-[9px] uppercase tracking-wide text-[var(--muted)]">
-                      {m.rank}
-                    </span>
-                    <span className="text-[10px] text-[var(--muted)]">{m.when}</span>
-                  </div>
-                  <p className="mt-0.5 text-sm text-slate-200">{m.text}</p>
-                </div>
+            {messages.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center text-center text-sm text-[var(--muted)]">
+                <span className="mb-2 text-3xl">{CHANNELS.find((c) => c.id === channel)?.icon}</span>
+                No messages in #{CHANNELS.find((c) => c.id === channel)?.name} yet.
+                <br />
+                Be the first to post — share a win or some proof.
               </div>
-            ))}
+            ) : (
+              messages.map((m, i) => (
+                <div key={i} className="flex gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/40 font-pixel text-[10px] text-[var(--accent)]">
+                    {m.who.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-display font-bold text-white">{m.who}</span>
+                      <span className="rounded border border-white/10 px-1.5 text-[9px] uppercase tracking-wide text-[var(--muted)]">
+                        {m.rank}
+                      </span>
+                      <span className="text-[10px] text-[var(--muted)]">{m.when}</span>
+                    </div>
+                    {m.text && <p className="mt-0.5 text-sm text-slate-200">{m.text}</p>}
+                    {m.image && (
+                      <img
+                        src={m.image}
+                        alt="upload"
+                        className="mt-2 max-h-64 rounded-lg border border-white/10"
+                      />
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
-          <div className="flex gap-2 border-t border-white/8 p-4">
-            <input
-              className="input"
-              placeholder={`Message #${CHANNELS.find((c) => c.id === channel)?.name}`}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && send()}
-            />
-            <button onClick={send} className="btn btn-primary">
-              Send
-            </button>
+
+          {/* composer */}
+          <div className="border-t border-white/8 p-4">
+            {pendingImage && (
+              <div className="mb-2 flex items-center gap-3 rounded-lg border border-white/10 bg-black/30 p-2">
+                <img src={pendingImage} alt="preview" className="h-12 w-12 rounded object-cover" />
+                <span className="flex-1 text-xs text-[var(--muted)]">Image attached</span>
+                <button
+                  onClick={() => {
+                    setPendingImage(null)
+                    if (fileRef.current) fileRef.current.value = ''
+                  }}
+                  className="text-xs text-cosmos-magenta"
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+            <div className="flex gap-2">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => pickImage(e.target.files?.[0])}
+              />
+              <button
+                onClick={() => fileRef.current?.click()}
+                title="Attach image"
+                className="btn btn-ghost shrink-0 px-3"
+              >
+                📎
+              </button>
+              <input
+                className="input"
+                placeholder={`Message #${CHANNELS.find((c) => c.id === channel)?.name}`}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && send()}
+              />
+              <button onClick={send} className="btn btn-primary shrink-0">
+                Send
+              </button>
+            </div>
           </div>
         </div>
       </div>

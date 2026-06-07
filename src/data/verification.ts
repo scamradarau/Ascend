@@ -50,6 +50,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
     defenses: [
       'Camera-only capture via the device sensor — there is NO file picker, so gallery upload is structurally impossible',
       'A one-time liveness code + live timestamp are burned into the frame at capture, so old/replayed images won’t carry today’s token',
+      'On-device AI scene recognition checks the photo actually shows the activity (a gym photo can’t be a toilet)',
       'Capture metadata (exact time, session nonce) is bound to the submission',
       'AI screen-detection + human spot-checks flag "photo of a photo"',
     ],
@@ -69,6 +70,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
     ],
     defenses: [
       'Live camera capture (no uploads) + burned-in liveness code & timestamp',
+      'On-device AI scene recognition verifies the photo matches the activity (gym / outdoors), not a random room',
       'GPS coordinates + accuracy captured at the moment of capture and bound to the photo',
       'Location is cross-checked against the activity (e.g. is this a gym / outdoors?)',
       'Impossible-travel detection: two captures too far apart in too little time are flagged',

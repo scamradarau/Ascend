@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { makeLivenessCode, type VerificationResult, type VerificationMethodId } from '../../data/verification'
+import {
+  categoryForQuest,
+  classify,
+  evaluate,
+  type ActivityVerdict,
+} from '../../data/activityRecognition'
 
 // ================================================================
 // LiveCamera — the anti-cheat cornerstone.
@@ -27,6 +33,10 @@ interface Props {
 
 type Phase = 'init' | 'ready' | 'denied' | 'unavailable' | 'captured'
 
+function categoryLabel(c: string) {
+  return c === 'gym' ? 'a gym/workout' : c === 'outdoors' ? 'the outdoors' : c === 'meal' ? 'a meal' : 'the activity'
+}
+
 export default function LiveCamera({ method, needGps, label, onResult, onCancel }: Props) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -38,6 +48,10 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
   const [gpsState, setGpsState] = useState<'idle' | 'getting' | 'ok' | 'fail'>('idle')
   const [thumb, setThumb] = useState<string | null>(null)
   const [facing, setFacing] = useState<'user' | 'environment'>('environment')
+  // activity recognition
+  const expectedCategory = categoryForQuest(label)
+  const [detecting, setDetecting] = useState(false)
+  const [verdict, setVerdict] = useState<ActivityVerdict | null>(null)
 
   // live clock so the player sees the timestamp ticking (proves "now")
   useEffect(() => {
@@ -136,25 +150,55 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
     setPhase('captured')
     stop()
     void full
+
+    // ---- activity recognition (on the clean thumbnail) ----
+    if (expectedCategory !== 'none') {
+      setVerdict(null)
+      setDetecting(true)
+      const probe = new Image()
+      probe.onload = async () => {
+        try {
+          const preds = await classify(probe)
+          setVerdict(evaluate(expectedCategory, preds))
+        } catch {
+          // model/network failure — don't block, mark unknown
+          setVerdict({
+            verdict: 'pending',
+            topLabel: 'unknown',
+            topProb: 0,
+            expectedLabel: expectedCategory,
+            reason: 'Scene check unavailable — sent for review.',
+          })
+        } finally {
+          setDetecting(false)
+        }
+      }
+      probe.src = tc.toDataURL('image/jpeg', 0.8)
+    }
   }
 
   function submit(demo: boolean) {
     const flags: string[] = []
     if (needGps && !gps) flags.push('No GPS fix — location unverified')
     if (demo) flags.push('Camera unavailable — demo capture, needs review')
+    if (verdict && verdict.verdict !== 'verified') flags.push(verdict.reason)
 
-    const status: VerificationResult['status'] = demo
+    // activity verdict influences final status
+    let status: VerificationResult['status'] = demo
       ? 'pending'
       : flags.length > 0
         ? 'pending'
         : 'verified'
+    if (verdict?.verdict === 'reject') status = 'flagged'
 
     onResult({
       method,
       status,
       note: demo
         ? 'Demo capture (no camera on this device).'
-        : `Live capture verified with code ${code}.`,
+        : verdict && expectedCategory !== 'none'
+          ? `Live capture (code ${code}). Scene: ${verdict.reason}`
+          : `Live capture verified with code ${code}.`,
       trustDelta: status === 'verified' ? 3 : 0,
       meta: {
         capturedAt: new Date().toISOString(),
@@ -222,6 +266,33 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
 
       <canvas ref={canvasRef} className="hidden" />
 
+      {/* activity scene check */}
+      {phase === 'captured' && expectedCategory !== 'none' && (
+        <div className="mt-3">
+          {detecting ? (
+            <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-xs text-[var(--muted)]">
+              <span className="h-3 w-3 animate-pulseGlow rounded-full bg-[var(--accent)]" />
+              🔍 Checking the photo really shows {categoryLabel(expectedCategory)}…
+            </div>
+          ) : (
+            verdict && (
+              <div
+                className={`rounded-lg border px-3 py-2 text-xs ${
+                  verdict.verdict === 'verified'
+                    ? 'border-exp/40 bg-exp/5 text-exp'
+                    : verdict.verdict === 'reject'
+                      ? 'border-cosmos-magenta/50 bg-cosmos-magenta/10 text-cosmos-magenta'
+                      : 'border-amber-400/40 bg-amber-400/5 text-amber-300'
+                }`}
+              >
+                {verdict.verdict === 'verified' ? '✓ ' : verdict.verdict === 'reject' ? '✗ ' : '⏳ '}
+                {verdict.reason}
+              </div>
+            )
+          )}
+        </div>
+      )}
+
       {/* controls */}
       <div className="mt-4 flex items-center justify-between gap-2">
         <button onClick={() => { stop(); onCancel() }} className="btn btn-ghost text-xs">
@@ -243,9 +314,19 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
               <button onClick={() => start(facing)} className="btn btn-ghost text-xs">
                 Retake
               </button>
-              <button onClick={() => submit(false)} className="btn btn-primary text-xs">
-                ✅ Submit proof
-              </button>
+              {verdict?.verdict === 'reject' ? (
+                <button disabled className="btn btn-primary text-xs" title={verdict.reason}>
+                  ✗ Wrong scene — retake
+                </button>
+              ) : (
+                <button
+                  onClick={() => submit(false)}
+                  disabled={detecting}
+                  className="btn btn-primary text-xs"
+                >
+                  {detecting ? 'Checking…' : '✅ Submit proof'}
+                </button>
+              )}
             </>
           )}
           {(phase === 'denied' || phase === 'unavailable') && (

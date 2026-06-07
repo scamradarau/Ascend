@@ -10,11 +10,13 @@ const NAV = [
   { to: '/app/character', label: 'Character', icon: '🧬' },
   { to: '/app/traits', label: 'Traits', icon: '🧠' },
   { to: '/app/quests', label: 'Quests', icon: '📜' },
+  { to: '/app/journal', label: 'Journal', icon: '📓' },
   { to: '/app/leaderboards', label: 'Leaderboard', icon: '🏆' },
   { to: '/app/inventory', label: 'Inventory', icon: '🎒' },
   { to: '/app/shop', label: 'Shop', icon: '🛒' },
   { to: '/app/guild', label: 'Guild', icon: '🛡️' },
   { to: '/app/friends', label: 'Friends', icon: '👥' },
+  { to: '/app/stoic', label: 'The Stoic', icon: '🏛️' },
   { to: '/app/guide', label: 'Codex', icon: '📖' },
   { to: '/app/feedback', label: 'Feedback', icon: '💬' },
   { to: '/app/settings', label: 'Settings', icon: '⚙️' },
@@ -65,22 +67,30 @@ export default function PlatformLayout() {
             </PixelTitle>
           </button>
 
-          {/* nav links */}
-          <nav className="no-scrollbar -mx-1 flex flex-1 items-center gap-1 overflow-x-auto px-1">
+          {/* nav links — icons always; the ACTIVE item shows its label so it
+              never overflows / clips, even with many tabs. Tooltips aid the rest. */}
+          <nav className="no-scrollbar -mx-1 flex flex-1 items-center gap-0.5 overflow-x-auto px-1">
             {nav.map((n) => (
               <NavLink
                 key={n.to}
                 to={n.to}
+                title={n.label}
                 className={({ isActive }) =>
-                  `flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
+                  `flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
                     isActive
                       ? 'bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] text-[var(--accent)] shadow-glow'
-                      : 'text-[var(--muted)] hover:text-[var(--text)]'
+                      : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-white/[0.04]'
                   }`
                 }
               >
-                <span aria-hidden>{n.icon}</span>
-                <span className="hidden md:inline">{n.label}</span>
+                {({ isActive }) => (
+                  <>
+                    <span aria-hidden className="text-base leading-none">
+                      {n.icon}
+                    </span>
+                    {isActive && <span className="hidden sm:inline">{n.label}</span>}
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>

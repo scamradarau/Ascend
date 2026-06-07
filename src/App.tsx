@@ -23,6 +23,8 @@ import Codex from './pages/Codex'
 import Friends from './pages/Friends'
 import PlayerProfile from './pages/PlayerProfile'
 import Privacy from './pages/Privacy'
+import Stoic from './pages/Stoic'
+import Journal from './pages/Journal'
 
 function RequireAuth({ children }: { children: JSX.Element }) {
   const user = useAuth((s) => s.user)
@@ -112,6 +114,8 @@ export default function App() {
         <Route path="shop" element={<Shop />} />
         <Route path="admin" element={<Admin />} />
         <Route path="guide" element={<Codex />} />
+        <Route path="stoic" element={<Stoic />} />
+        <Route path="journal" element={<Journal />} />
         <Route path="guild" element={<Guild />} />
         <Route path="friends" element={<Friends />} />
         <Route path="player/:id" element={<PlayerProfile />} />
