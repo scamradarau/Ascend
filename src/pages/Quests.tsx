@@ -7,6 +7,7 @@ import { VerificationModal } from '../components/VerificationModal'
 import { methodForTask, type VerificationResult, type VerificationMethodId } from '../data/verification'
 import { CHALLENGES, periodKeyFor, type Challenge } from '../data/challenges'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
+import ResetCountdown from '../components/ResetCountdown'
 import type { DailyTask } from '../data/types'
 
 export default function Quests() {
@@ -105,6 +106,9 @@ export default function Quests() {
         <div className="flex gap-2">
           <Pill tone="exp">
             {dailyDone}/{dailyTotal} dailies today
+          </Pill>
+          <Pill tone="violet">
+            <ResetCountdown scope="daily" prefix="Dailies reset in" />
           </Pill>
           <Pill tone="gold">{questsThisMonth} this month</Pill>
         </div>
@@ -207,7 +211,9 @@ export default function Quests() {
             <span className="font-pixel text-xs text-cosmos-gold glow-text">
               {scope === 'weekly' ? '📅 WEEKLY CHALLENGES' : '🗓️ MONTHLY CHALLENGES'}
             </span>
-            <Pill tone="gold">{scope === 'weekly' ? 'Resets weekly' : 'Resets monthly'} · big rewards</Pill>
+            <Pill tone="gold">
+              <ResetCountdown scope={scope} /> · big rewards
+            </Pill>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {CHALLENGES.filter((c) => c.scope === scope).map((c) => {
