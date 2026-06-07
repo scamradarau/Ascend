@@ -7,6 +7,7 @@ import { levelFromTotalExp } from '../data/leveling'
 import type { VerificationResult, VerificationMethodId } from '../data/verification'
 import { DEFAULT_AVATAR, type AvatarConfig, type CosmeticSlot } from '../data/cosmetics'
 import { challengeById, periodKeyFor, monthKey } from '../data/challenges'
+import { todayKey } from '../lib/time'
 
 // ----------------------------------------------------------------
 // Persistent game state
@@ -124,7 +125,7 @@ export interface GameState {
   resetAll: () => void
 }
 
-const todayStr = () => new Date().toISOString().slice(0, 10)
+const todayStr = () => todayKey()
 const clampTrust = (n: number) => Math.max(0, Math.min(100, Math.round(n)))
 
 // Account-namespaced storage: the active save is keyed by the logged-in
@@ -279,7 +280,7 @@ export const useGame = create<GameState>()(
         const today = todayStr()
         let streak = state.streak
         if (state.lastActiveDate !== today) {
-          const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+          const yesterday = todayKey(new Date(Date.now() - 86400000))
           streak = state.lastActiveDate === yesterday ? streak + 1 : 1
         }
 

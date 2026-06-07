@@ -1,30 +1,13 @@
 import { useEffect, useState } from 'react'
+import { nextDailyReset, nextWeeklyReset, nextMonthlyReset } from '../lib/time'
 
 // ================================================================
 // RESET COUNTDOWN — live "time until reset" for daily / weekly /
-// monthly quests. The targets below mirror EXACTLY how the quest
-// period keys are computed (see store/useGame.ts + data/challenges.ts):
-//   • daily   → keyed by UTC date  → next UTC midnight
-//   • weekly  → ISO week (UTC, Mon) → next Monday 00:00 UTC
-//   • monthly → local year-month   → local midnight on the 1st
-// Keeping these in lock-step means the countdown hits 0 the instant
-// the underlying progress actually rolls over.
+// monthly quests. Targets come from lib/time.ts, which anchors every
+// reset to SYDNEY midnight (DST-aware) — the same wall clock the quest
+// period keys use — so the countdown hits 0 the instant progress rolls
+// over.
 // ================================================================
-
-export function nextDailyReset(now = new Date()): number {
-  return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)
-}
-
-export function nextWeeklyReset(now = new Date()): number {
-  const day = now.getUTCDay() // Sun=0 .. Sat=6
-  let untilMonday = (1 - day + 7) % 7
-  if (untilMonday === 0) untilMonday = 7 // it's Monday → next Monday
-  return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + untilMonday)
-}
-
-export function nextMonthlyReset(now = new Date()): number {
-  return new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime()
-}
 
 function fmt(ms: number): string {
   if (ms < 0) ms = 0

@@ -137,27 +137,9 @@ export const CHALLENGES: Challenge[] = [
   },
 ]
 
-// ---- period keys (so progress resets each week / month) ----
-export function weekKey(d = new Date()): string {
-  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
-  const dayNum = (date.getUTCDay() + 6) % 7
-  date.setUTCDate(date.getUTCDate() - dayNum + 3)
-  const firstThursday = new Date(Date.UTC(date.getUTCFullYear(), 0, 4))
-  const week =
-    1 +
-    Math.round(
-      ((date.getTime() - firstThursday.getTime()) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) /
-        7,
-    )
-  return `${date.getUTCFullYear()}-W${week}`
-}
-
-export function monthKey(d = new Date()): string {
-  return `${d.getFullYear()}-${d.getMonth() + 1}`
-}
-
-export function periodKeyFor(scope: 'weekly' | 'monthly'): string {
-  return scope === 'weekly' ? weekKey() : monthKey()
-}
+// ---- period keys (Sydney-anchored; see lib/time.ts) ----
+// Re-exported from the shared time module so resets stay in lock-step
+// with the on-screen countdown.
+export { weekKey, monthKey, periodKeyFor } from '../lib/time'
 
 export const challengeById = (id: string) => CHALLENGES.find((c) => c.id === id)
