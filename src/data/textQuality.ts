@@ -67,9 +67,9 @@ export function assessText(raw: string): TextAssessment {
   }
 
   // 6) low lexical diversity
-  if (tokens.length >= 6) {
+  if (tokens.length >= 5) {
     const unique = new Set(tokens).size / tokens.length
-    if (unique < 0.4) {
+    if (unique < 0.5) {
       reasons.push('Very low lexical diversity')
       flags += 1
     }
@@ -79,6 +79,28 @@ export function assessText(raw: string): TextAssessment {
   if (text.length >= 10 && letters.length / text.replace(/\s/g, '').length < 0.45) {
     reasons.push('Mostly symbols / numbers')
     flags += 1
+  }
+
+  // 8) tiny alphabet — home-row mashing like "asd asd asd", "jkl jkl" uses
+  //    only a handful of distinct letters. Real writing uses many.
+  if (letters.length >= 12) {
+    const distinctLetters = new Set(letters.split('')).size
+    if (distinctLetters <= 5) {
+      reasons.push('Only a few distinct letters — keyboard mashing')
+      flags += 3
+    } else if (distinctLetters <= 8) {
+      reasons.push('Unusually few distinct letters')
+      flags += 1
+    }
+  }
+
+  // 9) lots of very short tokens (mostly 1–3 char "words")
+  if (tokens.length >= 6) {
+    const shortRatio = tokens.filter((t) => t.length <= 3).length / tokens.length
+    if (shortRatio > 0.7) {
+      reasons.push('Mostly tiny non-words')
+      flags += 1
+    }
   }
 
   const score = Math.min(1, flags / 4)

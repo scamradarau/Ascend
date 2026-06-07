@@ -68,6 +68,8 @@ export interface GameState {
   aether: number
   trust: number // integrity score 0..100
   activeTraits: ActiveTrait[]
+  // progress of dropped traits, preserved so re-adding doesn't reset their level
+  archivedTraits: Record<string, { exp: number; mainQuestProgress: number; mainQuestDone: boolean }>
   dailyLog: DailyLog
   completedQuests: CompletedQuest[]
   questsThisMonth: number
@@ -169,6 +171,7 @@ export const useGame = create<GameState>()(
       aether: 0,
       trust: STARTING_TRUST,
       activeTraits: [],
+      archivedTraits: {},
       dailyLog: {},
       completedQuests: [],
       questsThisMonth: 0,
@@ -210,6 +213,7 @@ export const useGame = create<GameState>()(
           aether: 250,
           trust: STARTING_TRUST,
           activeTraits: active,
+          archivedTraits: {},
           dailyLog: {},
           completedQuests: [],
           questsThisMonth: 0,
@@ -226,14 +230,24 @@ export const useGame = create<GameState>()(
       },
 
       addTrait: (traitId) => {
-        const { activeTraits } = get()
+        const { activeTraits, archivedTraits } = get()
         if (activeTraits.length >= 3) return false
         if (activeTraits.some((t) => t.id === traitId)) return false
+        // restore prior progress if this trait was dropped before
+        const saved = archivedTraits[traitId]
+        const rest = { ...archivedTraits }
+        delete rest[traitId]
         set({
           activeTraits: [
             ...activeTraits,
-            { id: traitId, exp: 0, mainQuestProgress: 0, mainQuestDone: false },
+            {
+              id: traitId,
+              exp: saved?.exp ?? 0,
+              mainQuestProgress: saved?.mainQuestProgress ?? 0,
+              mainQuestDone: saved?.mainQuestDone ?? false,
+            },
           ],
+          archivedTraits: rest,
         })
         return true
       },
@@ -241,7 +255,17 @@ export const useGame = create<GameState>()(
       dropTrait: (traitId) => {
         const t = get().activeTraits.find((x) => x.id === traitId)
         if (t && (t.mainQuestProgress > 0 || t.mainQuestDone)) return
-        set({ activeTraits: get().activeTraits.filter((x) => x.id !== traitId) })
+        // keep the trait's progress so re-adding it later does NOT reset its level
+        const archived = t
+          ? {
+              ...get().archivedTraits,
+              [traitId]: { exp: t.exp, mainQuestProgress: t.mainQuestProgress, mainQuestDone: t.mainQuestDone },
+            }
+          : get().archivedTraits
+        set({
+          activeTraits: get().activeTraits.filter((x) => x.id !== traitId),
+          archivedTraits: archived,
+        })
       },
 
       completeDailyTask: (traitId, taskId, payload, result) => {
@@ -435,6 +459,7 @@ export const useGame = create<GameState>()(
           aether: 0,
           trust: STARTING_TRUST,
           activeTraits: [],
+          archivedTraits: {},
           dailyLog: {},
           completedQuests: [],
           questsThisMonth: 0,

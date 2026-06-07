@@ -35,6 +35,7 @@ export default function JournalVerifier({ method, label, minWords = 15, onResult
         wordCount: words,
         pasteBlocked,
         flags: quality.reasons.length ? quality.reasons : undefined,
+        entry: text.trim(),
       },
     })
   }

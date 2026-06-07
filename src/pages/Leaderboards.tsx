@@ -235,12 +235,12 @@ export default function Leaderboards() {
             <div className="text-xs uppercase tracking-widest text-[var(--muted)]">Rewards pool</div>
             <div className="mt-2 grid grid-cols-3 gap-2 text-center">
               {[
-                ['💵', 'Cash'],
-                ['💳', 'Gift Cards'],
-                ['📱', 'Tech'],
-                ['📚', 'Books'],
-                ['🎫', 'Memberships'],
-                ['✈️', 'Flights'],
+                ['🧘', 'Free Memberships'],
+                ['📚', 'Ebooks'],
+                ['🏷️', 'Discount Codes'],
+                ['✨', 'Cosmetics'],
+                ['📣', 'Shout-outs'],
+                ['🎖️', 'Digital Badges'],
               ].map(([icon, label]) => (
                 <div key={label} className="rounded-lg border border-white/8 bg-white/[0.02] p-2">
                   <div className="text-xl">{icon}</div>
@@ -249,7 +249,8 @@ export default function Leaderboards() {
               ))}
             </div>
             <p className="mt-3 text-[10px] text-[var(--muted)]">
-              Funded via sponsorships — rewards rotate to keep the ladder fair.
+              Low-cost, sustainable perks — rotated to keep the ladder fair. (Bigger sponsor prizes
+              can come later as the community grows.)
             </p>
           </div>
         </div>

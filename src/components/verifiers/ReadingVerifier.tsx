@@ -83,6 +83,7 @@ export default function ReadingVerifier({ method, label, minMinutes = 8, book, o
         wordCount: words,
         pasteBlocked,
         flags: quality.reasons.length ? quality.reasons : undefined,
+        entry: `📖 ${chosenBook}\n\nSummary:\n${summary.trim()}\n\nComprehension:\n${answer.trim()}`,
       },
     })
   }

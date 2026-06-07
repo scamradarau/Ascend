@@ -141,6 +141,7 @@ export default function TimerVerifier({
         wordCount: reflection.trim() ? reflection.trim().split(/\s+/).length : undefined,
         pasteBlocked,
         flags: flags.length ? flags : undefined,
+        entry: reflection.trim() || undefined,
       },
     })
   }

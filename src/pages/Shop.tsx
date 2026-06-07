@@ -8,14 +8,14 @@ import {
 } from '../data/cosmetics'
 import { PixelTitle, Pill, Toast } from '../components/ui'
 
-// Real-world reward redemptions (deck: coupons, gift cards, tech, cash).
+// Low-cost, sustainable real rewards — mostly free digital perks to start.
 const REWARDS = [
-  { id: 'coupon', name: 'Café Coupon', icon: '☕', cost: 400, tier: 'LOW', reqLevel: 1 },
-  { id: 'book', name: 'Any Main-Quest Book', icon: '📚', cost: 1200, tier: 'MID', reqLevel: 10 },
-  { id: 'giftcard', name: '$25 Gift Card', icon: '💳', cost: 2500, tier: 'MID', reqLevel: 20 },
-  { id: 'membership', name: '1-Month Gym Membership', icon: '🏋️', cost: 4000, tier: 'HIGH', reqLevel: 25 },
-  { id: 'tech', name: 'Trending Tech Drop', icon: '📱', cost: 9000, tier: 'HIGH', reqLevel: 40 },
-  { id: 'cash', name: 'IRL Cash Reward', icon: '💵', cost: 15000, tier: 'HIGH', reqLevel: 50 },
+  { id: 'shoutout', name: 'Community Shout-out', icon: '📣', cost: 250, tier: 'LOW', reqLevel: 1 },
+  { id: 'ebook', name: 'Free Ebook (self-help classic)', icon: '📚', cost: 500, tier: 'LOW', reqLevel: 3 },
+  { id: 'meditation', name: 'Free Meditation App — 1 Month', icon: '🧘', cost: 800, tier: 'LOW', reqLevel: 5 },
+  { id: 'habit', name: 'Free Habit-Tracker Premium — 1 Month', icon: '✅', cost: 1000, tier: 'MID', reqLevel: 8 },
+  { id: 'fitness', name: 'Free Fitness App — 1 Month', icon: '🏃', cost: 1400, tier: 'MID', reqLevel: 12 },
+  { id: 'discount', name: 'Partner Discount Code', icon: '🏷️', cost: 1800, tier: 'MID', reqLevel: 15 },
 ]
 
 const TIER_TONE = { LOW: 'exp', MID: 'default', HIGH: 'gold' } as const

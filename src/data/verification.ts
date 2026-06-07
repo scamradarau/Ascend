@@ -220,6 +220,8 @@ export interface VerificationResult {
     pasteBlocked?: boolean
     foregroundLocked?: boolean
     flags?: string[]
+    /** the exact content the user submitted (summary/reflection/notes) */
+    entry?: string
   }
   thumb?: string // tiny data-url preview from the camera, if any
 }

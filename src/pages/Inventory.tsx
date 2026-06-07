@@ -1,10 +1,20 @@
 import { useState } from 'react'
-import { useGame } from '../store/useGame'
+import { useGame, type Submission } from '../store/useGame'
 import { BADGES } from '../data/badges'
-import { ExpBar, PixelTitle, Pill } from '../components/ui'
+import { VERIFICATION_METHODS } from '../data/verification'
+import { ExpBar, PixelTitle, Pill, Modal } from '../components/ui'
 
 const TABS = ['Badges', 'Items', 'Proof Log'] as const
 type Tab = (typeof TABS)[number]
+
+function Meta({ k, children }: { k: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-lg border border-white/8 bg-white/[0.02] p-2">
+      <div className="text-[9px] uppercase tracking-widest text-[var(--muted)]">{k}</div>
+      <div className="text-slate-200">{children}</div>
+    </div>
+  )
+}
 
 const STATUS_TONE: Record<string, string> = {
   verified: 'text-exp',
@@ -35,6 +45,7 @@ const REWARD_TONE = { LOW: 'exp', MID: 'default', HIGH: 'gold' } as const
 export default function Inventory() {
   const [tab, setTab] = useState<Tab>('Badges')
   const submissions = useGame((s) => s.submissions)
+  const [view, setView] = useState<Submission | null>(null)
 
   return (
     <div>
@@ -167,41 +178,103 @@ export default function Inventory() {
           ) : (
             <ul className="mt-4 space-y-2">
               {submissions.map((e) => (
-                <li
-                  key={e.id}
-                  className="flex gap-3 rounded-lg border border-white/8 bg-white/[0.02] p-3 text-sm"
-                >
-                  {e.thumb ? (
-                    <img src={e.thumb} alt="" className="h-12 w-12 shrink-0 rounded-md object-cover" />
-                  ) : null}
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-white">{e.label}</span>
-                      <span className={`text-[10px] uppercase tracking-wide ${STATUS_TONE[e.status]}`}>
-                        ● {e.status}
-                      </span>
+                <li key={e.id}>
+                  <button
+                    onClick={() => setView(e)}
+                    className="flex w-full gap-3 rounded-lg border border-white/8 bg-white/[0.02] p-3 text-left text-sm transition hover:border-[var(--edge-strong)]"
+                  >
+                    {e.thumb ? (
+                      <img src={e.thumb} alt="" className="h-12 w-12 shrink-0 rounded-md object-cover" />
+                    ) : (
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-white/10 text-xl">
+                        {VERIFICATION_METHODS[e.method]?.icon ?? '✓'}
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-semibold text-white">{e.label}</span>
+                        <span className={`text-[10px] uppercase tracking-wide ${STATUS_TONE[e.status]}`}>
+                          ● {e.status}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 line-clamp-1 text-xs text-[var(--muted)]">
+                        {e.meta.entry || e.note}
+                      </p>
+                      <div className="mt-1 flex flex-wrap items-center gap-x-3 text-[10px] text-[var(--muted)]/80">
+                        <span>{new Date(e.at).toLocaleString()}</span>
+                        {e.meta.gps && (
+                          <span>📍 {e.meta.gps.lat.toFixed(3)}, {e.meta.gps.lng.toFixed(3)}</span>
+                        )}
+                        {e.meta.dwellSec !== undefined && <span>⏱ {Math.round(e.meta.dwellSec / 60)}m</span>}
+                        {e.meta.wordCount !== undefined && <span>📝 {e.meta.wordCount}w</span>}
+                        <span className="text-[var(--accent)]">View →</span>
+                      </div>
                     </div>
-                    <p className="mt-0.5 text-xs text-[var(--muted)]">{e.note}</p>
-                    <div className="mt-1 flex flex-wrap gap-x-3 text-[10px] text-[var(--muted)]/80">
-                      <span>{new Date(e.at).toLocaleString()}</span>
-                      {e.meta.gps && (
-                        <span>📍 {e.meta.gps.lat.toFixed(3)}, {e.meta.gps.lng.toFixed(3)}</span>
-                      )}
-                      {e.meta.dwellSec !== undefined && <span>⏱ {Math.round(e.meta.dwellSec / 60)}m</span>}
-                      {e.meta.wordCount !== undefined && <span>📝 {e.meta.wordCount}w</span>}
-                      {e.meta.livenessCode && <span>🔑 {e.meta.livenessCode}</span>}
-                      {e.meta.pasteBlocked && <span>🚫 paste blocked</span>}
-                    </div>
-                    {e.meta.flags?.map((f) => (
-                      <div key={f} className="mt-0.5 text-[10px] text-cosmos-magenta">⚠ {f}</div>
-                    ))}
-                  </div>
+                  </button>
                 </li>
               ))}
             </ul>
           )}
         </div>
       )}
+
+      {/* full submission viewer */}
+      <Modal open={!!view} onClose={() => setView(null)} title="Submission detail">
+        {view && (
+          <div className="space-y-3 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="font-display font-bold text-white">{view.label}</span>
+              <span className={`text-xs uppercase tracking-wide ${STATUS_TONE[view.status]}`}>
+                ● {view.status}
+              </span>
+            </div>
+            <div className="text-xs text-[var(--muted)]">
+              {VERIFICATION_METHODS[view.method]?.label} · {new Date(view.at).toLocaleString()}
+            </div>
+
+            {view.thumb && (
+              <img src={view.thumb} alt="proof" className="max-h-72 w-full rounded-lg object-contain" />
+            )}
+
+            {view.meta.entry ? (
+              <div>
+                <div className="stat-label mb-1 text-[10px]">What you submitted</div>
+                <div className="max-h-56 overflow-y-auto whitespace-pre-line rounded-lg border border-white/10 bg-black/30 p-3 text-slate-200">
+                  {view.meta.entry}
+                </div>
+              </div>
+            ) : (
+              <p className="text-[var(--muted)]">{view.note}</p>
+            )}
+
+            <div className="grid grid-cols-2 gap-2 text-[11px]">
+              {view.meta.gps && (
+                <Meta k="Location">
+                  {view.meta.gps.lat.toFixed(4)}, {view.meta.gps.lng.toFixed(4)} ±
+                  {Math.round(view.meta.gps.accuracy)}m
+                </Meta>
+              )}
+              {view.meta.livenessCode && <Meta k="Liveness code">{view.meta.livenessCode}</Meta>}
+              {view.meta.dwellSec !== undefined && (
+                <Meta k="Time on task">{Math.round(view.meta.dwellSec / 60)} min</Meta>
+              )}
+              {view.meta.interruptions !== undefined && (
+                <Meta k="Interruptions">{view.meta.interruptions}</Meta>
+              )}
+              {view.meta.wordCount !== undefined && <Meta k="Word count">{view.meta.wordCount}</Meta>}
+              {view.meta.pasteBlocked && <Meta k="Paste">Blocked</Meta>}
+            </div>
+
+            {view.meta.flags && view.meta.flags.length > 0 && (
+              <div className="rounded-lg border border-cosmos-magenta/30 bg-cosmos-magenta/5 p-2">
+                {view.meta.flags.map((f) => (
+                  <div key={f} className="text-[11px] text-cosmos-magenta">⚠ {f}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
     </div>
   )
 }
