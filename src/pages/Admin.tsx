@@ -6,41 +6,8 @@ import { isOwnerEmail } from '../lib/supabase'
 import { VERIFICATION_METHODS } from '../data/verification'
 import { PixelTitle, Pill } from '../components/ui'
 
-// ---- mocked platform-wide analytics (owner view) ----
-const KPIS = [
-  { label: 'Total Players', value: '48,212', delta: '+3.4%', good: true },
-  { label: 'Daily Active', value: '12,408', delta: '+1.9%', good: true },
-  { label: 'D7 Retention', value: '41%', delta: '+2.1pp', good: true },
-  { label: 'Quests Verified / 24h', value: '38,940', delta: '+5.2%', good: true },
-  { label: 'Verification Pass Rate', value: '92.6%', delta: '-0.4pp', good: false },
-  { label: 'Flagged for Review', value: '212', delta: '+18', good: false },
-  { label: 'Avg Integrity', value: '94 / 100', delta: '+0.3', good: true },
-  { label: 'MRR', value: '$214,330', delta: '+6.8%', good: true },
-]
-
-const WEEKLY = [62, 70, 58, 81, 90, 76, 88] // engagement index
-const FLAG_REASONS = [
-  ['Photo-of-a-photo (AI screen detect)', 38],
-  ['GPS / location mismatch', 27],
-  ['Pasted / AI-written summary', 19],
-  ['Impossible travel between captures', 9],
-  ['Timer foreground violations', 7],
-]
-
-const SUBSCRIPTIONS = [
-  ['Free', 31200, '$0'],
-  ['Ascend+ (monthly)', 14800, '$9.99'],
-  ['Ascend+ (annual)', 1900, '$79'],
-  ['Guild Elite', 312, '$24.99'],
-]
-
-const REWARD_POOL = [
-  ['Café Coupons', 'Local Sponsors', 5000, true],
-  ['$25 Gift Cards', 'RewardCo', 800, true],
-  ['Gym Memberships', 'IronFit', 250, true],
-  ['Trending Tech', 'TechDrop', 40, false],
-  ['IRL Cash', 'Treasury', 20, true],
-]
+// Engagement index — empty at launch; wire to real analytics later.
+const WEEKLY: number[] = []
 
 // Review queue from other players. Empty until real users submit proof;
 // it then populates from the backend. The current player's own pending/
@@ -61,6 +28,7 @@ export default function Admin() {
   const submissions = useGame((s) => s.submissions)
   const reviewSubmission = useGame((s) => s.reviewSubmission)
   const profile = useGame((s) => s.profile)
+  const trust = useGame((s) => s.trust)
   const [seedQueue, setSeedQueue] = useState(SEED_QUEUE)
   const [decided, setDecided] = useState<Record<string, 'approve' | 'reject'>>({})
 
@@ -74,6 +42,21 @@ export default function Admin() {
   if (!ownerMode || !isOwnerEmail(authUser?.email))
     return <Navigate to="/app/settings" replace />
 
+  // Fresh-launch KPIs — real where we can read it locally, zero/— otherwise.
+  // These populate for real once backend aggregate queries are wired.
+  const flaggedCount = ownQueue.filter((s) => s.status === 'flagged').length
+  const verifiedCount = submissions.filter((s) => s.status === 'verified').length
+  const KPIS = [
+    { label: 'Total Players', value: '—' },
+    { label: 'Daily Active', value: '—' },
+    { label: 'D7 Retention', value: '—' },
+    { label: 'Quests Verified (you)', value: String(verifiedCount) },
+    { label: 'Verification Pass Rate', value: '—' },
+    { label: 'Flagged for Review', value: String(flaggedCount) },
+    { label: 'Avg Integrity', value: profile ? `${trust} / 100` : '—' },
+    { label: 'MRR', value: '$0' },
+  ]
+
   const decideSeed = (id: string, d: 'approve' | 'reject') => {
     setSeedQueue((q) => q.filter((x) => x.id !== id))
   }
@@ -85,8 +68,8 @@ export default function Admin() {
           <PixelTitle className="text-xs text-cosmos-gold">OWNER DASHBOARD</PixelTitle>
           <h1 className="mt-2 font-display text-2xl font-bold text-white">Command center</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">
-            Platform health, the anti-cheat review queue, rewards & revenue. (Analytics are
-            illustrative; the review queue acts on real submissions.)
+            Platform health, the anti-cheat review queue, rewards & revenue. Fresh launch —
+            metrics fill in as players join; the review queue acts on real submissions.
           </p>
         </div>
         <Pill tone="gold">OWNER</Pill>
@@ -98,9 +81,6 @@ export default function Admin() {
           <div key={k.label} className="panel p-4">
             <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">{k.label}</div>
             <div className="mt-1 font-display text-xl font-bold text-white">{k.value}</div>
-            <div className={`mt-0.5 text-[11px] ${k.good ? 'text-exp' : 'text-cosmos-magenta'}`}>
-              {k.good ? '▲' : '▼'} {k.delta}
-            </div>
           </div>
         ))}
       </div>
@@ -246,54 +226,36 @@ export default function Admin() {
           {/* anti-cheat breakdown */}
           <div className="panel p-5">
             <span className="font-pixel text-xs text-cosmos-magenta">TOP FLAG REASONS</span>
-            <ul className="mt-3 space-y-2">
-              {FLAG_REASONS.map(([r, n]) => (
-                <li key={r as string}>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-slate-300">{r}</span>
-                    <span className="text-[var(--muted)]">{n}</span>
-                  </div>
-                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/8">
-                    <div
-                      className="h-full rounded-full bg-cosmos-magenta"
-                      style={{ width: `${((n as number) / 38) * 100}%` }}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <p className="mt-3 py-4 text-center text-sm text-[var(--muted)]">
+              No flags recorded yet. Reasons rank here as the anti-cheat engine catches them.
+            </p>
           </div>
 
           {/* engagement */}
           <div className="panel p-5">
             <span className="font-pixel text-xs text-[var(--accent)]">ENGAGEMENT (7d)</span>
-            <div className="mt-4 flex h-28 items-end gap-2">
-              {WEEKLY.map((v, i) => (
-                <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                  <div
-                    className="w-full rounded-t exp-fill"
-                    style={{ height: `${v}%` }}
-                  />
-                  <span className="text-[9px] text-[var(--muted)]">{['M','T','W','T','F','S','S'][i]}</span>
-                </div>
-              ))}
-            </div>
+            {WEEKLY.length === 0 ? (
+              <p className="mt-3 py-4 text-center text-sm text-[var(--muted)]">
+                No engagement data yet — fills in once players are active.
+              </p>
+            ) : (
+              <div className="mt-4 flex h-28 items-end gap-2">
+                {WEEKLY.map((v, i) => (
+                  <div key={i} className="flex flex-1 flex-col items-center gap-1">
+                    <div className="w-full rounded-t exp-fill" style={{ height: `${v}%` }} />
+                    <span className="text-[9px] text-[var(--muted)]">{['M','T','W','T','F','S','S'][i]}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* revenue */}
           <div className="panel p-5">
             <span className="font-pixel text-xs text-cosmos-gold">SUBSCRIPTIONS</span>
-            <table className="mt-3 w-full text-xs">
-              <tbody>
-                {SUBSCRIPTIONS.map(([name, count, price]) => (
-                  <tr key={name as string} className="border-b border-white/5">
-                    <td className="py-1.5 text-slate-300">{name}</td>
-                    <td className="py-1.5 text-right text-[var(--muted)]">{(count as number).toLocaleString()}</td>
-                    <td className="py-1.5 text-right text-cosmos-gold">{price}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <p className="mt-3 py-4 text-center text-sm text-[var(--muted)]">
+              No subscriptions yet. Everyone’s on the free plan during the test.
+            </p>
           </div>
         </div>
       </div>
@@ -301,30 +263,10 @@ export default function Admin() {
       {/* reward & sponsor management */}
       <div className="panel mt-5 p-5">
         <span className="font-pixel text-xs text-cosmos-gold">REWARD &amp; SPONSOR POOL</span>
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
-                <th className="py-2 text-left">Reward</th>
-                <th className="py-2 text-left">Sponsor</th>
-                <th className="py-2 text-right">Stock</th>
-                <th className="py-2 text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {REWARD_POOL.map(([name, sponsor, stock, active]) => (
-                <tr key={name as string} className="border-t border-white/5">
-                  <td className="py-2 text-white">{name}</td>
-                  <td className="py-2 text-[var(--muted)]">{sponsor}</td>
-                  <td className="py-2 text-right text-slate-300">{(stock as number).toLocaleString()}</td>
-                  <td className="py-2 text-right">
-                    <Pill tone={active ? 'exp' : 'default'}>{active ? 'Active' : 'Paused'}</Pill>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <p className="mt-3 py-4 text-center text-sm text-[var(--muted)]">
+          No sponsors onboarded yet. Add rewards here as you secure partners — keep them cheap
+          or free (memberships, ebooks) to start.
+        </p>
       </div>
     </div>
   )
