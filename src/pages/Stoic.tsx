@@ -12,7 +12,7 @@ export default function Stoic() {
     {
       from: 'stoic',
       text:
-        'We are the Stoa — Marcus, Seneca, and Epictetus, speaking as one. Bring us your struggle: discipline, fear, anger, purpose, the hard road of becoming better. Ask, and we will counsel you.',
+        'I am the Stoic — one mind shaped by the whole tradition of the Porch, the discipline and the warmth of it together. Bring me your struggle: discipline, fear, anger, purpose, the hard road of becoming better. Ask, and I will counsel you.',
     },
   ])
   const [draft, setDraft] = useState('')
@@ -41,10 +41,10 @@ export default function Stoic() {
     <div className="mx-auto max-w-3xl">
       <div className="mb-6">
         <PixelTitle className="text-xs text-[var(--accent)]">THE STOIC</PixelTitle>
-        <h1 className="mt-2 font-display text-2xl font-bold text-white">Counsel of the Stoa</h1>
+        <h1 className="mt-2 font-display text-2xl font-bold text-white">Counsel of the Stoic</h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
-          One voice, three minds — Marcus Aurelius, Seneca &amp; Epictetus. Ask anything about
-          self‑mastery and living well.
+          A single sage, distilled from the whole Stoic tradition. Ask anything about self‑mastery
+          and living well.
         </p>
       </div>
 
@@ -57,7 +57,7 @@ export default function Stoic() {
           <div className="flex-1">
             <div className="font-display font-bold text-white">The Stoic</div>
             <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
-              Marcus · Seneca · Epictetus
+              Sage of the Porch
             </div>
           </div>
           <Pill tone="exp">online</Pill>

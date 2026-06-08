@@ -83,29 +83,61 @@ export default function Avatar({
           <stop offset="50%" stopColor="#f4c542" />
           <stop offset="100%" stopColor="#b07e1a" />
         </linearGradient>
+        <linearGradient id={`iron-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5b6378" />
+          <stop offset="55%" stopColor="#363c4d" />
+          <stop offset="100%" stopColor="#181c27" />
+        </linearGradient>
+        <linearGradient id={`bronze-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#e8b878" />
+          <stop offset="45%" stopColor="#c08a3e" />
+          <stop offset="100%" stopColor="#7a4f1c" />
+        </linearGradient>
+        <filter id={`glow-${uid}`} x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="3.2" result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
 
-      {/* aura */}
+      {/* aura — a glowing halo ring + orbiting motes that bloom OUTSIDE the
+          bust (which is otherwise opaque and would hide a centred glow) */}
       {hasAura && (
-        <>
-          <circle cx="100" cy="100" r="92" fill={`url(#aura-${uid})`} className={animated ? 'animate-pulseGlow' : ''} />
-          {(config.aura === 'phoenix' || config.aura === 'solar' || config.aura === 'void') &&
-            [...Array(10)].map((_, i) => {
-              const a = (i / 10) * Math.PI * 2
-              return (
-                <circle
-                  key={i}
-                  cx={100 + Math.cos(a) * 78}
-                  cy={100 + Math.sin(a) * 78}
-                  r={2.4}
-                  fill={aura}
-                  opacity={0.8}
-                  className={animated ? 'animate-twinkle' : ''}
-                  style={{ animationDelay: `${i * 0.2}s` }}
-                />
-              )
-            })}
-        </>
+        <g>
+          {/* soft outer field */}
+          <circle cx="100" cy="100" r="99" fill={`url(#aura-${uid})`} className={animated ? 'animate-pulseGlow' : ''} />
+          {/* bright halo ring that blooms past the frame */}
+          <circle
+            cx="100"
+            cy="100"
+            r="95"
+            fill="none"
+            stroke={aura}
+            strokeWidth="5"
+            opacity="0.6"
+            filter={`url(#glow-${uid})`}
+            className={animated ? 'animate-pulseGlow' : ''}
+          />
+          {/* orbiting motes for every aura */}
+          {[...Array(14)].map((_, i) => {
+            const a = (i / 14) * Math.PI * 2
+            return (
+              <circle
+                key={i}
+                cx={100 + Math.cos(a) * 96}
+                cy={100 + Math.sin(a) * 96}
+                r={i % 3 === 0 ? 2.8 : 1.8}
+                fill={aura}
+                opacity={0.85}
+                filter={`url(#glow-${uid})`}
+                className={animated ? 'animate-twinkle' : ''}
+                style={{ animationDelay: `${i * 0.15}s` }}
+              />
+            )
+          })}
+        </g>
       )}
 
       {/* frame ring */}
@@ -196,91 +228,191 @@ function Helmet({
   animated: boolean
 }) {
   const metal = `url(#metal-${uid})`
+  const iron = `url(#iron-${uid})`
+  const gold = `url(#gold-${uid})`
+  const bronze = `url(#bronze-${uid})`
+  const pulse = animated ? 'animate-pulseGlow' : ''
+
+  // Glowing eyes that read THROUGH a helmet's slot/openings. Drawn on top of
+  // the (face-covering) helmet so the gaze still glows. Positions match the
+  // head's eyes below (≈x90/110, y80).
+  const SlotEyes = ({ y = 80, lx = 89, rx = 111 }: { y?: number; lx?: number; rx?: number }) => (
+    <g>
+      <circle cx={lx} cy={y} r="5.2" fill={c1} opacity="0.4" className={pulse} />
+      <circle cx={rx} cy={y} r="5.2" fill={c1} opacity="0.4" className={pulse} />
+      <circle cx={lx} cy={y} r="2.5" fill="#ffffff" />
+      <circle cx={rx} cy={y} r="2.5" fill="#ffffff" />
+    </g>
+  )
+
   switch (id) {
+    // ---- Initiate Hood: cloth cowl that frames & shadows the face ----
     case 'hood':
       return (
         <g>
-          <path d="M62 78 Q66 40 100 38 Q134 40 138 78 Q120 58 100 58 Q80 58 62 78 Z" fill="#3a2f55" stroke="#1c1630" strokeWidth="2" />
-          <path d="M70 70 Q100 50 130 70" fill="none" stroke="#5a4b86" strokeWidth="2" />
+          {/* outer hood draping down both sides of the face */}
+          <path d="M58 112 Q50 44 100 36 Q150 44 142 112 Q138 96 130 92 L130 70 Q116 58 100 58 Q84 58 70 70 L70 92 Q62 96 58 112 Z" fill="#3a2f55" stroke="#1c1630" strokeWidth="2" />
+          {/* inner shadow over the upper face */}
+          <path d="M72 70 Q100 56 128 70 Q126 86 100 90 Q74 86 72 70 Z" fill="#0c0a18" opacity="0.85" />
+          <path d="M70 68 Q100 50 130 68" fill="none" stroke="#5a4b86" strokeWidth="2" />
+          <SlotEyes y={78} />
         </g>
       )
+    // ---- Focus Circlet: light band, face stays open ----
     case 'circlet':
       return (
         <g>
-          <path d="M70 64 Q100 54 130 64" fill="none" stroke="#cbb56b" strokeWidth="4" strokeLinecap="round" />
-          <circle cx="100" cy="58" r="4.5" fill="#22d3ee" className={animated ? 'animate-pulseGlow' : ''} />
+          <path d="M70 62 Q100 50 130 62" fill="none" stroke="#cbb56b" strokeWidth="4" strokeLinecap="round" />
+          <path d="M74 60 Q100 50 126 60" fill="none" stroke="#fff0c0" strokeWidth="1.2" />
+          <circle cx="100" cy="55" r="4.5" fill="#22d3ee" className={pulse} />
         </g>
       )
+    // ---- Knight: fully-closed great-helm with vision slit ----
     case 'knight':
       return (
         <g stroke="#2a3556" strokeWidth="2">
-          <path d="M64 70 Q64 40 100 38 Q136 40 136 70 L132 86 Q100 78 68 86 Z" fill={metal} />
-          <rect x="84" y="60" width="32" height="6" rx="3" fill="#0b1020" stroke="none" />
-          <rect x="96" y="44" width="8" height="40" rx="3" fill="#0b1020" stroke="none" />
-          <path d="M64 70 Q100 60 136 70" fill="none" stroke="#dfe7ff" strokeWidth="1" />
+          {/* bucket helm covering the whole head */}
+          <path d="M66 60 Q64 36 100 34 Q136 36 134 60 L134 100 Q134 112 120 114 L80 114 Q66 112 66 100 Z" fill={metal} />
+          {/* crown band + rivets */}
+          <path d="M66 60 Q100 50 134 60" fill="none" stroke="#dfe7ff" strokeWidth="1.5" />
+          {[72, 86, 100, 114, 128].map((x, i) => (
+            <circle key={i} cx={x} cy={58} r="1.6" fill="#dfe7ff" stroke="none" />
+          ))}
+          {/* central reinforcement rib */}
+          <rect x="96" y="44" width="8" height="68" rx="3" fill="#0b1020" stroke="none" opacity="0.7" />
+          {/* vision slit */}
+          <rect x="72" y="76" width="56" height="8" rx="3" fill="#04060d" stroke="none" />
+          {/* breath holes */}
+          {[84, 92, 108, 116].map((x, i) => (
+            <circle key={i} cx={x} cy={98} r="1.8" fill="#04060d" stroke="none" />
+          ))}
+          {/* small comb on top */}
+          <path d="M92 40 Q100 30 108 40 L108 48 L92 48 Z" fill={metal} />
+          <SlotEyes y={80} />
         </g>
       )
+    // ---- Ranger: open visor + cheek guards + side wings ----
     case 'ranger':
       return (
-        <g stroke="#1f3a2f" strokeWidth="2">
-          <path d="M66 66 Q100 44 134 66 L138 74 L126 78 Q100 66 74 78 L62 74 Z" fill="#2f6f52" />
-          <rect x="80" y="66" width="40" height="7" rx="3.5" fill="#0b1020" stroke="none" />
-          <path d="M62 74 L48 64 M138 74 L152 64" stroke="#3f8f6a" strokeWidth="3" strokeLinecap="round" />
+        <g stroke="#173a2c" strokeWidth="2">
+          {/* skull cap */}
+          <path d="M66 66 Q64 40 100 38 Q136 40 134 66 Q100 56 66 66 Z" fill="#2f6f52" />
+          {/* brow visor over the eyes */}
+          <path d="M66 66 Q100 60 134 66 L132 82 Q100 74 68 82 Z" fill="#24503c" />
+          <rect x="78" y="76" width="44" height="6" rx="3" fill="#04060d" stroke="none" />
+          {/* cheek guards down the sides of the face */}
+          <path d="M70 82 L73 106 Q80 110 85 102 L83 84 Z" fill="#2f6f52" />
+          <path d="M130 82 L127 106 Q120 110 115 102 L117 84 Z" fill="#2f6f52" />
+          {/* swept wings */}
+          <path d="M66 64 L48 56 L64 70 Z M134 64 L152 56 L136 70 Z" fill="#3f8f6a" stroke="none" />
+          <SlotEyes y={86} />
         </g>
       )
+    // ---- Samurai: kabuto bowl + kuwagata horns + menpō face mask ----
     case 'samurai':
       return (
-        <g stroke="#2a1a1a" strokeWidth="2">
-          <path d="M62 76 Q62 42 100 40 Q138 42 138 76 Q100 64 62 76 Z" fill="#6b1f1f" />
-          <path d="M62 76 L52 96 Q60 100 70 92 M138 76 L148 96 Q140 100 130 92" fill="#4a1414" />
-          {/* maedate crest */}
-          <path d="M86 44 Q100 18 114 44 Q100 36 86 44 Z" fill={`url(#gold-${uid})`} stroke="#7a5314" />
-          <rect x="84" y="62" width="32" height="6" rx="3" fill="#1a0c0c" stroke="none" />
+        <g stroke="#15171f" strokeWidth="2">
+          {/* shikoro neck flares */}
+          <path d="M62 82 L48 106 Q62 112 74 100 L72 84 Z" fill="#5a1717" />
+          <path d="M138 82 L152 106 Q138 112 126 100 L128 84 Z" fill="#5a1717" />
+          {/* hachi (bowl) */}
+          <path d="M66 64 Q64 38 100 36 Q136 38 134 64 Q100 54 66 64 Z" fill={iron} />
+          <path d="M100 38 L100 60 M83 40 L80 62 M117 40 L120 62" stroke="#15171f" strokeWidth="1.2" fill="none" />
+          {/* mabisashi (brow peak) */}
+          <path d="M66 62 Q100 56 134 62 L130 72 Q100 62 70 72 Z" fill={iron} />
+          {/* kuwagata horns */}
+          <path d="M86 46 Q72 8 54 14 Q74 24 80 52 Z" fill={gold} stroke="#7a5314" />
+          <path d="M114 46 Q128 8 146 14 Q126 24 120 52 Z" fill={gold} stroke="#7a5314" />
+          {/* maedate centre crest */}
+          <path d="M94 50 Q100 36 106 50 Q100 46 94 50 Z" fill={gold} stroke="#7a5314" />
+          {/* menpō mask over the lower face */}
+          <path d="M74 82 Q76 104 100 113 Q124 104 126 82 Q100 90 74 82 Z" fill={iron} />
+          {/* fierce scowl + fangs */}
+          <path d="M86 95 Q100 103 114 95" fill="none" stroke="#04060d" strokeWidth="3" />
+          <path d="M90 96 L93 101 L96 96 Z M104 96 L107 101 L110 96 Z" fill="#e7ecff" stroke="none" />
+          {/* nose ridge */}
+          <path d="M95 82 Q100 88 105 82" fill="none" stroke="#04060d" strokeWidth="2" />
+          <SlotEyes y={78} />
         </g>
       )
+    // ---- Archmage Cowl: deep hood drowning the face in shadow ----
     case 'mage':
       return (
         <g>
-          <path d="M64 74 Q70 26 100 22 Q130 26 136 74 Q100 60 64 74 Z" fill="#2b2150" stroke="#150f2c" strokeWidth="2" />
-          <path d="M100 22 Q96 46 100 60" stroke="#a855f7" strokeWidth="2" fill="none" />
-          <circle cx="100" cy="40" r="5" fill="#a855f7" className={animated ? 'animate-pulseGlow' : ''} />
+          <path d="M58 112 Q48 30 100 22 Q152 30 142 112 Q138 92 128 88 L128 64 Q114 50 100 50 Q86 50 72 64 L72 88 Q62 92 58 112 Z" fill="#2b2150" stroke="#150f2c" strokeWidth="2" />
+          {/* deep shadow */}
+          <path d="M72 64 Q100 48 128 64 Q126 88 100 94 Q74 88 72 64 Z" fill="#070512" opacity="0.92" />
+          {/* arcane gem on the brow */}
+          <circle cx="100" cy="40" r="5" fill="#a855f7" className={pulse} />
+          <path d="M100 24 Q96 34 100 44" stroke="#a855f7" strokeWidth="2" fill="none" />
+          {/* eyes glow from within the shadow */}
+          <g>
+            <circle cx="89" cy="78" r="5.2" fill="#c084fc" opacity="0.5" className={pulse} />
+            <circle cx="111" cy="78" r="5.2" fill="#c084fc" opacity="0.5" className={pulse} />
+            <circle cx="89" cy="78" r="2.3" fill="#fff" />
+            <circle cx="111" cy="78" r="2.3" fill="#fff" />
+          </g>
         </g>
       )
+    // ---- Warlord Crown: bronze Corinthian helm + crimson plume ----
     case 'warlord':
       return (
-        <g stroke="#5a3a0a" strokeWidth="2">
-          <path d="M62 74 Q62 44 100 42 Q138 44 138 74 Q100 62 62 74 Z" fill={`url(#gold-${uid})`} />
-          {/* crown spikes */}
-          <path d="M64 50 L58 26 L74 44 L84 22 L94 44 L100 18 L106 44 L116 22 L126 44 L142 26 L136 50 Z" fill={`url(#gold-${uid})`} />
-          {[58, 84, 100, 116, 142].map((x, i) => (
-            <circle key={i} cx={x} cy={i % 2 ? 30 : 26} r="3" fill="#ff4d6d" />
+        <g stroke="#7a4f1c" strokeWidth="2">
+          {/* crimson plume crest */}
+          <path d="M90 42 Q88 8 100 6 Q112 8 110 42 Z" fill="#b3001b" stroke="#6a0010" />
+          {[94, 98, 102, 106].map((x, i) => (
+            <line key={i} x1={x} y1={12} x2={x} y2={40} stroke="#e23" strokeWidth="1" />
           ))}
-          <rect x="84" y="60" width="32" height="6" rx="3" fill="#3a2606" stroke="none" />
+          {/* plume mount */}
+          <rect x="92" y="40" width="16" height="6" rx="2" fill={bronze} />
+          {/* Corinthian shell with cheek plates + central chin gap */}
+          <path d="M66 72 Q62 36 100 34 Q138 36 134 72 L134 98 Q134 108 124 110 L114 110 L114 78 Q108 72 100 72 Q92 72 86 78 L86 110 L76 110 Q66 108 66 98 Z" fill={bronze} />
+          {/* almond eye openings either side of the nose bar */}
+          <path d="M76 80 Q86 73 96 80 Q86 86 76 80 Z" fill="#04060d" />
+          <path d="M104 80 Q114 73 124 80 Q114 86 104 80 Z" fill="#04060d" />
+          {/* nose bar highlight */}
+          <rect x="97" y="72" width="6" height="30" rx="2" fill={bronze} stroke="#7a4f1c" strokeWidth="1" />
+          {/* brow ridge */}
+          <path d="M70 70 Q100 60 130 70" fill="none" stroke="#ffe9a8" strokeWidth="1.5" />
+          <SlotEyes y={80} lx={86} rx={114} />
         </g>
       )
+    // ---- Ascendant Halo: ring of light above (transcended, face open) ----
     case 'ascendant':
       return (
         <g>
-          <ellipse cx="100" cy="40" rx="34" ry="9" fill="none" stroke="#fff6c8" strokeWidth="3" className={animated ? 'animate-pulseGlow' : ''} />
-          <ellipse cx="100" cy="40" rx="34" ry="9" fill="none" stroke="#fbbf24" strokeWidth="1.5" />
+          <ellipse cx="100" cy="38" rx="34" ry="9" fill="none" stroke="#fff6c8" strokeWidth="3" className={pulse} />
+          <ellipse cx="100" cy="38" rx="34" ry="9" fill="none" stroke="#fbbf24" strokeWidth="1.5" />
           {[...Array(8)].map((_, i) => {
             const a = (i / 8) * Math.PI * 2
-            return <circle key={i} cx={100 + Math.cos(a) * 34} cy={40 + Math.sin(a) * 9} r="1.8" fill="#fff" />
+            return <circle key={i} cx={100 + Math.cos(a) * 34} cy={38 + Math.sin(a) * 9} r="1.8" fill="#fff" />
           })}
         </g>
       )
+    // ---- Phoenix Crest: fiery full helm + flame plume ----
     case 'phoenix':
       return (
-        <g>
-          <path d="M62 74 Q62 46 100 44 Q138 46 138 74 Q100 62 62 74 Z" fill="#2a0d06" stroke="#160603" strokeWidth="2" />
-          <path d="M100 44 Q88 20 100 8 Q112 20 100 44" fill="#ff7a18" className={animated ? 'animate-pulseGlow' : ''} />
-          <path d="M78 50 Q66 30 60 38 Q70 44 78 56 M122 50 Q134 30 140 38 Q130 44 122 56" fill="#ff4d1c" />
-          <circle cx="100" cy="30" r="3" fill="#ffd166" />
+        <g stroke="#160603" strokeWidth="2">
+          {/* flame crest */}
+          <path d="M100 46 Q86 18 100 4 Q114 18 100 46" fill="#ff7a18" className={pulse} />
+          <path d="M80 50 Q66 28 60 36 Q72 44 80 56 M120 50 Q134 28 140 36 Q128 44 120 56" fill="#ff4d1c" />
+          {/* dark ember helm covering the face */}
+          <path d="M66 66 Q62 40 100 38 Q138 40 134 66 L134 98 Q134 108 122 110 L114 110 L114 80 Q108 76 100 76 Q92 76 86 80 L86 110 L78 110 Q66 108 66 98 Z" fill="#2a0d06" />
+          {/* glowing eye slits */}
+          <path d="M76 80 Q86 74 95 80 Q86 86 76 80 Z" fill="#ff7a18" opacity="0.85" />
+          <path d="M105 80 Q114 74 124 80 Q114 86 105 80 Z" fill="#ff7a18" opacity="0.85" />
+          {/* nose bar + ember line */}
+          <rect x="97" y="74" width="6" height="30" rx="2" fill="#3a1206" />
+          <circle cx="100" cy="28" r="3" fill="#ffd166" />
+          <g>
+            <circle cx="86" cy="80" r="2.4" fill="#fff3d6" />
+            <circle cx="114" cy="80" r="2.4" fill="#fff3d6" />
+          </g>
         </g>
       )
     case 'none':
     default:
-      // bare — a subtle energy band
+      // bare — a subtle energy band, face fully visible
       return <path d="M74 62 Q100 56 126 62" fill="none" stroke={c1} strokeWidth="2" opacity="0.4" />
   }
 }
