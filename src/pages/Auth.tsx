@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../store/auth'
 import { useGame } from '../store/useGame'
 import { PixelTitle } from '../components/ui'
-import CosmosScenery from '../components/CosmosScenery'
+import ThemeBackground from '../components/ThemeBackground'
 import { isCloud } from '../lib/supabase'
 
 export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
@@ -55,7 +55,7 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
 
   return (
     <div className="cosmos-bg relative flex min-h-screen items-center justify-center px-4 py-12">
-      <CosmosScenery />
+      <ThemeBackground theme="cosmos" />
       <div className="grid-overlay pointer-events-none absolute inset-0 opacity-40" />
       <div className="relative z-10 w-full max-w-md">
         <Link to="/" className="mb-6 flex items-center justify-center">

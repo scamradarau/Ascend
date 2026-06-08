@@ -52,10 +52,14 @@ export default function Landing() {
     <div className="min-h-screen bg-[#070a18] text-white">
       {/* ---------------- HERO (brand-blue title slide) ---------------- */}
       <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 text-center">
-        {/* brand blue wash matching the deck's title slide */}
-        <div className="absolute inset-0 bg-gradient-to-b from-brand via-brand-600 to-[#070a18]" />
-        <div className="grid-overlay absolute inset-0 opacity-20" />
-        <div className="starfield absolute inset-0" />
+        {/* cosmos key art + brand-blue wash matching the deck's title slide */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: 'url(/themes/cosmos.webp)' }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand/40 via-brand-700/35 to-[#070a18]" />
+        <div className="grid-overlay absolute inset-0 opacity-15" />
+        <div className="starfield absolute inset-0 opacity-40" />
 
         <div className="relative z-10 mx-auto max-w-4xl">
           <div className="mb-6 flex items-center justify-center gap-3">
