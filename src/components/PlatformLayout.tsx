@@ -6,9 +6,7 @@ import { resolveClass } from '../data/classes'
 import { useSocial, selectPendingCount, selectUnreadCount } from '../store/social'
 import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
-import RuneScenery from './RuneScenery'
-import CosmosScenery from './CosmosScenery'
-import OlympusScenery from './OlympusScenery'
+import ThemeBackground from './ThemeBackground'
 
 const NAV = [
   { to: '/app/character', label: 'Character', icon: '🧬' },
@@ -59,13 +57,7 @@ export default function PlatformLayout() {
 
   return (
     <div className={`relative min-h-screen ${bgClass}`}>
-      {theme === 'rune' ? (
-        <RuneScenery />
-      ) : theme === 'olympus' ? (
-        <OlympusScenery />
-      ) : (
-        <CosmosScenery />
-      )}
+      <ThemeBackground theme={theme} />
       <div
         className={`grid-overlay pointer-events-none fixed inset-0 z-0 ${
           theme === 'cosmos' ? 'opacity-60' : 'opacity-10'

@@ -2,7 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { isCloud, uploadProof, type CloudProfile } from '../lib/supabase'
-import { fetchGuildMessages, sendGuildMessage, type GuildMessageRow } from '../lib/guild'
+import {
+  fetchGuildMessages,
+  sendGuildMessage,
+  fetchChannelActivity,
+  type GuildMessageRow,
+} from '../lib/guild'
 import { fetchProfilesByIds } from '../lib/social'
 import { rankForLevel } from '../data/ranks'
 import { levelFromTotalExp } from '../data/leveling'
@@ -28,15 +33,25 @@ interface ViewMsg {
   avatar: AvatarConfig
   text: string
   image?: string
-  when: string
+  at: string // ISO timestamp
 }
 
-function timeAgo(iso: string): string {
-  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
-  if (s < 45) return 'now'
-  if (s < 3600) return `${Math.floor(s / 60)}m`
-  if (s < 86400) return `${Math.floor(s / 3600)}h`
-  return `${Math.floor(s / 86400)}d`
+function fmtStamp(iso: string): string {
+  const d = new Date(iso)
+  const today = new Date()
+  const sameDay = d.toDateString() === today.toDateString()
+  const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  if (sameDay) return `Today ${time}`
+  return d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ` ${time}`
+}
+
+const SEEN_KEY = 'ascend-guild-seen'
+const loadSeen = (): Record<string, string> => {
+  try {
+    return JSON.parse(localStorage.getItem(SEEN_KEY) || '{}')
+  } catch {
+    return {}
+  }
 }
 
 export default function Guild() {
@@ -57,17 +72,26 @@ export default function Guild() {
   // cloud state
   const [rows, setRows] = useState<GuildMessageRow[]>([])
   const [profiles, setProfiles] = useState<Record<string, CloudProfile>>({})
+  const [seen, setSeen] = useState<Record<string, string>>(loadSeen)
+  const [activity, setActivity] = useState<Record<string, string>>({})
   // local fallback state (session-only)
   const [byChannel, setByChannel] = useState<Record<string, ViewMsg[]>>({})
 
-  // load + poll the channel from the backend
+  const markSeen = (ch: string) => {
+    const next = { ...loadSeen(), [ch]: new Date().toISOString() }
+    localStorage.setItem(SEEN_KEY, JSON.stringify(next))
+    setSeen(next)
+  }
+
+  // load + poll the active channel from the backend (and mark it read)
   useEffect(() => {
     if (!isCloud) return
     let alive = true
     const load = async () => {
-      const msgs = await fetchGuildMessages(channel)
+      const msgs = await fetchGuildMessages(channel, 200)
       if (!alive) return
       setRows(msgs)
+      markSeen(channel)
       const ids = [...new Set(msgs.map((m) => m.sender))].filter((id) => !profiles[id])
       if (ids.length) {
         const fetched = await fetchProfilesByIds(ids)
@@ -88,6 +112,22 @@ export default function Guild() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channel])
 
+  // poll per-channel activity for unread dots
+  useEffect(() => {
+    if (!isCloud) return
+    let alive = true
+    const load = () => fetchChannelActivity().then((a) => alive && setActivity(a))
+    load()
+    const t = setInterval(load, 8000)
+    return () => {
+      alive = false
+      clearInterval(t)
+    }
+  }, [])
+
+  const hasUnread = (ch: string) =>
+    ch !== channel && !!activity[ch] && (!seen[ch] || activity[ch] > seen[ch])
+
   const messages: ViewMsg[] = useMemo(() => {
     if (!isCloud) return byChannel[channel] ?? []
     return rows.map((r) => {
@@ -100,7 +140,7 @@ export default function Guild() {
         avatar: { ...DEFAULT_AVATAR, ...((p?.avatar as object) || (r.sender === me ? avatar : {})) },
         text: r.body ?? '',
         image: r.image_url ?? undefined,
-        when: timeAgo(r.created_at),
+        at: r.created_at,
       }
     })
   }, [isCloud, rows, profiles, byChannel, channel, me, profile, avatar])
@@ -160,7 +200,7 @@ export default function Guild() {
       avatar,
       text: draft.trim(),
       image: pendingImage ?? undefined,
-      when: 'now',
+      at: new Date().toISOString(),
     }
     setByChannel((prev) => ({ ...prev, [channel]: [...(prev[channel] ?? []), msg] }))
     setDraft('')
@@ -194,6 +234,9 @@ export default function Guild() {
               }`}
             >
               <span>{c.icon}</span># {c.name}
+              {hasUnread(c.id) && (
+                <span className="ml-auto h-2 w-2 shrink-0 rounded-full bg-cosmos-magenta" />
+              )}
             </button>
           ))}
           <div className="mt-3 rounded-lg border border-white/8 bg-black/30 p-3 text-center">
@@ -233,7 +276,9 @@ export default function Guild() {
                       <span className="rounded border border-white/10 px-1.5 text-[9px] uppercase tracking-wide text-[var(--muted)]">
                         {rankForLevel(m.level).title}
                       </span>
-                      <span className="text-[10px] text-[var(--muted)]">{m.when}</span>
+                      <span className="text-[10px] text-[var(--muted)]" title={new Date(m.at).toLocaleString()}>
+                        {fmtStamp(m.at)}
+                      </span>
                     </div>
                     {m.text && <p className="mt-0.5 text-sm text-slate-200">{m.text}</p>}
                     {m.image && (

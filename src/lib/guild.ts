@@ -27,6 +27,21 @@ export async function fetchGuildMessages(channel: string, limit = 100): Promise<
   return rows.reverse()
 }
 
+// Latest post time per channel (for unread dots) — one cheap query.
+export async function fetchChannelActivity(): Promise<Record<string, string>> {
+  if (!supabase) return {}
+  const { data } = await supabase
+    .from('guild_messages')
+    .select('channel,created_at')
+    .order('created_at', { ascending: false })
+    .limit(200)
+  const out: Record<string, string> = {}
+  for (const r of (data as { channel: string; created_at: string }[]) ?? []) {
+    if (!out[r.channel]) out[r.channel] = r.created_at // first seen = newest (desc order)
+  }
+  return out
+}
+
 export async function sendGuildMessage(
   me: string,
   channel: string,
