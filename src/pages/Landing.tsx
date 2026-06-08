@@ -2,7 +2,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { PixelTitle } from '../components/ui'
-import CosmosScenery from '../components/CosmosScenery'
 
 const FEATURES = [
   {
@@ -49,9 +48,21 @@ export default function Landing() {
     : '▶ Let’s get started'
 
   return (
-    <div className="min-h-screen bg-[#070a18] text-white">
+    <div className="relative min-h-screen bg-[#070a18] text-white">
+      {/* fixed cosmos backdrop for the whole page */}
+      <div
+        className="fixed inset-0 z-0 bg-cover bg-center"
+        style={{ backgroundImage: 'url(/themes/cosmos.webp)' }}
+      />
+      <div
+        className="fixed inset-0 z-0"
+        style={{
+          background:
+            'radial-gradient(120% 90% at 50% 20%, transparent 40%, rgba(3,5,12,0.65) 100%), linear-gradient(to bottom, rgba(3,5,12,0.3), rgba(3,5,12,0.55))',
+        }}
+      />
       {/* ---------------- HERO (brand-blue title slide) ---------------- */}
-      <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 text-center">
+      <section className="relative z-10 flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 text-center">
         {/* cosmos key art + brand-blue wash matching the deck's title slide */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -98,8 +109,7 @@ export default function Landing() {
       </section>
 
       {/* ---------------- WHAT IS ASCEND ---------------- */}
-      <section id="what" className="cosmos-bg relative overflow-hidden px-6 py-24">
-        <CosmosScenery contained />
+      <section id="what" className="relative z-10 overflow-hidden bg-[#070a18]/45 px-6 py-24">
         <div className="relative z-10 mx-auto max-w-5xl">
           <PixelTitle className="text-sm text-cosmos-cyan">WHAT IS “ASCEND”?</PixelTitle>
           <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
@@ -130,8 +140,7 @@ export default function Landing() {
       </section>
 
       {/* ---------------- WHY ---------------- */}
-      <section className="relative overflow-hidden bg-[#0a0f24] px-6 py-24">
-        <CosmosScenery contained />
+      <section className="relative z-10 overflow-hidden bg-[#0a0f24]/55 px-6 py-24">
         <div className="relative z-10 mx-auto grid max-w-5xl items-center gap-12 lg:grid-cols-2">
           <div>
             <PixelTitle className="text-sm text-cosmos-violet">WHY “ASCEND”?</PixelTitle>
@@ -173,8 +182,7 @@ export default function Landing() {
       </section>
 
       {/* ---------------- TARGET / CTA ---------------- */}
-      <section className="cosmos-bg relative overflow-hidden px-6 py-24 text-center">
-        <CosmosScenery contained />
+      <section className="relative z-10 overflow-hidden bg-[#070a18]/45 px-6 py-24 text-center">
         <div className="relative z-10 mx-auto max-w-3xl">
           <PixelTitle className="text-sm text-cosmos-cyan">THE ENDGAME AWAITS</PixelTitle>
           <h2 className="mt-4 font-display text-4xl font-bold sm:text-5xl">
