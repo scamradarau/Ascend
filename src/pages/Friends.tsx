@@ -5,7 +5,7 @@ import { useAuth } from '../store/auth'
 import { getAllPlayers, getAllPlayersCloud, type PlayerRow } from '../store/leaderboard'
 import { isCloud } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
-import Avatar from '../components/Avatar'
+import ClassAvatar from '../components/ClassAvatar'
 import InviteButton from '../components/InviteButton'
 import { PixelTitle, Pill, Toast } from '../components/ui'
 
@@ -21,7 +21,7 @@ function PlayerMini({
   return (
     <div className="panel flex items-center gap-3 p-3">
       <button onClick={() => navigate(`/app/player/${p.id}`)} className="shrink-0">
-        <Avatar config={p.avatar} size={56} animated={false} />
+        <ClassAvatar level={p.level} config={p.avatar} size={56} animated={false} />
       </button>
       <button
         onClick={() => navigate(`/app/player/${p.id}`)}

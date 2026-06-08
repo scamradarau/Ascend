@@ -7,8 +7,8 @@ import { isCloud } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
 import { attributeById } from '../data/attributes'
 import { BADGES } from '../data/badges'
-import { findCosmetic } from '../data/cosmetics'
-import Avatar from '../components/RiveAvatar'
+import { classForLevel } from '../data/classes'
+import ClassAvatar from '../components/ClassAvatar'
 import { PixelTitle, Pill, ExpBar } from '../components/ui'
 
 export default function PlayerProfile() {
@@ -43,7 +43,7 @@ export default function PlayerProfile() {
   const isSelf = authUser?.id === p.id
   const isFriend = friends.includes(p.id)
   const rank = rankForLevel(p.level)
-  const helmet = findCosmetic('helmet', p.avatar.helmet)
+  const cls = classForLevel(p.level)
   const earned = BADGES.filter((b) => p.badges.includes(b.id))
 
   return (
@@ -59,10 +59,10 @@ export default function PlayerProfile() {
         {/* ---- identity card ---- */}
         <div className="panel hud-corner p-6 text-center">
           <div className="flex justify-center">
-            <Avatar config={p.avatar} size={200} />
+            <ClassAvatar level={p.level} config={p.avatar} size={200} />
           </div>
           <div className="mt-2 text-[11px] uppercase tracking-widest text-[var(--accent)]">
-            {helmet.name}
+            {cls.name}
           </div>
           <h1 className="mt-2 font-display text-2xl font-bold text-white">{p.handle}</h1>
           <div className="mt-1 font-pixel text-sm text-[var(--accent)] glow-text">

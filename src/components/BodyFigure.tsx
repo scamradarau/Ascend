@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
-import { findCosmetic } from '../data/cosmetics'
-import Avatar from './RiveAvatar'
+import { classForLevel } from '../data/classes'
+import ClassAvatar from './ClassAvatar'
 
-// The centrepiece of the character page: the player's evolving Avatar,
-// with the brain node (→ Trait Matrix) and level badge (→ Level page).
+// The centrepiece of the character page: the player's evolving class
+// portrait, with the brain node (→ Trait Matrix) and level badge (→ Level page).
 export default function BodyFigure({ level }: { level: number }) {
   const navigate = useNavigate()
   const avatar = useGame((s) => s.avatar)
-  const helmet = findCosmetic('helmet', avatar.helmet)
+  const cls = classForLevel(level)
 
   return (
     <div className="relative flex h-full min-h-[440px] w-full items-center justify-center">
@@ -24,9 +24,9 @@ export default function BodyFigure({ level }: { level: number }) {
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
-        <Avatar config={avatar} size={300} />
+        <ClassAvatar level={level} config={avatar} size={300} />
         <div className="mt-1 rounded-full border border-[var(--edge)] bg-black/50 px-3 py-1 text-[11px] uppercase tracking-wider text-[var(--accent)]">
-          {helmet.name}
+          {cls.name}
         </div>
       </div>
 

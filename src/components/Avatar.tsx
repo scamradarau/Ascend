@@ -17,7 +17,7 @@ const SKIN_COLORS: Record<string, [string, string]> = {
   aurora: ['#22d3ee', '#a855f7'],
 }
 
-const AURA_COLORS: Record<string, string> = {
+export const AURA_COLORS: Record<string, string> = {
   none: 'transparent',
   spark: '#9ad8ff',
   ember: '#ff7a18',
@@ -27,7 +27,7 @@ const AURA_COLORS: Record<string, string> = {
   phoenix: '#ff4d1c',
 }
 
-const FRAME_COLORS: Record<string, string> = {
+export const FRAME_COLORS: Record<string, string> = {
   basic: '#3a4a78',
   bronze: '#b08d57',
   cyan: '#22d3ee',

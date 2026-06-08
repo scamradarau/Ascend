@@ -10,7 +10,7 @@ import {
   type CosmeticSlot,
 } from '../data/cosmetics'
 import { isOwnerEmail } from '../lib/supabase'
-import Avatar from '../components/RiveAvatar'
+import ClassAvatar from '../components/ClassAvatar'
 import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
 import { PixelTitle, Pill } from '../components/ui'
 
@@ -72,7 +72,7 @@ export default function Settings() {
         <div className="mt-5 grid gap-6 md:grid-cols-[280px_1fr]">
           {/* live preview */}
           <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--edge)] bg-black/40 p-4">
-            <Avatar config={avatar} size={240} />
+            <ClassAvatar level={level} config={avatar} size={240} />
             <div className="mt-2 text-center text-xs uppercase tracking-widest text-[var(--muted)]">
               {profile?.handle} · Lv {level}
             </div>

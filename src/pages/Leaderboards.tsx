@@ -9,7 +9,7 @@ import { levelFromTotalExp } from '../data/leveling'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
 import { REWARD_INFO } from '../data/leaderboard'
-import Avatar from '../components/Avatar'
+import ClassAvatar from '../components/ClassAvatar'
 import { PixelTitle, Pill } from '../components/ui'
 
 type Board = 'legendary' | 'stat' | 'quests'
@@ -132,7 +132,7 @@ export default function Leaderboards() {
                 <div
                   className={`relative ${isFirst ? 'scale-110' : 'opacity-95'} transition group-hover:scale-[1.15]`}
                 >
-                  <Avatar config={e.avatar} size={isFirst ? 120 : 92} animated={false} />
+                  <ClassAvatar level={e.level} config={e.avatar} size={isFirst ? 120 : 92} animated={false} />
                   <div
                     className={`absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full border px-2 py-0.5 font-pixel text-[10px] ${
                       e.pos === 1
@@ -191,7 +191,7 @@ export default function Leaderboards() {
                   </span>
                   <div className="flex items-center gap-3">
                     <div className="shrink-0">
-                      <Avatar config={e.avatar} size={40} animated={false} />
+                      <ClassAvatar level={e.level} config={e.avatar} size={40} animated={false} />
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 font-display font-bold text-white">
