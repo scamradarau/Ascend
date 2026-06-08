@@ -169,3 +169,27 @@ create policy "msg_insert" on messages for insert
 -- only the recipient can mark read
 create policy "msg_update" on messages for update
   using (auth.uid() = recipient) with check (auth.uid() = recipient);
+
+-- ================================================================
+-- GUILD MESSAGES — shared community group chat, one row per post,
+-- grouped by channel. Readable by any signed-in user.
+-- ================================================================
+create table if not exists guild_messages (
+  id uuid primary key default gen_random_uuid(),
+  channel    text not null,
+  sender     uuid references auth.users on delete cascade,
+  body       text,
+  image_url  text,
+  created_at timestamptz default now()
+);
+create index if not exists guild_messages_channel_idx on guild_messages (channel, created_at);
+alter table guild_messages enable row level security;
+
+drop policy if exists "guild_read"   on guild_messages;
+drop policy if exists "guild_insert" on guild_messages;
+-- any signed-in user can read the community chat
+create policy "guild_read" on guild_messages for select
+  using (auth.uid() is not null);
+-- you can only post as yourself
+create policy "guild_insert" on guild_messages for insert
+  with check (auth.uid() = sender);

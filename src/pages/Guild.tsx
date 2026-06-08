@@ -1,9 +1,12 @@
-import { useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
-import { isOwnerEmail } from '../lib/supabase'
+import { isCloud, uploadProof, type CloudProfile } from '../lib/supabase'
+import { fetchGuildMessages, sendGuildMessage, type GuildMessageRow } from '../lib/guild'
+import { fetchProfilesByIds } from '../lib/social'
 import { rankForLevel } from '../data/ranks'
-import type { AvatarConfig } from '../data/cosmetics'
+import { levelFromTotalExp } from '../data/leveling'
+import { DEFAULT_AVATAR, type AvatarConfig } from '../data/cosmetics'
 import ClassAvatar from '../components/ClassAvatar'
 import { PixelTitle, Pill } from '../components/ui'
 
@@ -16,65 +19,152 @@ const CHANNELS = [
   { id: 'mindset', name: 'mindset', icon: '🧘' },
 ]
 
-interface Msg {
+// a unified shape the message row renders from
+interface ViewMsg {
+  id: string
+  senderId?: string
   who: string
-  rank: string
-  text: string
-  when: string
-  image?: string // data URL (local, session-only in this build)
   level: number
-  classId: string | null
   avatar: AvatarConfig
-  owner: boolean
+  text: string
+  image?: string
+  when: string
+}
+
+function timeAgo(iso: string): string {
+  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
+  if (s < 45) return 'now'
+  if (s < 3600) return `${Math.floor(s / 60)}m`
+  if (s < 86400) return `${Math.floor(s / 3600)}h`
+  return `${Math.floor(s / 86400)}d`
 }
 
 export default function Guild() {
   const profile = useGame((s) => s.profile)
   const avatar = useGame((s) => s.avatar)
-  const classId = useGame((s) => s.classId)
-  const ownerMode = useGame((s) => s.ownerMode)
-  const authUser = useAuth((s) => s.user)
   const { level } = usePlayerLevel()
-  const myRank = rankForLevel(level).title.toUpperCase()
-  const owner = ownerMode && isOwnerEmail(authUser?.email)
+  const authUser = useAuth((s) => s.user)
+  const me = authUser?.id ?? null
+
   const [channel, setChannel] = useState('general')
   const [draft, setDraft] = useState('')
-  // messages are per-channel, start empty (community is brand new at launch)
-  const [byChannel, setByChannel] = useState<Record<string, Msg[]>>({})
   const [pendingImage, setPendingImage] = useState<string | null>(null)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [busy, setBusy] = useState(false)
   const fileRef = useRef<HTMLInputElement | null>(null)
+  const endRef = useRef<HTMLDivElement | null>(null)
 
-  const messages = byChannel[channel] ?? []
+  // cloud state
+  const [rows, setRows] = useState<GuildMessageRow[]>([])
+  const [profiles, setProfiles] = useState<Record<string, CloudProfile>>({})
+  // local fallback state (session-only)
+  const [byChannel, setByChannel] = useState<Record<string, ViewMsg[]>>({})
+
+  // load + poll the channel from the backend
+  useEffect(() => {
+    if (!isCloud) return
+    let alive = true
+    const load = async () => {
+      const msgs = await fetchGuildMessages(channel)
+      if (!alive) return
+      setRows(msgs)
+      const ids = [...new Set(msgs.map((m) => m.sender))].filter((id) => !profiles[id])
+      if (ids.length) {
+        const fetched = await fetchProfilesByIds(ids)
+        if (!alive) return
+        setProfiles((prev) => {
+          const next = { ...prev }
+          for (const p of fetched) next[p.id] = p
+          return next
+        })
+      }
+    }
+    load()
+    const t = setInterval(load, 6000)
+    return () => {
+      alive = false
+      clearInterval(t)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [channel])
+
+  const messages: ViewMsg[] = useMemo(() => {
+    if (!isCloud) return byChannel[channel] ?? []
+    return rows.map((r) => {
+      const p = profiles[r.sender]
+      return {
+        id: r.id,
+        senderId: r.sender,
+        who: p?.handle ?? (r.sender === me ? profile?.handle ?? 'You' : 'Ascender'),
+        level: levelFromTotalExp(p?.total_exp ?? 0).level,
+        avatar: { ...DEFAULT_AVATAR, ...((p?.avatar as object) || (r.sender === me ? avatar : {})) },
+        text: r.body ?? '',
+        image: r.image_url ?? undefined,
+        when: timeAgo(r.created_at),
+      }
+    })
+  }, [isCloud, rows, profiles, byChannel, channel, me, profile, avatar])
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages.length, channel])
+
+  // distinct posters in the last 15 min ≈ "online"
+  const online = useMemo(() => {
+    if (!isCloud) return 1
+    const cutoff = Date.now() - 15 * 60 * 1000
+    const recent = new Set(
+      rows.filter((r) => new Date(r.created_at).getTime() > cutoff).map((r) => r.sender),
+    )
+    recent.add(me ?? 'me')
+    return recent.size
+  }, [isCloud, rows, me])
 
   const pickImage = (file?: File | null) => {
-    if (!file) return
-    if (!file.type.startsWith('image/')) return
+    if (!file || !file.type.startsWith('image/')) return
     if (file.size > 4 * 1024 * 1024) {
       alert('Image too large (max 4MB).')
       return
     }
+    setPendingFile(file)
     const reader = new FileReader()
     reader.onload = () => setPendingImage(reader.result as string)
     reader.readAsDataURL(file)
   }
 
-  const send = () => {
-    if (draft.trim().length === 0 && !pendingImage) return
-    const msg: Msg = {
+  const clearImage = () => {
+    setPendingImage(null)
+    setPendingFile(null)
+    if (fileRef.current) fileRef.current.value = ''
+  }
+
+  const send = async () => {
+    if ((draft.trim().length === 0 && !pendingImage) || busy) return
+    if (isCloud && me) {
+      setBusy(true)
+      let imageUrl: string | null = null
+      if (pendingFile) imageUrl = await uploadProof(me, pendingFile)
+      await sendGuildMessage(me, channel, draft, imageUrl)
+      setDraft('')
+      clearImage()
+      const msgs = await fetchGuildMessages(channel)
+      setRows(msgs)
+      setBusy(false)
+      return
+    }
+    // local fallback (session-only)
+    const msg: ViewMsg = {
+      id: `${Date.now()}`,
       who: profile?.handle ?? 'You',
-      rank: myRank,
-      text: draft.trim(),
-      when: 'now',
-      image: pendingImage ?? undefined,
       level,
-      classId,
       avatar,
-      owner,
+      text: draft.trim(),
+      image: pendingImage ?? undefined,
+      when: 'now',
     }
     setByChannel((prev) => ({ ...prev, [channel]: [...(prev[channel] ?? []), msg] }))
     setDraft('')
-    setPendingImage(null)
-    if (fileRef.current) fileRef.current.value = ''
+    clearImage()
   }
 
   return (
@@ -107,9 +197,9 @@ export default function Guild() {
             </button>
           ))}
           <div className="mt-3 rounded-lg border border-white/8 bg-black/30 p-3 text-center">
-            <div className="font-pixel text-sm text-exp">1</div>
+            <div className="font-pixel text-sm text-exp">{online}</div>
             <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
-              ascender online
+              ascender{online === 1 ? '' : 's'} online
             </div>
           </div>
         </div>
@@ -132,23 +222,16 @@ export default function Guild() {
                 Be the first to post — share a win or some proof.
               </div>
             ) : (
-              messages.map((m, i) => (
-                <div key={i} className="flex gap-3">
+              messages.map((m) => (
+                <div key={m.id} className="flex gap-3">
                   <div className="shrink-0">
-                    <ClassAvatar
-                      level={m.level}
-                      config={m.avatar}
-                      classId={m.classId}
-                      owner={m.owner}
-                      size={38}
-                      animated={false}
-                    />
+                    <ClassAvatar level={m.level} config={m.avatar} size={38} animated={false} />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-display font-bold text-white">{m.who}</span>
                       <span className="rounded border border-white/10 px-1.5 text-[9px] uppercase tracking-wide text-[var(--muted)]">
-                        {m.rank}
+                        {rankForLevel(m.level).title}
                       </span>
                       <span className="text-[10px] text-[var(--muted)]">{m.when}</span>
                     </div>
@@ -164,6 +247,7 @@ export default function Guild() {
                 </div>
               ))
             )}
+            <div ref={endRef} />
           </div>
 
           {/* composer */}
@@ -172,13 +256,7 @@ export default function Guild() {
               <div className="mb-2 flex items-center gap-3 rounded-lg border border-white/10 bg-black/30 p-2">
                 <img src={pendingImage} alt="preview" className="h-12 w-12 rounded object-cover" />
                 <span className="flex-1 text-xs text-[var(--muted)]">Image attached</span>
-                <button
-                  onClick={() => {
-                    setPendingImage(null)
-                    if (fileRef.current) fileRef.current.value = ''
-                  }}
-                  className="text-xs text-cosmos-magenta"
-                >
+                <button onClick={clearImage} className="text-xs text-cosmos-magenta">
                   Remove
                 </button>
               </div>
@@ -205,8 +283,8 @@ export default function Guild() {
                 onChange={(e) => setDraft(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && send()}
               />
-              <button onClick={send} className="btn btn-primary shrink-0">
-                Send
+              <button onClick={send} disabled={busy} className="btn btn-primary shrink-0">
+                {busy ? '…' : 'Send'}
               </button>
             </div>
           </div>
