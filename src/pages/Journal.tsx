@@ -54,9 +54,6 @@ export default function Journal() {
   }, [completedQuests, submissions])
 
   const empty = groups.length === 0
-  // every finished quest counts: main-quest milestones + all non-flagged check-ins
-  const questsCompleted =
-    completedQuests.length + submissions.filter((s) => s.status !== 'flagged').length
 
   return (
     <div>
@@ -72,7 +69,7 @@ export default function Journal() {
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           ['Level', level],
-          ['Quests completed', questsCompleted],
+          ['Main quests completed', completedQuests.length],
           ['Verified check‑ins', verifiedCount],
           ['Current streak', `${streak}d`],
         ].map(([k, v]) => (
