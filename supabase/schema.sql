@@ -193,3 +193,56 @@ create policy "guild_read" on guild_messages for select
 -- you can only post as yourself
 create policy "guild_insert" on guild_messages for insert
   with check (auth.uid() = sender);
+
+-- ================================================================
+-- PHASE 3 / STEP 1 — server-authoritative progress (ADDITIVE; safe to run now)
+-- The write-lockdown (revokes/RLS) is in the STEP 2 block below and is kept
+-- INERT inside a block comment — do NOT run it until the verify-submission
+-- Edge Function is deployed, or earned progress will freeze.
+-- ================================================================
+
+-- server-owned source of trait progression (was only in the save blob)
+alter table profiles add column if not exists trait_exp jsonb default '{}'::jsonb;
+
+-- raw-proof + server-verdict columns on submissions
+alter table submissions
+  add column if not exists quest_id      text,
+  add column if not exists liveness_code text,
+  add column if not exists captured_at   timestamptz,
+  add column if not exists gps           jsonb,
+  add column if not exists image_path    text,
+  add column if not exists image_hash    text,
+  add column if not exists scene_label   text,
+  add column if not exists scene_prob    real,
+  add column if not exists exp_awarded   int,
+  add column if not exists trust_delta   int;
+alter table submissions alter column status set default 'submitted';
+
+/* ================================================================
+   STEP 2 — WRITE LOCKDOWN  (DO NOT RUN YET)
+   Deploy these together with the verify-submission Edge Function. Kept
+   here, inert inside this comment, for review. Running it before the
+   Edge Function exists would freeze all earned progress.
+   ----------------------------------------------------------------
+   -- profiles: revoke direct writes; allow cosmetic columns only.
+   revoke insert, update, delete on profiles from authenticated, anon;
+   grant  update (handle, region, age, avatar) on profiles to authenticated;
+   drop policy if exists "profiles_write" on profiles;
+   create policy "profiles_update_own" on profiles for update
+     using (auth.uid() = id) with check (auth.uid() = id);
+   -- NOTE before flipping: confirm public.handle_new_user() is SECURITY
+   -- DEFINER (it is, in this file) so new signups still get a profiles row
+   -- once `authenticated` loses INSERT on profiles.
+
+   -- submissions: client may INSERT raw proof only; rows are immutable to it.
+   revoke insert, update, delete on submissions from authenticated, anon;
+   grant insert (user_id, quest_id, method, label, liveness_code,
+                 captured_at, gps, image_path, scene_label, scene_prob)
+     on submissions to authenticated;
+   drop policy if exists "subs_owner" on submissions;
+   create policy "subs_select_own" on submissions for select
+     using (auth.uid() = user_id);
+   create policy "subs_insert_own" on submissions for insert
+     with check (auth.uid() = user_id and status = 'submitted'
+                 and exp_awarded is null and image_hash is null);
+   ================================================================ */

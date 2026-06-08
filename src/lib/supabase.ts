@@ -46,7 +46,24 @@ export interface CloudProfile {
   avatar: unknown
   earned_badges: string[]
   traits: { id: string; level: number }[]
+  trait_exp?: Record<string, number>
   updated_at?: string
+}
+
+// Server-owned earned progress (Step 1 reads this back as the source of truth).
+export type EarnedProgress = Pick<
+  CloudProfile,
+  'total_exp' | 'trust' | 'streak' | 'quests_this_month' | 'earned_badges' | 'trait_exp'
+>
+
+export async function fetchEarnedProgress(userId: string): Promise<EarnedProgress | null> {
+  if (!supabase) return null
+  const { data } = await supabase
+    .from('profiles')
+    .select('total_exp,trust,streak,quests_this_month,earned_badges,trait_exp')
+    .eq('id', userId)
+    .maybeSingle()
+  return (data as EarnedProgress) ?? null
 }
 
 // ---- auth ----
