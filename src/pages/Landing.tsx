@@ -63,12 +63,10 @@ export default function Landing() {
       />
       {/* ---------------- HERO (brand-blue title slide) ---------------- */}
       <section className="relative z-10 flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 text-center">
-        {/* cosmos key art + brand-blue wash matching the deck's title slide */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url(/themes/cosmos.webp)' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-brand/40 via-brand-700/35 to-[#070a18]" />
+        {/* brand-blue title-slide wash over the SHARED fixed cosmos backdrop
+            (fades to transparent so the same backdrop continues into the
+            sections below — no background "change" on scroll) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-brand/45 via-brand-700/25 to-transparent" />
         <div className="grid-overlay absolute inset-0 opacity-15" />
         <div className="starfield absolute inset-0 opacity-40" />
 

@@ -18,19 +18,24 @@ export default function BodyFigure({ level }: { level: number }) {
 
   return (
     <div className="relative flex h-full min-h-[440px] w-full items-center justify-center">
-      {/* aura rings */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="h-80 w-80 rounded-full border border-[var(--edge)] opacity-30 animate-pulseGlow" />
-        <div className="absolute h-[26rem] w-[26rem] rounded-full bg-[radial-gradient(circle,_color-mix(in_srgb,var(--accent)_14%,transparent),_transparent_62%)]" />
-      </div>
-
       {/* scan line */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-full overflow-hidden">
         <div className="h-24 w-full bg-[linear-gradient(180deg,transparent,color-mix(in_srgb,var(--accent)_16%,transparent),transparent)] animate-scan" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
-        <ClassAvatar level={level} config={avatar} size={300} classId={classId} owner={owner} />
+        {/* avatar with concentric aura rings centred on the portrait itself */}
+        <div className="relative">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,_color-mix(in_srgb,var(--accent)_14%,transparent),_transparent_62%)]"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--edge)] opacity-30 animate-pulseGlow"
+          />
+          <ClassAvatar level={level} config={avatar} size={300} classId={classId} owner={owner} />
+        </div>
         <div className="mt-1 rounded-full border border-[var(--edge)] bg-black/50 px-3 py-1 text-[11px] uppercase tracking-wider text-[var(--accent)]">
           {cls.name}
         </div>
