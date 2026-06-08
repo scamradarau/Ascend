@@ -1,6 +1,10 @@
 import { useRef, useState } from 'react'
 import { useGame, usePlayerLevel } from '../store/useGame'
+import { useAuth } from '../store/auth'
+import { isOwnerEmail } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
+import type { AvatarConfig } from '../data/cosmetics'
+import ClassAvatar from '../components/ClassAvatar'
 import { PixelTitle, Pill } from '../components/ui'
 
 const CHANNELS = [
@@ -18,12 +22,21 @@ interface Msg {
   text: string
   when: string
   image?: string // data URL (local, session-only in this build)
+  level: number
+  classId: string | null
+  avatar: AvatarConfig
+  owner: boolean
 }
 
 export default function Guild() {
   const profile = useGame((s) => s.profile)
+  const avatar = useGame((s) => s.avatar)
+  const classId = useGame((s) => s.classId)
+  const ownerMode = useGame((s) => s.ownerMode)
+  const authUser = useAuth((s) => s.user)
   const { level } = usePlayerLevel()
   const myRank = rankForLevel(level).title.toUpperCase()
+  const owner = ownerMode && isOwnerEmail(authUser?.email)
   const [channel, setChannel] = useState('general')
   const [draft, setDraft] = useState('')
   // messages are per-channel, start empty (community is brand new at launch)
@@ -53,6 +66,10 @@ export default function Guild() {
       text: draft.trim(),
       when: 'now',
       image: pendingImage ?? undefined,
+      level,
+      classId,
+      avatar,
+      owner,
     }
     setByChannel((prev) => ({ ...prev, [channel]: [...(prev[channel] ?? []), msg] }))
     setDraft('')
@@ -117,8 +134,15 @@ export default function Guild() {
             ) : (
               messages.map((m, i) => (
                 <div key={i} className="flex gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/40 font-pixel text-[10px] text-[var(--accent)]">
-                    {m.who.slice(0, 2).toUpperCase()}
+                  <div className="shrink-0">
+                    <ClassAvatar
+                      level={m.level}
+                      config={m.avatar}
+                      classId={m.classId}
+                      owner={m.owner}
+                      size={38}
+                      animated={false}
+                    />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
