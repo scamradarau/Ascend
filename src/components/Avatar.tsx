@@ -199,36 +199,32 @@ export default function Avatar({
       <g clipPath={`url(#clip-${uid})`}>
         <rect x="18" y="18" width="164" height="164" fill="#05070f" />
 
-        {/* torso / armoured chest */}
-        <path d="M48 188 Q100 128 152 188 Z" fill={`url(#body-${uid})`} opacity="0.95" />
-        <path d="M48 188 Q100 128 152 188 Z" fill="none" stroke={c1} strokeOpacity="0.5" strokeWidth="1.5" />
-        {/* chest armour plate seams */}
-        <path d="M100 126 L100 188 M76 150 Q100 162 124 150 M70 172 Q100 186 130 172" fill="none" stroke={c1} strokeOpacity="0.4" strokeWidth="1.5" />
+        {/* bust — one bold, clean silhouette to match the icon helmets */}
+        <path
+          d="M32 184 Q34 138 72 130 Q86 127 100 127 Q114 127 128 130 Q166 138 168 184 Z"
+          fill={`url(#body-${uid})`}
+        />
+        {/* soft rim light along the shoulders */}
+        <path
+          d="M32 184 Q34 138 72 130 Q86 127 100 127 Q114 127 128 130 Q166 138 168 184"
+          fill="none"
+          stroke={c1}
+          strokeOpacity="0.4"
+          strokeWidth="1.5"
+        />
 
-        {/* pauldrons (shoulder armour) */}
-        <path d="M40 176 Q44 138 78 140 Q70 158 70 180 Z" fill={`url(#body-${uid})`} stroke={c1} strokeOpacity="0.55" strokeWidth="1.5" />
-        <path d="M160 176 Q156 138 122 140 Q130 158 130 180 Z" fill={`url(#body-${uid})`} stroke={c1} strokeOpacity="0.55" strokeWidth="1.5" />
-        <path d="M46 168 Q52 150 70 150 M154 168 Q148 150 130 150" fill="none" stroke={c1} strokeOpacity="0.35" strokeWidth="1.2" />
-
-        {/* neck + collar */}
-        <rect x="89" y="98" width="22" height="24" rx="8" fill={`url(#body-${uid})`} />
-        <path d="M78 124 Q100 116 122 124" fill="none" stroke={c1} strokeOpacity="0.5" strokeWidth="2" />
+        {/* neck */}
+        <path d="M88 110 Q88 126 100 129 Q112 126 112 110 Z" fill={`url(#body-${uid})`} />
 
         {/* head */}
-        <ellipse cx="100" cy="78" rx="29" ry="33" fill={`url(#body-${uid})`} stroke={c1} strokeOpacity="0.55" strokeWidth="1.5" />
-        {/* cheek/jaw contour */}
-        <path d="M76 84 Q82 104 100 108 Q118 104 124 84" fill="none" stroke={c1} strokeOpacity="0.3" strokeWidth="1.2" />
-        {/* glowing eyes */}
-        <circle cx="90" cy="80" r="3.2" fill="#ffffff" />
-        <circle cx="110" cy="80" r="3.2" fill="#ffffff" />
-        <circle cx="90" cy="80" r="5.5" fill={c1} opacity="0.35" />
-        <circle cx="110" cy="80" r="5.5" fill={c1} opacity="0.35" />
+        <ellipse cx="100" cy="78" rx="28" ry="32" fill={`url(#body-${uid})`} />
+        <ellipse cx="100" cy="78" rx="28" ry="32" fill="none" stroke={c1} strokeOpacity="0.4" strokeWidth="1.5" />
 
-        {/* chest core emblem (rank gem) */}
-        <g>
-          <circle cx="100" cy="150" r="8" fill="#05070f" stroke={c1} strokeOpacity="0.6" strokeWidth="1.5" />
-          <circle cx="100" cy="150" r="4.5" fill="#7CFC00" className={animated ? 'animate-pulseGlow' : ''} />
-        </g>
+        {/* glowing eyes */}
+        <circle cx="90" cy="80" r="5.5" fill={c1} opacity="0.3" className={animated ? 'animate-pulseGlow' : ''} />
+        <circle cx="110" cy="80" r="5.5" fill={c1} opacity="0.3" className={animated ? 'animate-pulseGlow' : ''} />
+        <circle cx="90" cy="80" r="3" fill="#ffffff" />
+        <circle cx="110" cy="80" r="3" fill="#ffffff" />
       </g>
 
       {/* helmet on top */}
