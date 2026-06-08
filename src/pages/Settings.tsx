@@ -10,15 +10,16 @@ import {
   type CosmeticSlot,
 } from '../data/cosmetics'
 import { isOwnerEmail } from '../lib/supabase'
+import { classForLevel, nextClass } from '../data/classes'
 import ClassAvatar from '../components/ClassAvatar'
 import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
 import { PixelTitle, Pill } from '../components/ui'
 
+// Helmet & skin are now driven by your CLASS (which evolves with rank), so the
+// only equippable cosmetics here are auras and frames.
 const SLOTS: { slot: CosmeticSlot; label: string; icon: string }[] = [
-  { slot: 'helmet', label: 'Helmet', icon: '⛑️' },
   { slot: 'aura', label: 'Aura', icon: '✨' },
   { slot: 'frame', label: 'Frame', icon: '🔆' },
-  { slot: 'skin', label: 'Energy Core', icon: '🔷' },
 ]
 
 export default function Settings() {
@@ -40,7 +41,9 @@ export default function Settings() {
   const logout = useAuth((s) => s.logout)
   const { level } = usePlayerLevel()
 
-  const [slot, setSlot] = useState<CosmeticSlot>('helmet')
+  const [slot, setSlot] = useState<CosmeticSlot>('aura')
+  const cls = classForLevel(level)
+  const next = nextClass(level)
   const [sound, setSound] = useState(true)
   const [soundtrack, setSoundtrack] = useState<'mmo' | 'scifi'>('scifi')
   const [confirmReset, setConfirmReset] = useState(false)
@@ -61,24 +64,41 @@ export default function Settings() {
         <h1 className="mt-2 font-display text-2xl font-bold text-white">Customise your experience</h1>
       </div>
 
-      {/* ---------------- AVATAR FORGE ---------------- */}
+      {/* ---------------- CLASS & COSMETICS ---------------- */}
       <div className="panel hud-corner p-6">
-        <span className="font-pixel text-xs text-[var(--accent)]">AVATAR FORGE</span>
+        <span className="font-pixel text-xs text-[var(--accent)]">CLASS &amp; COSMETICS</span>
         <p className="mt-1 text-xs text-[var(--muted)]">
-          Your look evolves with achievement. Helmets upgrade as you rank up; auras, frames and cores
-          unlock via levels, badges, streaks or the Shop. Cycle back any time.
+          Your class evolves automatically as you climb the ranks. Auras and frames are yours to
+          equip — unlock more via levels, badges, streaks or the Shop.
         </p>
 
         <div className="mt-5 grid gap-6 md:grid-cols-[280px_1fr]">
-          {/* live preview */}
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--edge)] bg-black/40 p-4">
+          {/* live preview + class info */}
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--edge)] bg-black/40 p-4 text-center">
             <ClassAvatar level={level} config={avatar} size={240} />
-            <div className="mt-2 text-center text-xs uppercase tracking-widest text-[var(--muted)]">
+            <div className="mt-3 font-display text-lg font-bold" style={{ color: cls.color }}>
+              {cls.name}
+            </div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
               {profile?.handle} · Lv {level}
             </div>
+            <p className="mt-2 text-[11px] leading-relaxed text-[var(--muted)]">{cls.blurb}</p>
+            {next ? (
+              <div className="mt-3 w-full rounded-lg border border-[var(--edge)] bg-black/30 px-3 py-2 text-[11px] text-[var(--muted)]">
+                Next class:{' '}
+                <span className="font-bold" style={{ color: next.color }}>
+                  {next.name}
+                </span>{' '}
+                at <span className="text-white">Lv {next.minLevel}</span>
+              </div>
+            ) : (
+              <div className="mt-3 text-[11px] font-bold uppercase tracking-wider text-cosmos-gold">
+                ★ Apex class reached
+              </div>
+            )}
           </div>
 
-          {/* slot picker */}
+          {/* aura / frame picker */}
           <div>
             <div className="mb-3 flex flex-wrap gap-2">
               {SLOTS.map((s) => (

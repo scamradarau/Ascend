@@ -23,7 +23,7 @@ export const CLASSES: GameClass[] = [
     minLevel: 1,
     color: '#22d3ee',
     blurb: 'The hooded mystic. Every ascent begins in shadow and starlight.',
-    img: '/classes/seer.png',
+    img: '/classes/seer.webp',
   },
   {
     id: 'vanguard',
@@ -31,7 +31,7 @@ export const CLASSES: GameClass[] = [
     minLevel: 15,
     color: '#7cfc00',
     blurb: 'The disciplined knight. The line holds because you hold it.',
-    img: '/classes/vanguard.png',
+    img: '/classes/vanguard.webp',
   },
   {
     id: 'warden',
@@ -39,7 +39,7 @@ export const CLASSES: GameClass[] = [
     minLevel: 30,
     color: '#ec4899',
     blurb: 'The winged guardian. Resilient, radiant, unbroken.',
-    img: '/classes/warden.png',
+    img: '/classes/warden.webp',
   },
   {
     id: 'sovereign',
@@ -47,7 +47,7 @@ export const CLASSES: GameClass[] = [
     minLevel: 45,
     color: '#a855f7',
     blurb: 'The crowned enchanter. Presence that commands the room.',
-    img: '/classes/sovereign.png',
+    img: '/classes/sovereign.webp',
   },
   {
     id: 'titan',
@@ -55,7 +55,7 @@ export const CLASSES: GameClass[] = [
     minLevel: 60,
     color: '#fbbf24',
     blurb: 'The horned champion. Raw power forged under relentless load.',
-    img: '/classes/titan.png',
+    img: '/classes/titan.webp',
   },
   {
     id: 'samurai',
@@ -63,7 +63,7 @@ export const CLASSES: GameClass[] = [
     minLevel: 80,
     color: '#dc2626',
     blurb: 'The apex. Few reach the oni mask. Fear and mastery, made one.',
-    img: '/classes/samurai.png',
+    img: '/classes/samurai.webp',
   },
 ]
 
