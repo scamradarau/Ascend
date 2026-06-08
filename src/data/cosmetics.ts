@@ -95,8 +95,9 @@ export type CosmeticSlot = keyof typeof COSMETIC_GROUPS
 // Is a cosmetic unlocked given the player's state?
 export function isUnlocked(
   c: Cosmetic,
-  ctx: { level: number; streak: number; badges: string[]; purchased: string[] },
+  ctx: { level: number; streak: number; badges: string[]; purchased: string[]; owner?: boolean },
 ): boolean {
+  if (ctx.owner) return true // owner test account: everything unlocked
   if (c.unlock.default) return true
   if (c.unlock.buy !== undefined) return ctx.purchased.includes(c.id)
   if (c.unlock.level !== undefined) return ctx.level >= c.unlock.level

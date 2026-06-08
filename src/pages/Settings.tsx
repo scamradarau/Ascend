@@ -11,6 +11,7 @@ import {
 } from '../data/cosmetics'
 import { isOwnerEmail } from '../lib/supabase'
 import Avatar from '../components/Avatar'
+import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
 import { PixelTitle, Pill } from '../components/ui'
 
 const SLOTS: { slot: CosmeticSlot; label: string; icon: string }[] = [
@@ -44,7 +45,9 @@ export default function Settings() {
   const [soundtrack, setSoundtrack] = useState<'mmo' | 'scifi'>('scifi')
   const [confirmReset, setConfirmReset] = useState(false)
 
-  const ctx = { level, streak, badges: earnedBadges, purchased }
+  // Owner test account unlocks every cosmetic for testing.
+  const isOwner = ownerMode && isOwnerEmail(authUser?.email)
+  const ctx = { level, streak, badges: earnedBadges, purchased, owner: isOwner }
 
   const doReset = () => {
     resetAll()
@@ -139,6 +142,21 @@ export default function Settings() {
               🛒 Unlock more in the Shop →
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* ---------------- INVITE FRIENDS ---------------- */}
+      <div className="panel mt-5 p-6">
+        <span className="font-pixel text-xs text-cosmos-gold">INVITE FRIENDS</span>
+        <p className="mt-1 text-xs text-[var(--muted)]">
+          ASCEND is better with rivals. Share the link — they’ll land on a quick overview, then
+          can create their own character and join the leaderboard.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <InviteButton />
+          <a href={BROCHURE_URL} target="_blank" rel="noopener" className="btn btn-ghost text-xs">
+            👀 Preview what they’ll see →
+          </a>
         </div>
       </div>
 

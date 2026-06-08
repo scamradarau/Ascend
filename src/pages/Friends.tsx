@@ -6,6 +6,7 @@ import { getAllPlayers, getAllPlayersCloud, type PlayerRow } from '../store/lead
 import { isCloud } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
 import Avatar from '../components/Avatar'
+import InviteButton from '../components/InviteButton'
 import { PixelTitle, Pill, Toast } from '../components/ui'
 
 function PlayerMini({
@@ -65,12 +66,15 @@ export default function Friends() {
 
   return (
     <div>
-      <div className="mb-6">
-        <PixelTitle className="text-xs text-[var(--accent)]">FRIENDS</PixelTitle>
-        <h1 className="mt-2 font-display text-2xl font-bold text-white">Your circle</h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">
-          Add friends, view their builds, and keep each other accountable on the climb.
-        </p>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <PixelTitle className="text-xs text-[var(--accent)]">FRIENDS</PixelTitle>
+          <h1 className="mt-2 font-display text-2xl font-bold text-white">Your circle</h1>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Add friends, view their builds, and keep each other accountable on the climb.
+          </p>
+        </div>
+        <InviteButton />
       </div>
 
       {/* search / add */}
