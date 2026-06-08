@@ -8,7 +8,7 @@ import { rankForLevel } from '../data/ranks'
 import { attributeById } from '../data/attributes'
 import { BADGES } from '../data/badges'
 import { findCosmetic } from '../data/cosmetics'
-import Avatar from '../components/Avatar'
+import Avatar from '../components/RiveAvatar'
 import { PixelTitle, Pill, ExpBar } from '../components/ui'
 
 export default function PlayerProfile() {

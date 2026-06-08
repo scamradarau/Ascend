@@ -10,7 +10,7 @@ import {
   type CosmeticSlot,
 } from '../data/cosmetics'
 import { isOwnerEmail } from '../lib/supabase'
-import Avatar from '../components/Avatar'
+import Avatar from '../components/RiveAvatar'
 import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
 import { PixelTitle, Pill } from '../components/ui'
 

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { findCosmetic } from '../data/cosmetics'
-import Avatar from './Avatar'
+import Avatar from './RiveAvatar'
 
 // The centrepiece of the character page: the player's evolving Avatar,
 // with the brain node (→ Trait Matrix) and level badge (→ Level page).
