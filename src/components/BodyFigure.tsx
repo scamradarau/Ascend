@@ -36,9 +36,18 @@ export default function BodyFigure({ level }: { level: number }) {
           />
           <ClassAvatar level={level} config={avatar} size={300} classId={classId} owner={owner} />
         </div>
-        <div className="mt-1 rounded-full border border-[var(--edge)] bg-black/50 px-3 py-1 text-[11px] uppercase tracking-wider text-[var(--accent)]">
+        {/* class name — clears the aura ring */}
+        <div className="mt-6 rounded-full border border-[var(--edge)] bg-black/60 px-3 py-1 text-[11px] uppercase tracking-wider text-[var(--accent)]">
           {cls.name}
         </div>
+        {/* level — stacked under the name (no overlap on any screen) */}
+        <button
+          onClick={() => navigate('/app/level')}
+          className="mt-3 rounded-lg border border-[var(--edge-strong)] bg-black/70 px-5 py-1.5 text-center transition hover:shadow-glow"
+        >
+          <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">Level</div>
+          <div className="font-pixel text-lg text-[var(--accent)] glow-text">{level}</div>
+        </button>
       </div>
 
       {/* brain button (zoom into traits) */}
@@ -64,16 +73,6 @@ export default function BodyFigure({ level }: { level: number }) {
         title="Customise avatar"
       >
         🎨
-      </button>
-
-      {/* level badge */}
-      <button
-        onClick={() => navigate('/app/level')}
-        className="absolute bottom-2 left-1/2 z-20 -translate-x-1/2 rounded-lg border border-[var(--edge-strong)] bg-black/70 px-4 py-1.5 text-center transition hover:shadow-glow"
-      >
-        <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">Level</div>
-        <div className="font-pixel text-lg text-[var(--accent)] glow-text">{level}</div>
-      </button>
-    </div>
+      </button>    </div>
   )
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
@@ -43,6 +44,8 @@ export default function PlatformLayout() {
   const { level } = usePlayerLevel()
   const rank = rankForLevel(level)
   const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const navBadges = pendingReqs + unreadMsgs
   const showOwner = ownerMode && isOwnerEmail(authUser?.email)
   const cls = resolveClass(level, classId, showOwner)
   const nav = showOwner
@@ -79,38 +82,22 @@ export default function PlatformLayout() {
             </PixelTitle>
           </button>
 
-          {/* nav links — icons always; the ACTIVE item shows its label so it
-              never overflows / clips, even with many tabs. Tooltips aid the rest. */}
-          <nav className="no-scrollbar -mx-1 flex flex-1 items-center gap-0.5 overflow-x-auto px-1">
-            {nav.map((n) => (
-              <NavLink
-                key={n.to}
-                to={n.to}
-                title={n.label}
-                className={({ isActive }) =>
-                  `flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
-                    isActive
-                      ? 'bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] text-[var(--accent)] shadow-glow'
-                      : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-white/[0.04]'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <span aria-hidden className="relative text-base leading-none">
-                      {n.icon}
-                      {badgeFor(n.to) > 0 && (
-                        <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
-                          {badgeFor(n.to) > 9 ? '9+' : badgeFor(n.to)}
-                        </span>
-                      )}
-                    </span>
-                    {isActive && <span className="hidden sm:inline">{n.label}</span>}
-                  </>
-                )}
-              </NavLink>
-            ))}
-          </nav>
+          {/* menu toggle — opens the slide-out nav drawer (keeps the bar uncluttered) */}
+          <button
+            onClick={() => setMenuOpen(true)}
+            title="Menu"
+            aria-label="Open menu"
+            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-lg text-[var(--text)] transition hover:border-[var(--accent)]/60 hover:text-[var(--accent)]"
+          >
+            ☰
+            {navBadges > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
+                {navBadges > 9 ? '9+' : navBadges}
+              </span>
+            )}
+          </button>
+
+          <div className="flex-1" />
 
           {/* aether + integrity */}
           <button
@@ -179,6 +166,54 @@ export default function PlatformLayout() {
           </div>
         )}
       </header>
+
+      {/* slide-out navigation drawer */}
+      {menuOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            onClick={() => setMenuOpen(false)}
+          />
+          <nav className="fixed left-0 top-0 z-50 flex h-full w-72 max-w-[82vw] flex-col overflow-y-auto border-r border-[var(--edge-strong)] bg-[var(--bg)]/95 backdrop-blur-xl shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[var(--edge)] px-4 py-3">
+              <PixelTitle className="text-sm text-[var(--accent)]">ASCEND</PixelTitle>
+              <button
+                onClick={() => setMenuOpen(false)}
+                aria-label="Close menu"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-[var(--muted)] transition hover:text-[var(--text)]"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 space-y-1 p-3">
+              {nav.map((n) => (
+                <NavLink
+                  key={n.to}
+                  to={n.to}
+                  onClick={() => setMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold uppercase tracking-wider transition ${
+                      isActive
+                        ? 'bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] text-[var(--accent)] shadow-glow'
+                        : 'text-[var(--muted)] hover:bg-white/[0.04] hover:text-[var(--text)]'
+                    }`
+                  }
+                >
+                  <span aria-hidden className="text-lg leading-none">
+                    {n.icon}
+                  </span>
+                  <span className="flex-1">{n.label}</span>
+                  {badgeFor(n.to) > 0 && (
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-cosmos-magenta px-1.5 text-[10px] font-bold text-white">
+                      {badgeFor(n.to) > 9 ? '9+' : badgeFor(n.to)}
+                    </span>
+                  )}
+                </NavLink>
+              ))}
+            </div>
+          </nav>
+        </>
+      )}
 
       <main className="relative z-10 mx-auto max-w-7xl px-4 py-6 sm:py-8">
         <Outlet />
