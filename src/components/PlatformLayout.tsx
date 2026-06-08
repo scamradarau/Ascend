@@ -3,6 +3,7 @@ import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { rankForLevel } from '../data/ranks'
 import { resolveClass } from '../data/classes'
+import { useSocial, selectPendingCount, selectUnreadCount } from '../store/social'
 import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
 import RuneScenery from './RuneScenery'
@@ -19,6 +20,8 @@ const NAV = [
   { to: '/app/shop', label: 'Shop', icon: '🛒' },
   { to: '/app/guild', label: 'Guild', icon: '🛡️' },
   { to: '/app/friends', label: 'Friends', icon: '👥' },
+  { to: '/app/notifications', label: 'Alerts', icon: '🔔' },
+  { to: '/app/messages', label: 'Messages', icon: '✉️' },
   { to: '/app/stoic', label: 'The Stoic', icon: '🏛️' },
   { to: '/app/guide', label: 'Codex', icon: '📖' },
   { to: '/app/feedback', label: 'Feedback', icon: '💬' },
@@ -35,6 +38,10 @@ export default function PlatformLayout() {
   const logout = useAuth((s) => s.logout)
   const authUser = useAuth((s) => s.user)
   const classId = useGame((s) => s.classId)
+  const pendingReqs = useSocial(selectPendingCount)
+  const unreadMsgs = useSocial(selectUnreadCount)
+  const badgeFor = (to: string) =>
+    to === '/app/notifications' ? pendingReqs : to === '/app/messages' ? unreadMsgs : 0
   const { level } = usePlayerLevel()
   const rank = rankForLevel(level)
   const navigate = useNavigate()
@@ -98,8 +105,13 @@ export default function PlatformLayout() {
               >
                 {({ isActive }) => (
                   <>
-                    <span aria-hidden className="text-base leading-none">
+                    <span aria-hidden className="relative text-base leading-none">
                       {n.icon}
+                      {badgeFor(n.to) > 0 && (
+                        <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
+                          {badgeFor(n.to) > 9 ? '9+' : badgeFor(n.to)}
+                        </span>
+                      )}
                     </span>
                     {isActive && <span className="hidden sm:inline">{n.label}</span>}
                   </>

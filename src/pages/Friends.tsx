@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
+import { useSocial, selectFriendIds, selectOutgoing } from '../store/social'
 import { getAllPlayers, getAllPlayersCloud, type PlayerRow } from '../store/leaderboard'
 import { isCloud } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
@@ -38,10 +39,19 @@ function PlayerMini({
 }
 
 export default function Friends() {
+  const navigate = useNavigate()
   const authUser = useAuth((s) => s.user)
-  const friends = useGame((s) => s.friends)
+  const localFriends = useGame((s) => s.friends)
   const addFriend = useGame((s) => s.addFriend)
   const removeFriend = useGame((s) => s.removeFriend)
+
+  // cloud social: requests + accepted friends
+  const cloudFriendIds = useSocial(selectFriendIds)
+  const outgoing = useSocial(selectOutgoing)
+  const sendRequest = useSocial((s) => s.sendRequest)
+  const unfriendCloud = useSocial((s) => s.unfriend)
+  const outgoingIds = new Set(outgoing.map((r) => r.to_user))
+
   const [query, setQuery] = useState('')
   const [toast, setToast] = useState<string | null>(null)
   const flash = (m: string) => {
@@ -54,12 +64,13 @@ export default function Friends() {
     if (isCloud) getAllPlayersCloud().then(setCloudRows).catch(() => setCloudRows([]))
   }, [])
 
+  const friendIds = isCloud ? cloudFriendIds : localFriends
   const players = useMemo(
     () => (isCloud ? cloudRows ?? [] : getAllPlayers()).filter((p) => p.id !== authUser?.id),
     [authUser, cloudRows],
   )
-  const friendRows = players.filter((p) => friends.includes(p.id))
-  const others = players.filter((p) => !friends.includes(p.id))
+  const friendRows = players.filter((p) => friendIds.includes(p.id))
+  const others = players.filter((p) => !friendIds.includes(p.id))
   const matches = query.trim()
     ? others.filter((p) => p.handle.toLowerCase().includes(query.trim().toLowerCase()))
     : others
@@ -106,15 +117,26 @@ export default function Friends() {
                 key={p.id}
                 p={p}
                 action={
-                  <button
-                    onClick={() => {
-                      removeFriend(p.id)
-                      flash(`Removed ${p.handle}`)
-                    }}
-                    className="btn btn-ghost text-[11px]"
-                  >
-                    Remove
-                  </button>
+                  <div className="flex gap-1.5">
+                    {isCloud && (
+                      <button
+                        onClick={() => navigate(`/app/messages/${p.id}`)}
+                        className="btn btn-primary text-[11px]"
+                      >
+                        ✉ Message
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        if (isCloud) unfriendCloud(p.id)
+                        else removeFriend(p.id)
+                        flash(`Removed ${p.handle}`)
+                      }}
+                      className="btn btn-ghost text-[11px]"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 }
               />
             ))}
@@ -135,23 +157,37 @@ export default function Friends() {
                   : 'No players match that search.'}
               </div>
             )}
-            {matches.map((p) => (
-              <PlayerMini
-                key={p.id}
-                p={p}
-                action={
-                  <button
-                    onClick={() => {
-                      addFriend(p.id)
-                      flash(`Added ${p.handle}`)
-                    }}
-                    className="btn btn-primary text-[11px]"
-                  >
-                    + Add
-                  </button>
-                }
-              />
-            ))}
+            {matches.map((p) => {
+              const requested = isCloud && outgoingIds.has(p.id)
+              return (
+                <PlayerMini
+                  key={p.id}
+                  p={p}
+                  action={
+                    requested ? (
+                      <button disabled className="btn btn-ghost text-[11px] opacity-60">
+                        Requested
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          if (isCloud) {
+                            sendRequest(p.id)
+                            flash(`Request sent to ${p.handle}`)
+                          } else {
+                            addFriend(p.id)
+                            flash(`Added ${p.handle}`)
+                          }
+                        }}
+                        className="btn btn-primary text-[11px]"
+                      >
+                        {isCloud ? '+ Request' : '+ Add'}
+                      </button>
+                    )
+                  }
+                />
+              )
+            })}
           </div>
         </div>
       </div>

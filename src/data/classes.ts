@@ -59,7 +59,7 @@ export const CLASSES: GameClass[] = [
   },
   {
     id: 'samurai',
-    name: 'Samurai Warlord',
+    name: 'Warlord',
     minLevel: 80,
     color: '#dc2626',
     blurb: 'The apex. Few reach the oni mask. Fear and mastery, made one.',

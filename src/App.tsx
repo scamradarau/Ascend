@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useGame } from './store/useGame'
 import { useAuth } from './store/auth'
+import { useSocial } from './store/social'
 import { startCloudSync } from './store/cloudSync'
 import Landing from './pages/Landing'
 import Auth from './pages/Auth'
@@ -22,6 +23,8 @@ import Shop from './pages/Shop'
 import Admin from './pages/Admin'
 import Codex from './pages/Codex'
 import Friends from './pages/Friends'
+import Notifications from './pages/Notifications'
+import Messages from './pages/Messages'
 import PlayerProfile from './pages/PlayerProfile'
 import Privacy from './pages/Privacy'
 import Stoic from './pages/Stoic'
@@ -50,6 +53,7 @@ export default function App() {
   useEffect(() => {
     init()
     startCloudSync()
+    useSocial.getState().start()
   }, [init])
 
   useEffect(() => {
@@ -120,6 +124,9 @@ export default function App() {
         <Route path="journal" element={<Journal />} />
         <Route path="guild" element={<Guild />} />
         <Route path="friends" element={<Friends />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="messages" element={<Messages />} />
+        <Route path="messages/:id" element={<Messages />} />
         <Route path="player/:id" element={<PlayerProfile />} />
         <Route path="feedback" element={<Feedback />} />
         <Route path="settings" element={<Settings />} />

@@ -111,3 +111,61 @@ create policy "proof_upload_own" on storage.objects for insert
 drop policy if exists "proof_read" on storage.objects;
 create policy "proof_read" on storage.objects for select
   using (bucket_id = 'proof');
+
+-- ================================================================
+-- FRIEND REQUESTS — friendships require acceptance.
+-- A friendship exists when a row reaches status 'accepted'.
+-- ================================================================
+create table if not exists friend_requests (
+  id uuid primary key default gen_random_uuid(),
+  from_user uuid references auth.users on delete cascade,
+  to_user   uuid references auth.users on delete cascade,
+  status    text default 'pending',        -- pending | accepted | declined
+  created_at timestamptz default now(),
+  unique (from_user, to_user)
+);
+alter table friend_requests enable row level security;
+
+drop policy if exists "fr_read"   on friend_requests;
+drop policy if exists "fr_insert" on friend_requests;
+drop policy if exists "fr_update" on friend_requests;
+drop policy if exists "fr_delete" on friend_requests;
+-- either party can see the request
+create policy "fr_read" on friend_requests for select
+  using (auth.uid() = from_user or auth.uid() = to_user);
+-- only the sender can create it (for themselves)
+create policy "fr_insert" on friend_requests for insert
+  with check (auth.uid() = from_user);
+-- only the recipient can accept/decline
+create policy "fr_update" on friend_requests for update
+  using (auth.uid() = to_user) with check (auth.uid() = to_user);
+-- either party can remove it (cancel / unfriend)
+create policy "fr_delete" on friend_requests for delete
+  using (auth.uid() = from_user or auth.uid() = to_user);
+
+-- ================================================================
+-- MESSAGES — private 1:1 direct messages between users.
+-- ================================================================
+create table if not exists messages (
+  id uuid primary key default gen_random_uuid(),
+  sender    uuid references auth.users on delete cascade,
+  recipient uuid references auth.users on delete cascade,
+  body      text not null,
+  created_at timestamptz default now(),
+  read_at   timestamptz
+);
+alter table messages enable row level security;
+create index if not exists messages_pair_idx on messages (sender, recipient, created_at);
+
+drop policy if exists "msg_read"   on messages;
+drop policy if exists "msg_insert" on messages;
+drop policy if exists "msg_update" on messages;
+-- sender or recipient can read
+create policy "msg_read" on messages for select
+  using (auth.uid() = sender or auth.uid() = recipient);
+-- only the sender can send
+create policy "msg_insert" on messages for insert
+  with check (auth.uid() = sender);
+-- only the recipient can mark read
+create policy "msg_update" on messages for update
+  using (auth.uid() = recipient) with check (auth.uid() = recipient);
