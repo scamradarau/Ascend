@@ -77,6 +77,21 @@ export function classForLevel(level: number): GameClass {
 export const classById = (id: string): GameClass | undefined =>
   CLASSES.find((c) => c.id === id)
 
+// A class is unlocked once you reach its level (owner unlocks everything).
+export function isClassUnlocked(cls: GameClass, level: number, owner = false): boolean {
+  return owner || level >= cls.minLevel
+}
+
+// The class to actually display: the chosen one if it's unlocked, otherwise
+// the highest class your level grants.
+export function resolveClass(level: number, classId?: string | null, owner = false): GameClass {
+  if (classId) {
+    const chosen = classById(classId)
+    if (chosen && isClassUnlocked(chosen, level, owner)) return chosen
+  }
+  return classForLevel(level)
+}
+
 // The next class up the ladder (for "next unlock" hints), or undefined at apex.
 export function nextClass(level: number): GameClass | undefined {
   const current = classForLevel(level)

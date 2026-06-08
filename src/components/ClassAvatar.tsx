@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { AvatarConfig } from '../data/cosmetics'
-import { classForLevel } from '../data/classes'
+import { resolveClass } from '../data/classes'
 import Avatar, { AURA_COLORS, FRAME_COLORS } from './Avatar'
 
 // ================================================================
@@ -18,14 +18,20 @@ export default function ClassAvatar({
   config,
   size = 260,
   animated = true,
+  classId = null,
+  owner = false,
 }: {
   level: number
   config: AvatarConfig
   size?: number
   animated?: boolean
+  /** the current player's chosen class (own avatar); omit for other players */
+  classId?: string | null
+  /** owner test account — all classes selectable */
+  owner?: boolean
 }) {
   const [failed, setFailed] = useState(false)
-  const cls = classForLevel(level)
+  const cls = resolveClass(level, classId, owner)
 
   // missing/failed image → procedural SVG avatar (keeps everything working)
   if (failed) return <Avatar config={config} size={size} animated={animated} />

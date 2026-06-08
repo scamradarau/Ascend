@@ -10,7 +10,7 @@ import {
   type CosmeticSlot,
 } from '../data/cosmetics'
 import { isOwnerEmail } from '../lib/supabase'
-import { classForLevel, nextClass } from '../data/classes'
+import { CLASSES, resolveClass, isClassUnlocked, nextClass } from '../data/classes'
 import ClassAvatar from '../components/ClassAvatar'
 import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
 import { PixelTitle, Pill } from '../components/ui'
@@ -30,6 +30,9 @@ export default function Settings() {
   const resetAll = useGame((s) => s.resetAll)
   const avatar = useGame((s) => s.avatar)
   const setAvatar = useGame((s) => s.setAvatar)
+  const classId = useGame((s) => s.classId)
+  const setClassId = useGame((s) => s.setClassId)
+  const setDevLevel = useGame((s) => s.setDevLevel)
   const streak = useGame((s) => s.streak)
   const earnedBadges = useGame((s) => s.earnedBadges)
   const purchased = useGame((s) => s.purchasedCosmetics)
@@ -42,15 +45,15 @@ export default function Settings() {
   const { level } = usePlayerLevel()
 
   const [slot, setSlot] = useState<CosmeticSlot>('aura')
-  const cls = classForLevel(level)
-  const next = nextClass(level)
   const [sound, setSound] = useState(true)
   const [soundtrack, setSoundtrack] = useState<'mmo' | 'scifi'>('scifi')
   const [confirmReset, setConfirmReset] = useState(false)
 
-  // Owner test account unlocks every cosmetic for testing.
+  // Owner test account unlocks every cosmetic + class for testing.
   const isOwner = ownerMode && isOwnerEmail(authUser?.email)
   const ctx = { level, streak, badges: earnedBadges, purchased, owner: isOwner }
+  const cls = resolveClass(level, classId, isOwner)
+  const next = nextClass(level)
 
   const doReset = () => {
     resetAll()
@@ -68,14 +71,83 @@ export default function Settings() {
       <div className="panel hud-corner p-6">
         <span className="font-pixel text-xs text-[var(--accent)]">CLASS &amp; COSMETICS</span>
         <p className="mt-1 text-xs text-[var(--muted)]">
-          Your class evolves automatically as you climb the ranks. Auras and frames are yours to
-          equip — unlock more via levels, badges, streaks or the Shop.
+          Climb the ranks to unlock new classes, then wear whichever unlocked class you like. Auras
+          and frames are yours to equip — unlock more via levels, badges, streaks or the Shop.
         </p>
+
+        {/* class ladder — swap between any unlocked class */}
+        <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {CLASSES.map((c) => {
+            const unlocked = isClassUnlocked(c, level, isOwner)
+            const active = cls.id === c.id
+            return (
+              <button
+                key={c.id}
+                disabled={!unlocked}
+                onClick={() => unlocked && setClassId(c.id)}
+                title={unlocked ? c.name : `Unlocks at Lv ${c.minLevel}`}
+                className={`group relative rounded-xl border p-2 text-center transition ${
+                  active ? 'shadow-glow' : unlocked ? 'hover:border-white/30' : 'opacity-45'
+                }`}
+                style={{ borderColor: active ? c.color : 'rgba(255,255,255,0.1)' }}
+              >
+                <div
+                  className="mx-auto h-14 w-14 overflow-hidden rounded-full border bg-black/50"
+                  style={{ borderColor: c.color }}
+                >
+                  <img
+                    src={c.img}
+                    alt={c.name}
+                    className={`h-full w-full object-cover ${unlocked ? '' : 'grayscale'}`}
+                    style={{ objectPosition: 'center 20%' }}
+                  />
+                </div>
+                <div className="mt-1 truncate text-[10px] font-bold uppercase tracking-wide text-white">
+                  {c.name}
+                </div>
+                <div className="text-[9px] uppercase tracking-wide text-[var(--muted)]">
+                  {active ? '● Worn' : unlocked ? 'Tap to wear' : `🔒 Lv ${c.minLevel}`}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* owner-only: jump to any level to test the ladder */}
+        {isOwner && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-cosmos-gold/40 bg-cosmos-gold/5 px-3 py-2">
+            <span className="font-pixel text-[10px] text-cosmos-gold">OWNER · SET LEVEL</span>
+            {[1, 15, 30, 45, 60, 80].map((lv) => (
+              <button
+                key={lv}
+                onClick={() => setDevLevel(lv)}
+                className={`rounded-md border px-2 py-1 text-[11px] font-bold transition ${
+                  level === lv
+                    ? 'border-cosmos-gold text-cosmos-gold'
+                    : 'border-white/15 text-[var(--muted)] hover:border-cosmos-gold/60'
+                }`}
+              >
+                Lv {lv}
+              </button>
+            ))}
+            <input
+              type="number"
+              min={1}
+              max={999}
+              defaultValue={level}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') setDevLevel(Number((e.target as HTMLInputElement).value) || 1)
+              }}
+              className="input ml-auto w-20 py-1 text-center text-xs"
+              title="Type a level and press Enter"
+            />
+          </div>
+        )}
 
         <div className="mt-5 grid gap-6 md:grid-cols-[280px_1fr]">
           {/* live preview + class info */}
           <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--edge)] bg-black/40 p-4 text-center">
-            <ClassAvatar level={level} config={avatar} size={240} />
+            <ClassAvatar level={level} config={avatar} size={240} classId={classId} owner={isOwner} />
             <div className="mt-3 font-display text-lg font-bold" style={{ color: cls.color }}>
               {cls.name}
             </div>

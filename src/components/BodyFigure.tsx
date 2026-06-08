@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
-import { classForLevel } from '../data/classes'
+import { useAuth } from '../store/auth'
+import { isOwnerEmail } from '../lib/supabase'
+import { resolveClass } from '../data/classes'
 import ClassAvatar from './ClassAvatar'
 
 // The centrepiece of the character page: the player's evolving class
@@ -8,7 +10,11 @@ import ClassAvatar from './ClassAvatar'
 export default function BodyFigure({ level }: { level: number }) {
   const navigate = useNavigate()
   const avatar = useGame((s) => s.avatar)
-  const cls = classForLevel(level)
+  const classId = useGame((s) => s.classId)
+  const ownerMode = useGame((s) => s.ownerMode)
+  const authUser = useAuth((s) => s.user)
+  const owner = ownerMode && isOwnerEmail(authUser?.email)
+  const cls = resolveClass(level, classId, owner)
 
   return (
     <div className="relative flex h-full min-h-[440px] w-full items-center justify-center">
@@ -24,7 +30,7 @@ export default function BodyFigure({ level }: { level: number }) {
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
-        <ClassAvatar level={level} config={avatar} size={300} />
+        <ClassAvatar level={level} config={avatar} size={300} classId={classId} owner={owner} />
         <div className="mt-1 rounded-full border border-[var(--edge)] bg-black/50 px-3 py-1 text-[11px] uppercase tracking-wider text-[var(--accent)]">
           {cls.name}
         </div>

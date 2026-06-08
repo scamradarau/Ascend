@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { rankForLevel } from '../data/ranks'
+import { resolveClass } from '../data/classes'
 import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
 import RuneScenery from './RuneScenery'
@@ -33,10 +34,12 @@ export default function PlatformLayout() {
   const ownerMode = useGame((s) => s.ownerMode)
   const logout = useAuth((s) => s.logout)
   const authUser = useAuth((s) => s.user)
+  const classId = useGame((s) => s.classId)
   const { level } = usePlayerLevel()
   const rank = rankForLevel(level)
   const navigate = useNavigate()
   const showOwner = ownerMode && isOwnerEmail(authUser?.email)
+  const cls = resolveClass(level, classId, showOwner)
   const nav = showOwner
     ? [
         ...NAV.slice(0, NAV.length - 1),
@@ -136,8 +139,21 @@ export default function PlatformLayout() {
                 {rank.title} · Lv {level}
               </span>
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-md border border-[var(--edge-strong)] bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] font-pixel text-[10px] text-black">
-              {level}
+            <div className="relative h-9 w-9 shrink-0">
+              <div
+                className="h-9 w-9 overflow-hidden rounded-full border-2 bg-black/60"
+                style={{ borderColor: cls.color }}
+              >
+                <img
+                  src={cls.img}
+                  alt={cls.name}
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: 'center 20%' }}
+                />
+              </div>
+              <span className="absolute -bottom-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full border border-[var(--edge-strong)] bg-black px-1 font-pixel text-[8px] text-[var(--accent)]">
+                {level}
+              </span>
             </div>
           </button>
 

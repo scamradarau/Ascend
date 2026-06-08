@@ -3,7 +3,7 @@ import { persist, createJSONStorage, type StateStorage } from 'zustand/middlewar
 import type { OnboardingAnswers } from '../data/onboarding'
 import { computeOnboarding } from '../data/onboarding'
 import { traitById } from '../data/traits'
-import { levelFromTotalExp } from '../data/leveling'
+import { levelFromTotalExp, totalExpToReach } from '../data/leveling'
 import type { VerificationResult, VerificationMethodId } from '../data/verification'
 import { DEFAULT_AVATAR, type AvatarConfig, type CosmeticSlot } from '../data/cosmetics'
 import { challengeById, periodKeyFor, monthKey } from '../data/challenges'
@@ -83,6 +83,8 @@ export interface GameState {
   // cosmetics
   avatar: AvatarConfig
   purchasedCosmetics: string[]
+  // chosen class id (null = auto: highest class unlocked by level)
+  classId: string | null
 
   // owner
   ownerMode: boolean
@@ -116,8 +118,11 @@ export interface GameState {
   ) => void
   reviewSubmission: (id: string, decision: 'approve' | 'reject', note?: string) => void
   setAvatar: (slot: CosmeticSlot, id: string) => void
+  setClassId: (id: string | null) => void
   purchaseCosmetic: (id: string, cost: number) => boolean
   toggleOwnerMode: () => void
+  /** owner-only dev helper: jump to any level by setting total EXP */
+  setDevLevel: (level: number) => void
   setPendingSleep: (v: { at: string } | null) => void
   logChallenge: (id: string, result: VerificationResult) => { completed: boolean; exp: number }
   addFriend: (id: string) => void
@@ -184,6 +189,7 @@ export const useGame = create<GameState>()(
       earnedBadges: [],
       avatar: { ...DEFAULT_AVATAR },
       purchasedCosmetics: [],
+      classId: null,
       ownerMode: false,
       pendingSleep: null,
       challenges: {},
@@ -227,6 +233,7 @@ export const useGame = create<GameState>()(
           earnedBadges: [],
           avatar: { ...DEFAULT_AVATAR },
           purchasedCosmetics: [],
+          classId: null,
           pendingSleep: null,
           challenges: {},
           friends: [],
@@ -402,6 +409,8 @@ export const useGame = create<GameState>()(
       setAvatar: (slot, id) =>
         set({ avatar: { ...get().avatar, [slot]: id } }),
 
+      setClassId: (id) => set({ classId: id }),
+
       purchaseCosmetic: (id, cost) => {
         const state = get()
         if (state.purchasedCosmetics.includes(id)) return true
@@ -412,6 +421,10 @@ export const useGame = create<GameState>()(
 
       toggleOwnerMode: () => set({ ownerMode: !get().ownerMode }),
       setPendingSleep: (v) => set({ pendingSleep: v }),
+
+      // owner-only: jump to any level by setting cumulative EXP to that level's threshold
+      setDevLevel: (level) =>
+        set({ totalExp: totalExpToReach(Math.max(1, Math.min(999, Math.round(level)))) }),
 
       addFriend: (id) => {
         const f = get().friends
