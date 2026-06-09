@@ -1,6 +1,7 @@
 import { supabase, fetchEarnedProgress } from '../lib/supabase'
 import { useAuth } from './auth'
 import { useGame, type Submission } from './useGame'
+import { useSocial } from './social'
 import { todayKey } from '../lib/time'
 import type { VerificationResult } from '../data/verification'
 
@@ -70,6 +71,7 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
       liveness_code: code,
       captured_at: a.result.meta?.capturedAt ?? new Date().toISOString(),
       gps: a.result.meta?.gps ?? null,
+      thumb: a.result.thumb ?? null,
       // the client's on-device verdict caps the server result (no upgrades)
       client_status: a.result.status,
     },
@@ -77,11 +79,13 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
   const res = (verify.data as { status?: string; exp_awarded?: number; main_done?: boolean } | null) ?? {}
   const status = (res.status as ServerSubmitResult['status']) ?? 'pending'
   const exp = res.exp_awarded ?? 0
+  const verified = status === 'verified'
 
   // 3. pull authoritative EXP/trust/streak/trait levels back from profiles
   await reconcileEarned(userId)
 
-  // 4. local UI-only state (journal, dailyLog, aether, main progress)
+  // 4. local UI-only state (journal entry always; "done" + rewards only on a
+  //    real verify — a pending photo stays NOT-done until an admin approves it)
   useGame.setState((s) => {
     const at = new Date().toISOString()
     const sub: Submission = {
@@ -98,28 +102,33 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
       at,
     }
     const patch: Partial<ReturnType<typeof useGame.getState>> = {
-      aether: s.aether + Math.round(exp / 4),
       submissions: [sub, ...s.submissions].slice(0, 120),
     }
-    if (a.kind === 'daily' && a.traitId && a.taskId) {
-      patch.dailyLog = { ...s.dailyLog, [`${a.traitId}:${a.taskId}:${todayKey()}`]: at }
-    }
-    if (a.kind === 'main' && a.traitId) {
-      patch.activeTraits = s.activeTraits.map((t) =>
-        t.id === a.traitId
-          ? {
-              ...t,
-              mainQuestProgress: Math.min(1, t.mainQuestProgress + 0.25),
-              mainQuestDone: Boolean(res.main_done),
-            }
-          : t,
-      )
-      if (res.main_done) {
-        patch.completedQuests = [{ traitId: a.traitId, title: a.label, at }, ...s.completedQuests]
+    if (verified) {
+      patch.aether = s.aether + Math.round(exp / 4)
+      if (a.kind === 'daily' && a.traitId && a.taskId) {
+        patch.dailyLog = { ...s.dailyLog, [`${a.traitId}:${a.taskId}:${todayKey()}`]: at }
+      }
+      if (a.kind === 'main' && a.traitId) {
+        patch.activeTraits = s.activeTraits.map((t) =>
+          t.id === a.traitId
+            ? {
+                ...t,
+                mainQuestProgress: Math.min(1, t.mainQuestProgress + 0.25),
+                mainQuestDone: Boolean(res.main_done),
+              }
+            : t,
+        )
+        if (res.main_done) {
+          patch.completedQuests = [{ traitId: a.traitId, title: a.label, at }, ...s.completedQuests]
+        }
       }
     }
     return patch
   })
+
+  // refresh social so the quest's review state (pending/verified) + alerts update
+  void useSocial.getState().refresh()
 
   return { status, exp }
 }

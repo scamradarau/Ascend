@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame, isTaskDoneToday, traitLevel } from '../store/useGame'
+import { useSocial } from '../store/social'
 import { isCloud } from '../lib/supabase'
 import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
@@ -17,6 +18,15 @@ export default function Quests() {
   // Move 2: every cloud account routes completions through the
   // server-authoritative Edge Functions (local mode keeps the offline path).
   const serverVerify = isCloud
+  const subs = useSocial((s) => s.submissions)
+  // latest review status for a quest (dailies scoped to today)
+  const reviewStatusOf = (questId: string, daily: boolean): 'verified' | 'pending' | 'flagged' | null => {
+    const today = (iso: string) => new Date(iso).toDateString() === new Date().toDateString()
+    const m = subs
+      .filter((x) => x.quest_id === questId && (!daily || today(x.created_at)))
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))[0]
+    return m?.status ?? null
+  }
   const activeTraits = useGame((s) => s.activeTraits)
   const dailyLog = useGame((s) => s.dailyLog)
   const completedQuests = useGame((s) => s.completedQuests)
@@ -85,7 +95,7 @@ export default function Quests() {
           r.status === 'flagged'
             ? '⚠ Flagged — no EXP'
             : r.status === 'pending'
-              ? '⏳ Sent for review'
+              ? '📸 Sent for review — pass it and you’ll earn the EXP; if it doesn’t pass, no EXP and you can retry.'
               : `+${r.exp} EXP`,
         )
       })
@@ -128,7 +138,9 @@ export default function Quests() {
         flash(
           r.status === 'flagged'
             ? '⚠ Flagged — no progress'
-            : `+${r.exp} EXP`,
+            : r.status === 'pending'
+              ? '📸 Sent for review — pass it to earn the EXP; if not, no EXP and you can retry.'
+              : `+${r.exp} EXP`,
         )
       })
       return
@@ -215,13 +227,19 @@ export default function Quests() {
                   <span className="text-sm font-semibold text-white">
                     🗡️ {t.mainQuest.title}
                   </span>
-                  <button
-                    disabled={at.mainQuestDone}
-                    onClick={() => setPending({ traitId: at.id, kind: 'main' })}
-                    className="btn btn-ghost text-[11px]"
-                  >
-                    {at.mainQuestDone ? '✓ Complete' : 'Check in'}
-                  </button>
+                  {(() => {
+                    const mainReview = reviewStatusOf(`main:${at.id}`, false)
+                    const mainUnderReview = !at.mainQuestDone && mainReview === 'pending'
+                    return (
+                      <button
+                        disabled={at.mainQuestDone || mainUnderReview}
+                        onClick={() => setPending({ traitId: at.id, kind: 'main' })}
+                        className="btn btn-ghost text-[11px]"
+                      >
+                        {at.mainQuestDone ? '✓ Complete' : mainUnderReview ? '⏳ Under review' : 'Check in'}
+                      </button>
+                    )
+                  })()}
                 </div>
                 <div className="mt-2">
                   <ExpBar pct={mqPct} height="h-2" />
@@ -231,27 +249,37 @@ export default function Quests() {
               {/* dailies */}
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {t.dailyTasks.map((task) => {
-                  const done = isTaskDoneToday(dailyLog, at.id, task.id)
+                  const sub = reviewStatusOf(`${at.id}:${task.id}`, true)
+                  const done = isTaskDoneToday(dailyLog, at.id, task.id) || sub === 'verified'
+                  const underReview = !done && sub === 'pending'
                   return (
                     <button
                       key={task.id}
-                      disabled={done}
+                      disabled={done || underReview}
                       onClick={() => setPending({ traitId: at.id, kind: 'daily', task })}
                       className={`flex items-center gap-2.5 rounded-lg border p-2.5 text-left text-sm transition ${
                         done
                           ? 'border-exp/30 bg-exp/5 text-exp'
-                          : 'border-white/8 bg-white/[0.02] text-white hover:border-[var(--edge-strong)]'
+                          : underReview
+                            ? 'border-amber-400/40 bg-amber-400/5 text-amber-300'
+                            : 'border-white/8 bg-white/[0.02] text-white hover:border-[var(--edge-strong)]'
                       }`}
                     >
                       <span
                         className={`flex h-4 w-4 items-center justify-center rounded border text-[10px] ${
-                          done ? 'border-exp bg-exp text-black' : 'border-white/30'
+                          done
+                            ? 'border-exp bg-exp text-black'
+                            : underReview
+                              ? 'border-amber-400 text-amber-300'
+                              : 'border-white/30'
                         }`}
                       >
-                        {done && '✓'}
+                        {done ? '✓' : underReview ? '⏳' : ''}
                       </span>
                       <span className="flex-1">{task.label}</span>
-                      <span className="text-[10px] text-[var(--muted)]">+{task.exp}</span>
+                      <span className="text-[10px] text-[var(--muted)]">
+                        {underReview ? 'Under review' : `+${task.exp}`}
+                      </span>
                     </button>
                   )
                 })}

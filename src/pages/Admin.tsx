@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
-import { isOwnerEmail } from '../lib/supabase'
+import { isOwnerEmail, isCloud, type CloudProfile } from '../lib/supabase'
+import { fetchPendingReview, reviewSubmission, fetchProfilesByIds, type SubmissionRow } from '../lib/social'
 import { VERIFICATION_METHODS } from '../data/verification'
 import { PixelTitle, Pill } from '../components/ui'
 
@@ -31,6 +32,37 @@ export default function Admin() {
   const trust = useGame((s) => s.trust)
   const [seedQueue, setSeedQueue] = useState(SEED_QUEUE)
   const [decided, setDecided] = useState<Record<string, 'approve' | 'reject'>>({})
+
+  // live cross-user photo review queue (from the DB; admins see everyone's)
+  const [pendingReview, setPendingReview] = useState<SubmissionRow[]>([])
+  const [revProfiles, setRevProfiles] = useState<Record<string, CloudProfile>>({})
+  const [busyId, setBusyId] = useState<string | null>(null)
+
+  const loadPending = async () => {
+    if (!isCloud) return
+    const rows = await fetchPendingReview()
+    setPendingReview(rows)
+    const ids = [...new Set(rows.map((r) => r.user_id))].filter((id) => !revProfiles[id])
+    if (ids.length) {
+      const ps = await fetchProfilesByIds(ids)
+      setRevProfiles((p) => {
+        const n = { ...p }
+        for (const x of ps) n[x.id] = x
+        return n
+      })
+    }
+  }
+  useEffect(() => {
+    loadPending()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const decideReview = async (id: string, decision: 'approve' | 'reject') => {
+    setBusyId(id)
+    await reviewSubmission(id, decision)
+    setPendingReview((p) => p.filter((x) => x.id !== id))
+    setBusyId(null)
+  }
 
   // own submissions needing review
   const ownQueue = useMemo(
@@ -73,6 +105,63 @@ export default function Admin() {
           </p>
         </div>
         <Pill tone="gold">OWNER</Pill>
+      </div>
+
+      {/* live photo review queue (cross-user, from the DB) */}
+      <div className="panel hud-corner mb-5 p-5">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="font-pixel text-xs text-cosmos-gold">PHOTO REVIEW QUEUE</span>
+          <div className="flex items-center gap-2">
+            <Pill tone="gold">{pendingReview.length} pending</Pill>
+            <button onClick={loadPending} className="btn btn-ghost text-[11px]">⟳ Refresh</button>
+          </div>
+        </div>
+        {!isCloud ? (
+          <p className="py-6 text-center text-sm text-[var(--muted)]">Cloud only.</p>
+        ) : pendingReview.length === 0 ? (
+          <p className="py-6 text-center text-sm text-[var(--muted)]">
+            No photos awaiting review. 🎉
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {pendingReview.map((r) => (
+              <div
+                key={r.id}
+                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3"
+              >
+                {r.thumb ? (
+                  <img src={r.thumb} alt="proof" className="h-14 w-14 shrink-0 rounded-lg object-cover" />
+                ) : (
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-white/10 text-2xl">
+                    📷
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="font-display font-bold text-white">
+                    {revProfiles[r.user_id]?.handle ?? 'Ascender'}
+                  </div>
+                  <div className="truncate text-xs text-[var(--muted)]">
+                    {r.label || r.quest_id} · {new Date(r.created_at).toLocaleString()}
+                  </div>
+                </div>
+                <button
+                  disabled={busyId === r.id}
+                  onClick={() => decideReview(r.id, 'reject')}
+                  className="btn btn-ghost border-cosmos-magenta/40 text-[11px] text-cosmos-magenta"
+                >
+                  Reject
+                </button>
+                <button
+                  disabled={busyId === r.id}
+                  onClick={() => decideReview(r.id, 'approve')}
+                  className="btn btn-primary text-[11px]"
+                >
+                  {busyId === r.id ? '…' : 'Approve'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* KPI grid */}

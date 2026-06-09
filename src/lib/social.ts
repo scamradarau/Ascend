@@ -114,3 +114,55 @@ export async function fetchProfilesByIds(ids: string[]): Promise<CloudProfile[]>
   const { data } = await supabase.from('profiles').select('*').in('id', ids)
   return (data as CloudProfile[]) ?? []
 }
+
+// ---- submissions + review ----
+export interface SubmissionRow {
+  id: string
+  user_id: string
+  quest_id: string
+  label: string | null
+  method: string | null
+  status: 'verified' | 'pending' | 'flagged'
+  exp_awarded: number | null
+  thumb?: string | null
+  created_at: string
+}
+
+// my own recent submissions (drives quest review states + result alerts)
+export async function fetchMySubmissions(me: string, limit = 200): Promise<SubmissionRow[]> {
+  if (!supabase) return []
+  const { data } = await supabase
+    .from('submissions')
+    .select('id,user_id,quest_id,label,method,status,exp_awarded,created_at')
+    .eq('user_id', me)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  return (data as SubmissionRow[]) ?? []
+}
+
+// pending submissions awaiting review (admins see everyone's via RLS)
+export async function fetchPendingReview(limit = 100): Promise<SubmissionRow[]> {
+  if (!supabase) return []
+  const { data } = await supabase
+    .from('submissions')
+    .select('id,user_id,quest_id,label,method,status,exp_awarded,thumb,created_at')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: true })
+    .limit(limit)
+  return (data as SubmissionRow[]) ?? []
+}
+
+export async function reviewSubmission(id: string, decision: 'approve' | 'reject') {
+  if (!supabase) return { error: 'unavailable' as const }
+  const { data, error } = await supabase.functions.invoke('review-submission', {
+    body: { submission_id: id, decision },
+  })
+  return { data, error: error?.message }
+}
+
+// am I an admin (reviewer)?
+export async function fetchIsAdmin(me: string): Promise<boolean> {
+  if (!supabase) return false
+  const { data } = await supabase.from('admins').select('user_id').eq('user_id', me).maybeSingle()
+  return Boolean(data)
+}

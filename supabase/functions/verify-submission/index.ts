@@ -55,6 +55,7 @@ interface Body {
   image_path?: string | null
   scene_label?: string | null
   scene_prob?: number | null
+  thumb?: string | null
   /** the client's on-device verdict (scene check / dwell / gibberish etc.) */
   client_status?: 'verified' | 'pending' | 'flagged'
 }
@@ -166,11 +167,16 @@ Deno.serve(async (req) => {
 
   // The server never UPGRADES the client's on-device verdict — if the scene
   // check / dwell / gibberish check didn't pass, it can't become "verified".
-  // (Full server-side re-run of the scene check is the next hardening step.)
-  const status = strictest(serverStatus, body.client_status ?? 'verified')
+  let status = strictest(serverStatus, body.client_status ?? 'verified')
 
-  // Only a verified pass pays. Pending/flagged pay nothing — closes the
-  // "spam a photo for review and still gain EXP" exploit.
+  // Photo-proof quests ALWAYS require human review: a clean photo becomes
+  // 'pending' (awaiting an admin's approve/reject), never auto-verified.
+  // Hard fails (dupe/liveness/GPS) stay flagged.
+  const isPhoto = body.method === 'geo-photo' || body.method === 'live-photo'
+  if (isPhoto && status === 'verified') status = 'pending'
+
+  // Only a verified pass pays now. Pending earns nothing until an admin
+  // approves it (review-submission grants the EXP then).
   const mult = status === 'verified' ? 1 : 0
 
   // --- 5. EXP from catalog (main quests step in 4) ---
@@ -188,7 +194,7 @@ Deno.serve(async (req) => {
       expBase = 0 // already finished
     } else {
       expBase = Math.round(quest.base_exp / 4)
-      if (status !== 'flagged') {
+      if (status === 'verified') {
         const nextCount = Math.min(4, prevCount + 1)
         mainDone = nextCount >= 4
         await admin.from('quest_progress').upsert({
@@ -268,6 +274,7 @@ Deno.serve(async (req) => {
     image_hash: imageHash,
     scene_label: body.scene_label ?? null,
     scene_prob: body.scene_prob ?? null,
+    thumb: body.thumb ?? null,
     exp_awarded: expAwarded,
     trust_delta: trustDelta,
     note: flags.length ? flags.join('; ') : `Verified (${quest.scope}).`,

@@ -1,9 +1,11 @@
 import { create } from 'zustand'
-import { isCloud, type CloudProfile } from '../lib/supabase'
+import { isCloud, fetchEarnedProgress, type CloudProfile } from '../lib/supabase'
 import { useAuth } from './auth'
+import { useGame } from './useGame'
 import {
   fetchMyRequests,
   fetchMyMessages,
+  fetchMySubmissions,
   fetchProfilesByIds,
   sendFriendRequest,
   respondFriendRequest,
@@ -12,7 +14,18 @@ import {
   markConversationRead,
   type FriendRequestRow,
   type MessageRow,
+  type SubmissionRow,
 } from '../lib/social'
+
+const SEEN_KEY = 'ascend-alerts-seen'
+const loadSeen = (): string[] => {
+  try {
+    return JSON.parse(localStorage.getItem(SEEN_KEY) || '[]')
+  } catch {
+    return []
+  }
+}
+const PHOTO_METHODS = new Set(['geo-photo', 'live-photo'])
 
 // ================================================================
 // SOCIAL store — friend requests + DMs, kept fresh by light polling
@@ -23,6 +36,8 @@ interface SocialState {
   meId: string | null
   requests: FriendRequestRow[]
   messages: MessageRow[]
+  submissions: SubmissionRow[]
+  seenAlerts: string[]
   profiles: Record<string, CloudProfile>
   ready: boolean
   refresh: () => Promise<void>
@@ -32,6 +47,7 @@ interface SocialState {
   unfriend: (other: string) => Promise<void>
   send: (to: string, body: string) => Promise<{ error?: string }>
   markRead: (other: string) => Promise<void>
+  markAlertsSeen: () => void
 }
 
 let timer: ReturnType<typeof setInterval> | null = null
@@ -40,16 +56,22 @@ export const useSocial = create<SocialState>((set, get) => ({
   meId: null,
   requests: [],
   messages: [],
+  submissions: [],
+  seenAlerts: loadSeen(),
   profiles: {},
   ready: false,
 
   refresh: async () => {
     const me = useAuth.getState().user?.id ?? null
     if (!isCloud || !me) {
-      set({ meId: me, requests: [], messages: [], ready: true })
+      set({ meId: me, requests: [], messages: [], submissions: [], ready: true })
       return
     }
-    const [requests, messages] = await Promise.all([fetchMyRequests(me), fetchMyMessages(me)])
+    const [requests, messages, submissions] = await Promise.all([
+      fetchMyRequests(me),
+      fetchMyMessages(me),
+      fetchMySubmissions(me),
+    ])
     // gather the other-party ids we need profiles for
     const ids = new Set<string>()
     for (const r of requests) {
@@ -69,7 +91,34 @@ export const useSocial = create<SocialState>((set, get) => ({
       profiles = { ...have }
       for (const p of fetched) profiles[p.id] = p
     }
-    set({ meId: me, requests, messages, profiles, ready: true })
+    set({ meId: me, requests, messages, submissions, profiles, ready: true })
+
+    // keep earned values in sync with the server (so an approved review's EXP
+    // shows up here within one poll, without needing a reload)
+    const prog = await fetchEarnedProgress(me)
+    if (prog) {
+      useGame.setState((g) => ({
+        totalExp: typeof prog.total_exp === 'number' ? prog.total_exp : g.totalExp,
+        trust: typeof prog.trust === 'number' ? prog.trust : g.trust,
+        streak: typeof prog.streak === 'number' ? prog.streak : g.streak,
+        questsThisMonth:
+          typeof prog.quests_this_month === 'number' ? prog.quests_this_month : g.questsThisMonth,
+        earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : g.earnedBadges,
+        activeTraits:
+          prog.trait_exp && Object.keys(prog.trait_exp).length
+            ? g.activeTraits.map((t) =>
+                prog.trait_exp![t.id] != null ? { ...t, exp: prog.trait_exp![t.id] } : t,
+              )
+            : g.activeTraits,
+      }))
+    }
+  },
+
+  markAlertsSeen: () => {
+    const ids = get().submissions.map((s) => s.id)
+    const merged = [...new Set([...get().seenAlerts, ...ids])].slice(-500)
+    localStorage.setItem(SEEN_KEY, JSON.stringify(merged))
+    set({ seenAlerts: merged })
   },
 
   start: () => {
@@ -143,3 +192,29 @@ export const conversationWith = (s: SocialState, other: string): MessageRow[] =>
         (m.sender === other && m.recipient === s.meId),
     )
     .sort((a, b) => a.created_at.localeCompare(b.created_at))
+
+// ---- quest review state (from my submissions) ----
+const isToday = (iso: string) => new Date(iso).toDateString() === new Date().toDateString()
+
+// latest status for a quest. Dailies are scoped to today; main/challenge use
+// the most recent submission overall.
+export function questReviewStatus(
+  s: SocialState,
+  questId: string,
+  daily: boolean,
+): 'verified' | 'pending' | 'flagged' | null {
+  const subs = s.submissions
+    .filter((m) => m.quest_id === questId && (!daily || isToday(m.created_at)))
+    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+  return subs[0]?.status ?? null
+}
+
+// resolved photo reviews → result alerts; unread = not yet seen
+export function reviewAlerts(s: SocialState): SubmissionRow[] {
+  return s.submissions.filter(
+    (m) =>
+      PHOTO_METHODS.has(m.method ?? '') && (m.status === 'verified' || m.status === 'flagged'),
+  )
+}
+export const unreadAlertCount = (s: SocialState) =>
+  reviewAlerts(s).filter((a) => !s.seenAlerts.includes(a.id)).length

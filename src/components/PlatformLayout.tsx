@@ -4,7 +4,7 @@ import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { rankForLevel } from '../data/ranks'
 import { resolveClass } from '../data/classes'
-import { useSocial, selectPendingCount, selectUnreadCount } from '../store/social'
+import { useSocial, selectPendingCount, selectUnreadCount, unreadAlertCount } from '../store/social'
 import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
 import ThemeBackground from './ThemeBackground'
@@ -39,13 +39,14 @@ export default function PlatformLayout() {
   const classId = useGame((s) => s.classId)
   const pendingReqs = useSocial(selectPendingCount)
   const unreadMsgs = useSocial(selectUnreadCount)
+  const unreadAlerts = useSocial(unreadAlertCount)
   const badgeFor = (to: string) =>
-    to === '/app/notifications' ? pendingReqs : to === '/app/messages' ? unreadMsgs : 0
+    to === '/app/notifications' ? pendingReqs + unreadAlerts : to === '/app/messages' ? unreadMsgs : 0
   const { level } = usePlayerLevel()
   const rank = rankForLevel(level)
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-  const navBadges = pendingReqs + unreadMsgs
+  const navBadges = pendingReqs + unreadMsgs + unreadAlerts
   const showOwner = ownerMode && isOwnerEmail(authUser?.email)
   const cls = resolveClass(level, classId, showOwner)
   const nav = showOwner

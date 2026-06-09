@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useSocial, selectIncoming, selectOutgoing } from '../store/social'
+import { useSocial, selectIncoming, selectOutgoing, reviewAlerts } from '../store/social'
 import { isCloud } from '../lib/supabase'
 import { levelFromTotalExp } from '../data/leveling'
 import { DEFAULT_AVATAR, type AvatarConfig } from '../data/cosmetics'
@@ -11,13 +11,21 @@ export default function Notifications() {
   const navigate = useNavigate()
   const incoming = useSocial(selectIncoming)
   const outgoing = useSocial(selectOutgoing)
+  const alerts = useSocial(reviewAlerts)
   const profiles = useSocial((s) => s.profiles)
   const respond = useSocial((s) => s.respond)
   const refresh = useSocial((s) => s.refresh)
+  const markAlertsSeen = useSocial((s) => s.markAlertsSeen)
 
   useEffect(() => {
     refresh()
   }, [refresh])
+
+  // opening Alerts marks review results as seen (clears the badge)
+  useEffect(() => {
+    const t = setTimeout(() => markAlertsSeen(), 800)
+    return () => clearTimeout(t)
+  }, [markAlertsSeen, alerts.length])
 
   if (!isCloud) {
     return (
@@ -40,15 +48,52 @@ export default function Notifications() {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-6">
-        <PixelTitle className="text-xs text-[var(--accent)]">NOTIFICATIONS</PixelTitle>
-        <h1 className="mt-2 font-display text-2xl font-bold text-white">Friend requests</h1>
+        <PixelTitle className="text-xs text-[var(--accent)]">ALERTS</PixelTitle>
+        <h1 className="mt-2 font-display text-2xl font-bold text-white">Your alerts</h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
-          Accept to become friends and unlock private messages.
+          Quest review results and friend requests.
         </p>
       </div>
 
+      {/* ---- review results ---- */}
+      {alerts.length > 0 && (
+        <div className="mb-8">
+          <div className="mb-3 font-pixel text-xs text-[var(--accent)]">QUEST REVIEWS</div>
+          <div className="space-y-2">
+            {alerts.slice(0, 30).map((a) => {
+              const ok = a.status === 'verified'
+              return (
+                <div
+                  key={a.id}
+                  className={`panel flex items-center gap-3 p-3 ${
+                    ok ? 'border-exp/30' : 'border-cosmos-magenta/30'
+                  }`}
+                >
+                  <span className="text-xl">{ok ? '✅' : '❌'}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-display font-bold text-white">
+                      {ok ? 'Approved' : 'Didn’t pass review'}
+                    </div>
+                    <div className="truncate text-[12px] text-[var(--muted)]">
+                      {a.label || a.quest_id}
+                      {' · '}
+                      {new Date(a.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                    </div>
+                  </div>
+                  {ok ? (
+                    <Pill tone="exp">+{a.exp_awarded ?? 0} EXP</Pill>
+                  ) : (
+                    <span className="text-[11px] uppercase tracking-wide text-cosmos-magenta">Retry it</span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="mb-3 flex items-center justify-between">
-        <span className="font-pixel text-xs text-[var(--accent)]">INCOMING</span>
+        <span className="font-pixel text-xs text-[var(--accent)]">FRIEND REQUESTS</span>
         <Pill tone="exp">{incoming.length}</Pill>
       </div>
 
