@@ -111,6 +111,21 @@ export async function upsertCloudProfile(p: Partial<CloudProfile> & { id: string
   await supabase.from('profiles').upsert({ ...p, updated_at: new Date().toISOString() })
 }
 
+// Cosmetic-only profile update (handle/region/age/avatar). Earned columns
+// (total_exp/trust/streak/quests_this_month/earned_badges/traits/trait_exp)
+// are server-owned and written ONLY by the verify-submission Edge Function.
+// Uses update (not upsert) so it survives the INSERT revoke in the lockdown.
+export interface CosmeticProfile {
+  handle?: string
+  region?: string
+  age?: number | null
+  avatar?: unknown
+}
+export async function updateCloudCosmetic(id: string, c: CosmeticProfile) {
+  if (!supabase) return
+  await supabase.from('profiles').update({ ...c, updated_at: new Date().toISOString() }).eq('id', id)
+}
+
 export async function fetchLeaderboard(): Promise<CloudProfile[]> {
   if (!supabase) return []
   const { data } = await supabase.from('profiles').select('*').limit(500)

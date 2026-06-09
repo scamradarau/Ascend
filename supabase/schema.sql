@@ -226,23 +226,20 @@ alter table submissions alter column status set default 'submitted';
    ----------------------------------------------------------------
    -- profiles: revoke direct writes; allow cosmetic columns only.
    revoke insert, update, delete on profiles from authenticated, anon;
-   grant  update (handle, region, age, avatar) on profiles to authenticated;
+   grant  update (handle, region, age, avatar, updated_at) on profiles to authenticated;
    drop policy if exists "profiles_write" on profiles;
+   drop policy if exists "profiles_update_own" on profiles;
    create policy "profiles_update_own" on profiles for update
      using (auth.uid() = id) with check (auth.uid() = id);
    -- NOTE before flipping: confirm public.handle_new_user() is SECURITY
    -- DEFINER (it is, in this file) so new signups still get a profiles row
    -- once `authenticated` loses INSERT on profiles.
 
-   -- submissions: client may INSERT raw proof only; rows are immutable to it.
+   -- submissions: written ONLY by the verify-submission Edge Function
+   -- (service role). The client neither inserts nor edits them.
    revoke insert, update, delete on submissions from authenticated, anon;
-   grant insert (user_id, quest_id, method, label, liveness_code,
-                 captured_at, gps, image_path, scene_label, scene_prob)
-     on submissions to authenticated;
    drop policy if exists "subs_owner" on submissions;
+   drop policy if exists "subs_select_own" on submissions;
    create policy "subs_select_own" on submissions for select
      using (auth.uid() = user_id);
-   create policy "subs_insert_own" on submissions for insert
-     with check (auth.uid() = user_id and status = 'submitted'
-                 and exp_awarded is null and image_hash is null);
    ================================================================ */

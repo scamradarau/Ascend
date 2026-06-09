@@ -131,8 +131,28 @@ Deno.serve(async (req) => {
 
   // --- 4. status (server-decided) ---
   // flagged: faked liveness or impossible GPS. pending: weak signal. verified: clean.
+  // daily dedupe — one verified daily per quest per user per UTC day
+  let dupe = false
+  if (quest.scope === 'daily') {
+    const dayStart = new Date()
+    dayStart.setUTCHours(0, 0, 0, 0)
+    const { data: already } = await admin
+      .from('submissions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('quest_id', quest.id)
+      .eq('status', 'verified')
+      .gte('created_at', dayStart.toISOString())
+      .limit(1)
+      .maybeSingle()
+    if (already) {
+      dupe = true
+      flags.push('Already completed today')
+    }
+  }
+
   let status: 'verified' | 'pending' | 'flagged'
-  if (!livenessOk || !gpsOk) status = 'flagged'
+  if (!livenessOk || !gpsOk || dupe) status = 'flagged'
   else if (body.scene_label === '__mismatch__') status = 'flagged'
   else status = 'verified'
   // (scene re-run server-side is a later hardening; client scene recorded only)

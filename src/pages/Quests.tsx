@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame, isTaskDoneToday, traitLevel } from '../store/useGame'
-import { useAuth } from '../store/auth'
-import { isOwnerEmail } from '../lib/supabase'
+import { isCloud } from '../lib/supabase'
 import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
@@ -15,10 +14,9 @@ import type { DailyTask } from '../data/types'
 
 export default function Quests() {
   const navigate = useNavigate()
-  const authUser = useAuth((s) => s.user)
-  // Move 1: owner account routes completions through the server-authoritative
-  // Edge Functions; everyone else stays on the local path until Move 2.
-  const serverVerify = isOwnerEmail(authUser?.email)
+  // Move 2: every cloud account routes completions through the
+  // server-authoritative Edge Functions (local mode keeps the offline path).
+  const serverVerify = isCloud
   const activeTraits = useGame((s) => s.activeTraits)
   const dailyLog = useGame((s) => s.dailyLog)
   const completedQuests = useGame((s) => s.completedQuests)

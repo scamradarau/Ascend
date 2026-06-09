@@ -6,7 +6,7 @@ import {
   isCloud,
   saveCloudSave,
   loadCloudSave,
-  upsertCloudProfile,
+  updateCloudCosmetic,
   fetchEarnedProgress,
   type CloudProfile,
 } from '../lib/supabase'
@@ -80,7 +80,15 @@ function pushNow() {
   // serialize the same way the persist layer does (functions dropped)
   const plain = JSON.parse(JSON.stringify(s)) as GameState
   void saveCloudSave(user.id, plain)
-  void upsertCloudProfile(profileSummary(user.id, user.username, s))
+  // Earned values (exp/trust/streak/trait_exp) are server-owned now — the
+  // client only mirrors COSMETIC profile fields. The verify-submission Edge
+  // Function is the sole writer of earned columns.
+  void updateCloudCosmetic(user.id, {
+    handle: user.username,
+    region: s.profile?.region || 'OCE',
+    age: typeof s.profile?.age === 'number' ? s.profile.age : null,
+    avatar: s.avatar,
+  })
 }
 
 // Start a debounced subscriber that mirrors every change to the cloud.
