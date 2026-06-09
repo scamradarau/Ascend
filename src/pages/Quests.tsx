@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame, isTaskDoneToday, traitLevel } from '../store/useGame'
+import { useAuth } from '../store/auth'
+import { isOwnerEmail } from '../lib/supabase'
+import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
 import { VerificationModal } from '../components/VerificationModal'
@@ -12,6 +15,10 @@ import type { DailyTask } from '../data/types'
 
 export default function Quests() {
   const navigate = useNavigate()
+  const authUser = useAuth((s) => s.user)
+  // Move 1: owner account routes completions through the server-authoritative
+  // Edge Functions; everyone else stays on the local path until Move 2.
+  const serverVerify = isOwnerEmail(authUser?.email)
   const activeTraits = useGame((s) => s.activeTraits)
   const dailyLog = useGame((s) => s.dailyLog)
   const completedQuests = useGame((s) => s.completedQuests)
@@ -52,6 +59,41 @@ export default function Quests() {
   const submit = (result: VerificationResult) => {
     if (!pending) return
     const t = traitById(pending.traitId)!
+
+    if (serverVerify) {
+      // server decides status + EXP
+      const args =
+        pending.kind === 'daily' && pending.task
+          ? {
+              questId: `${pending.traitId}:${pending.task.id}`,
+              method: result.method,
+              label: pending.task.label,
+              kind: 'daily' as const,
+              traitId: pending.traitId,
+              taskId: pending.task.id,
+              result,
+            }
+          : {
+              questId: `main:${pending.traitId}`,
+              method: result.method,
+              label: `Main quest · ${t.mainQuest.title}`,
+              kind: 'main' as const,
+              traitId: pending.traitId,
+              result,
+            }
+      flash('⏳ Verifying…')
+      serverSubmitQuest(args).then((r) => {
+        flash(
+          r.status === 'flagged'
+            ? '⚠ Flagged — no EXP'
+            : r.status === 'pending'
+              ? '⏳ Sent for review'
+              : `+${r.exp} EXP (verified by server)`,
+        )
+      })
+      return
+    }
+
     if (pending.kind === 'daily' && pending.task) {
       completeDailyTask(pending.traitId, pending.task.id, { exp: pending.task.exp, label: pending.task.label }, result)
       flash(
@@ -76,6 +118,23 @@ export default function Quests() {
 
   const submitChallenge = (result: VerificationResult) => {
     if (!challengePending) return
+    if (serverVerify) {
+      flash('⏳ Verifying…')
+      serverSubmitQuest({
+        questId: challengePending.id,
+        method: result.method,
+        label: challengePending.title,
+        kind: 'challenge',
+        result,
+      }).then((r) => {
+        flash(
+          r.status === 'flagged'
+            ? '⚠ Flagged — no progress'
+            : `+${r.exp} EXP (verified by server)`,
+        )
+      })
+      return
+    }
     const res = logChallenge(challengePending.id, result)
     flash(
       result.status === 'flagged'
