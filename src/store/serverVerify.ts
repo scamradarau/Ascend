@@ -70,6 +70,8 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
       liveness_code: code,
       captured_at: a.result.meta?.capturedAt ?? new Date().toISOString(),
       gps: a.result.meta?.gps ?? null,
+      // the client's on-device verdict caps the server result (no upgrades)
+      client_status: a.result.status,
     },
   })
   const res = (verify.data as { status?: string; exp_awarded?: number; main_done?: boolean } | null) ?? {}

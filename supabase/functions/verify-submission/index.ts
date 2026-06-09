@@ -55,6 +55,14 @@ interface Body {
   image_path?: string | null
   scene_label?: string | null
   scene_prob?: number | null
+  /** the client's on-device verdict (scene check / dwell / gibberish etc.) */
+  client_status?: 'verified' | 'pending' | 'flagged'
+}
+
+// strictest of two statuses wins (flagged > pending > verified)
+function strictest(a: string, b: string): 'verified' | 'pending' | 'flagged' {
+  const rank: Record<string, number> = { verified: 0, pending: 1, flagged: 2 }
+  return ((rank[a] ?? 1) >= (rank[b] ?? 1) ? a : b) as 'verified' | 'pending' | 'flagged'
 }
 
 Deno.serve(async (req) => {
@@ -151,13 +159,19 @@ Deno.serve(async (req) => {
     }
   }
 
-  let status: 'verified' | 'pending' | 'flagged'
-  if (!livenessOk || !gpsOk || dupe) status = 'flagged'
-  else if (body.scene_label === '__mismatch__') status = 'flagged'
-  else status = 'verified'
-  // (scene re-run server-side is a later hardening; client scene recorded only)
+  let serverStatus: 'verified' | 'pending' | 'flagged'
+  if (!livenessOk || !gpsOk || dupe) serverStatus = 'flagged'
+  else if (body.scene_label === '__mismatch__') serverStatus = 'flagged'
+  else serverStatus = 'verified'
 
-  const mult = status === 'verified' ? 1 : status === 'pending' ? 0.5 : 0
+  // The server never UPGRADES the client's on-device verdict — if the scene
+  // check / dwell / gibberish check didn't pass, it can't become "verified".
+  // (Full server-side re-run of the scene check is the next hardening step.)
+  const status = strictest(serverStatus, body.client_status ?? 'verified')
+
+  // Only a verified pass pays. Pending/flagged pay nothing — closes the
+  // "spam a photo for review and still gain EXP" exploit.
+  const mult = status === 'verified' ? 1 : 0
 
   // --- 5. EXP from catalog (main quests step in 4) ---
   let expBase = quest.base_exp

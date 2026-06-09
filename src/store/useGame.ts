@@ -157,8 +157,9 @@ function applyResultEconomy(
   expBase: number,
   result: VerificationResult,
 ): { expGain: number; aetherGain: number; trust: number } {
-  // verified pays full; pending pays half and waits on review; flagged pays nothing
-  const mult = result.status === 'verified' ? 1 : result.status === 'pending' ? 0.5 : 0
+  // Only a VERIFIED pass pays. Pending (awaiting/uncertain review) and flagged
+  // pay nothing — so you can't farm EXP by spamming photos "for review".
+  const mult = result.status === 'verified' ? 1 : 0
   const expGain = Math.round(expBase * mult)
   const aetherGain = Math.round((expBase / 4) * mult)
   const trust = clampTrust(state.trust + result.trustDelta)

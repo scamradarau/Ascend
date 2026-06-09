@@ -104,7 +104,7 @@ export const TRAITS: Trait[] = [
     benefit: 'Lower stress, sharper attention, and the space to respond instead of react.',
     howToLevel: ['Meditate daily.', 'Practise single-tasking.', 'Do a 60-second body scan when stressed.'],
     dailyTasks: [
-      { id: 'mind-med', label: 'Consistent deep breathing — 5 minutes', evidence: 'reflection', exp: 18 },
+      { id: 'mind-med', label: 'Consistent deep breathing — 5 minutes', evidence: 'reflection', verify: 'meditation-timer', minMinutes: 5, exp: 18 },
       { id: 'mind-gratitude', label: 'Write 3 things you’re grateful for', evidence: 'reflection', exp: 15 },
     ],
     mainQuest: {
@@ -178,9 +178,9 @@ export const TRAITS: Trait[] = [
       'Start absurdly small so you never miss.',
     ],
     dailyTasks: [
-      { id: 'disc-cold', label: 'Take a cold shower', evidence: 'reflection', exp: 18 },
-      { id: 'disc-wake', label: 'Wake at your set time — no snooze', evidence: 'reflection', exp: 18 },
-      { id: 'disc-keystone', label: 'Complete your keystone habit', evidence: 'reflection', exp: 25 },
+      { id: 'disc-cold', label: 'Take a cold shower', evidence: 'reflection', verify: 'check-in', exp: 18 },
+      { id: 'disc-wake', label: 'Wake at your set time — no snooze', evidence: 'reflection', verify: 'check-in', exp: 18 },
+      { id: 'disc-keystone', label: 'Complete your keystone habit', evidence: 'reflection', verify: 'check-in', exp: 25 },
     ],
     mainQuest: {
       title: 'Read “Atomic Habits” & install one keystone habit',
@@ -412,7 +412,7 @@ export const TRAITS: Trait[] = [
     ],
     dailyTasks: [
       { id: 'conf-fear', label: 'Do one thing outside your comfort zone', evidence: 'reflection', exp: 22 },
-      { id: 'conf-posture', label: 'Hold confident posture for the day', evidence: 'photo', hint: 'A real-time posture photo.', exp: 15 },
+      { id: 'conf-posture', label: 'Hold confident posture all day', evidence: 'reflection', verify: 'check-in', exp: 15 },
       { id: 'conf-eye', label: 'Make eye contact in every conversation', evidence: 'reflection', exp: 15 },
     ],
     mainQuest: {
@@ -523,14 +523,14 @@ export const TRAITS: Trait[] = [
     howToLevel: ['Train with progressive overload 3–5×/week.', 'Hit a protein target daily.', 'Prioritise sleep and steps.'],
     dailyTasks: [
       { id: 'phys-train', label: 'Complete a training session', evidence: 'photo', verify: 'geo-photo', hint: 'Real-time gym photo.', exp: 28 },
-      { id: 'phys-protein', label: 'Hit your protein target', evidence: 'reflection', exp: 14 },
+      { id: 'phys-protein', label: 'Eat & photograph a protein-rich meal', evidence: 'photo', verify: 'live-photo', hint: 'Live photo of a high-protein plate (meat, eggs, fish, legumes…).', exp: 16 },
       { id: 'phys-steps', label: 'Walk 8,000+ steps', evidence: 'photo', verify: 'geo-photo', hint: 'Live photo on your walk.', exp: 12 },
     ],
     mainQuest: {
-      title: 'Train consistently for 8 weeks (progress photos)',
+      title: 'Train consistently for 8 weeks',
       book: 'Bigger Leaner Stronger — Michael Matthews',
-      why: 'A no-nonsense, evidence-based system for building muscle and losing fat that actually sticks.',
-      checkIn: 'photo',
+      why: 'A no-nonsense, evidence-based system for building muscle and losing fat that actually sticks. Log each session with a real gym photo — progress is the sum of sessions shown up for.',
+      checkIn: 'schedule',
       exp: 250,
     },
     hotTips: ['Progressive overload is the whole game.', 'You can’t out-train a bad diet.', 'Sleep is the best legal PED.'],
@@ -547,7 +547,7 @@ export const TRAITS: Trait[] = [
     dailyTasks: [
       { id: 'vit-sleep', label: 'Sleep 7–9 hours', evidence: 'reflection', verify: 'sleep-window', exp: 16 },
       { id: 'vit-sun', label: 'Get morning sunlight', evidence: 'photo', verify: 'live-photo', hint: 'Live photo outside.', exp: 12 },
-      { id: 'vit-water', label: 'Drink 2–3L of water', evidence: 'reflection', exp: 10 },
+      { id: 'vit-water', label: 'Drink 2–3L of water', evidence: 'reflection', verify: 'check-in', exp: 10 },
     ],
     mainQuest: {
       title: 'Read “Why We Sleep” & fix your sleep for 2 weeks',
@@ -926,7 +926,7 @@ export const TRAITS: Trait[] = [
     howToLevel: ['Hit a protein target each meal.', 'Eat whole foods 80% of the time.', 'Stop drinking your calories.'],
     dailyTasks: [
       { id: 'nut-meal', label: 'Log a healthy, protein-rich meal', evidence: 'photo', verify: 'live-photo', hint: 'Live photo of the meal.', exp: 16 },
-      { id: 'nut-nosugar', label: 'No added sugar today', evidence: 'reflection', verify: 'journal', exp: 14 },
+      { id: 'nut-nosugar', label: 'No added sugar today', evidence: 'reflection', verify: 'check-in', exp: 14 },
     ],
     mainQuest: {
       title: 'Track your food honestly for 14 days',
