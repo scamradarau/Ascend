@@ -237,6 +237,10 @@ export interface VerificationResult {
     flags?: string[]
     /** the exact content the user submitted (summary/reflection/notes) */
     entry?: string
+    /** did an on-device AI scene check actually run for this quest? */
+    sceneChecked?: boolean
+    /** the scene check's verdict, when it ran */
+    sceneVerdict?: 'verified' | 'pending' | 'reject'
   }
   thumb?: string // tiny data-url preview from the camera, if any
 }

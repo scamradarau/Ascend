@@ -74,6 +74,9 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
       thumb: a.result.thumb ?? null,
       // the client's on-device verdict caps the server result (no upgrades)
       client_status: a.result.status,
+      // hybrid auto-approve: true only when the on-device AI actually
+      // CONFIRMED the scene (so a clear gym/meal/outdoors photo skips review)
+      scene_pass: a.result.meta?.sceneChecked === true && a.result.meta?.sceneVerdict === 'verified',
     },
   })
   const res = (verify.data as { status?: string; exp_awarded?: number; main_done?: boolean } | null) ?? {}

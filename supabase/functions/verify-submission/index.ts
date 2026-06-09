@@ -58,6 +58,8 @@ interface Body {
   thumb?: string | null
   /** the client's on-device verdict (scene check / dwell / gibberish etc.) */
   client_status?: 'verified' | 'pending' | 'flagged'
+  /** true only when the on-device AI CONFIRMED the scene (hybrid auto-approve) */
+  scene_pass?: boolean
 }
 
 // strictest of two statuses wins (flagged > pending > verified)
@@ -169,11 +171,12 @@ Deno.serve(async (req) => {
   // check / dwell / gibberish check didn't pass, it can't become "verified".
   let status = strictest(serverStatus, body.client_status ?? 'verified')
 
-  // Photo-proof quests ALWAYS require human review: a clean photo becomes
-  // 'pending' (awaiting an admin's approve/reject), never auto-verified.
-  // Hard fails (dupe/liveness/GPS) stay flagged.
+  // HYBRID review for photo quests: if the on-device AI clearly CONFIRMED the
+  // scene (gym / meal / outdoors), auto-verify (instant EXP). Otherwise —
+  // uncertain verdict, or a quest with no scene to check — send it to a human
+  // (status 'pending'). Hard fails (dupe/liveness/GPS/mismatch) stay flagged.
   const isPhoto = body.method === 'geo-photo' || body.method === 'live-photo'
-  if (isPhoto && status === 'verified') status = 'pending'
+  if (isPhoto && status === 'verified' && !body.scene_pass) status = 'pending'
 
   // Only a verified pass pays now. Pending earns nothing until an admin
   // approves it (review-submission grants the EXP then).

@@ -205,6 +205,8 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
         livenessCode: code,
         gps,
         flags: flags.length ? flags : undefined,
+        sceneChecked: expectedCategory !== 'none',
+        sceneVerdict: verdict?.verdict,
       },
       thumb: thumb ?? undefined,
     })
