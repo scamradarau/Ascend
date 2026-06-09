@@ -6,6 +6,9 @@ import {
   traitLevel,
   isTaskDoneToday,
 } from '../store/useGame'
+import { useSocial } from '../store/social'
+import { isCloud } from '../lib/supabase'
+import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
 import { rankForLevel, nextRank } from '../data/ranks'
@@ -32,6 +35,15 @@ export default function Character() {
   const totalExp = useGame((s) => s.totalExp)
   const completeDailyTask = useGame((s) => s.completeDailyTask)
   const streak = useGame((s) => s.streak)
+  const serverVerify = isCloud
+  const subs = useSocial((s) => s.submissions)
+  const reviewStatusOf = (questId: string): 'verified' | 'pending' | 'flagged' | null => {
+    const today = (iso: string) => new Date(iso).toDateString() === new Date().toDateString()
+    const m = subs
+      .filter((x) => x.quest_id === questId && today(x.created_at))
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))[0]
+    return m?.status ?? null
+  }
   const { level, pct, intoLevel, needed } = usePlayerLevel()
   const rank = rankForLevel(level)
   const next = nextRank(level)
@@ -52,23 +64,51 @@ export default function Character() {
     return out
   }, [activeTraits])
 
-  const doneCount = dailyQuests.filter((q) =>
-    isTaskDoneToday(dailyLog, q.traitId, q.task.id),
+  const doneCount = dailyQuests.filter(
+    (q) =>
+      isTaskDoneToday(dailyLog, q.traitId, q.task.id) ||
+      (serverVerify && reviewStatusOf(`${q.traitId}:${q.task.id}`) === 'verified'),
   ).length
 
   const submitCheckIn = (result: VerificationResult) => {
     if (!pending) return
     const task = pending.task
+
+    if (serverVerify) {
+      setToast('⏳ Verifying…')
+      serverSubmitQuest({
+        questId: `${pending.traitId}:${task.id}`,
+        method: result.method,
+        label: task.label,
+        kind: 'daily',
+        traitId: pending.traitId,
+        taskId: task.id,
+        result,
+      }).then((r) => {
+        setToast(
+          r.status === 'flagged'
+            ? '⚠ Flagged — no EXP'
+            : r.status === 'pending'
+              ? '📸 Sent for review — pass it and you’ll earn the EXP; if not, no EXP and you can retry.'
+              : `+${r.exp} EXP · ${task.label}`,
+        )
+        setTimeout(() => setToast(null), 3400)
+      })
+      return
+    }
+
+    // local (offline) fallback
     const before = levelFromTotalExp(totalExp).level
     completeDailyTask(pending.traitId, task.id, { exp: task.exp, label: task.label }, result)
-    if (result.status === 'flagged') {
-      setToast('⚠ Submission flagged — no EXP awarded')
-    } else if (result.status === 'pending') {
-      setToast('⏳ Sent for review · partial EXP')
-    } else {
-      const after = levelFromTotalExp(totalExp + task.exp).level
-      setToast(after > before ? `LEVEL UP! → Lv ${after}` : `+${task.exp} EXP · ${task.label}`)
-    }
+    setToast(
+      result.status === 'flagged'
+        ? '⚠ Submission flagged — no EXP'
+        : result.status === 'pending'
+          ? '⏳ Sent for review — no EXP unless it passes.'
+          : levelFromTotalExp(totalExp + task.exp).level > before
+            ? `LEVEL UP! → Lv ${levelFromTotalExp(totalExp + task.exp).level}`
+            : `+${task.exp} EXP · ${task.label}`,
+    )
     setTimeout(() => setToast(null), 2600)
   }
 
@@ -194,33 +234,42 @@ export default function Character() {
 
           <div className="-mr-2 max-h-[460px] space-y-2.5 overflow-y-auto pr-2">
             {dailyQuests.map((q) => {
-              const done = isTaskDoneToday(dailyLog, q.traitId, q.task.id)
+              const sub = serverVerify ? reviewStatusOf(`${q.traitId}:${q.task.id}`) : null
+              const done = isTaskDoneToday(dailyLog, q.traitId, q.task.id) || sub === 'verified'
+              const underReview = !done && sub === 'pending'
               const t = traitById(q.traitId)!
               return (
                 <button
                   key={`${q.traitId}:${q.task.id}`}
-                  disabled={done}
+                  disabled={done || underReview}
                   onClick={() => setPending(q)}
                   className={`flex w-full items-start gap-3 rounded-lg border p-3 text-left transition ${
                     done
                       ? 'border-exp/30 bg-exp/5'
-                      : 'border-white/8 bg-white/[0.02] hover:border-[var(--edge-strong)]'
+                      : underReview
+                        ? 'border-amber-400/40 bg-amber-400/5'
+                        : 'border-white/8 bg-white/[0.02] hover:border-[var(--edge-strong)]'
                   }`}
                 >
                   <span
-                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
-                      done ? 'border-exp bg-exp text-black' : 'border-white/30'
+                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border text-[10px] ${
+                      done
+                        ? 'border-exp bg-exp text-black'
+                        : underReview
+                          ? 'border-amber-400 text-amber-300'
+                          : 'border-white/30'
                     }`}
                   >
-                    {done && '✓'}
+                    {done ? '✓' : underReview ? '⏳' : ''}
                   </span>
                   <span className="flex-1">
                     <span
                       className={`block text-sm font-semibold ${
-                        done ? 'text-exp line-through' : 'text-white'
+                        done ? 'text-exp line-through' : underReview ? 'text-amber-300' : 'text-white'
                       }`}
                     >
                       {q.task.label}
+                      {underReview && <span className="ml-2 text-[10px] uppercase tracking-wide">· under review</span>}
                     </span>
                     <span className="mt-0.5 flex items-center gap-2 text-[11px] text-[var(--muted)]">
                       <span className="uppercase tracking-wide">{t.name}</span>

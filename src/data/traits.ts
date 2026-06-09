@@ -178,9 +178,9 @@ export const TRAITS: Trait[] = [
       'Start absurdly small so you never miss.',
     ],
     dailyTasks: [
-      { id: 'disc-cold', label: 'Take a cold shower', evidence: 'reflection', verify: 'check-in', exp: 18 },
-      { id: 'disc-wake', label: 'Wake at your set time — no snooze', evidence: 'reflection', verify: 'check-in', exp: 18 },
-      { id: 'disc-keystone', label: 'Complete your keystone habit', evidence: 'reflection', verify: 'check-in', exp: 25 },
+      { id: 'disc-cold', label: 'Take a cold shower', evidence: 'reflection', verify: 'check-in', exp: 4 },
+      { id: 'disc-wake', label: 'Wake at your set time — no snooze', evidence: 'reflection', verify: 'check-in', exp: 4 },
+      { id: 'disc-keystone', label: 'Complete your keystone habit', evidence: 'reflection', verify: 'check-in', exp: 4 },
     ],
     mainQuest: {
       title: 'Read “Atomic Habits” & install one keystone habit',
@@ -201,14 +201,14 @@ export const TRAITS: Trait[] = [
     benefit: 'Consistency turns ambition into identity. It’s the difference between starting and becoming.',
     howToLevel: ['Track a streak you refuse to break.', 'Lower the bar on bad days, but never to zero.'],
     dailyTasks: [
-      { id: 'con-streak', label: 'Maintain your streak today', evidence: 'reflection', verify: 'check-in', exp: 20 },
+      { id: 'con-streak', label: 'Maintain your streak today', evidence: 'reflection', verify: 'check-in', exp: 4 },
       {
         id: 'con-log',
         label: 'Mark today’s habits done in your tracker',
         evidence: 'reflection',
         verify: 'check-in',
         hint: 'Open your habit-tracker app (or a notebook) and tick off today’s habits, then confirm here.',
-        exp: 12,
+        exp: 4,
       },
     ],
     mainQuest: {
@@ -412,7 +412,7 @@ export const TRAITS: Trait[] = [
     ],
     dailyTasks: [
       { id: 'conf-fear', label: 'Do one thing outside your comfort zone', evidence: 'reflection', exp: 22 },
-      { id: 'conf-posture', label: 'Hold confident posture all day', evidence: 'reflection', verify: 'check-in', exp: 15 },
+      { id: 'conf-posture', label: 'Hold confident posture all day', evidence: 'reflection', verify: 'check-in', exp: 4 },
       { id: 'conf-eye', label: 'Make eye contact in every conversation', evidence: 'reflection', exp: 15 },
     ],
     mainQuest: {
@@ -547,7 +547,7 @@ export const TRAITS: Trait[] = [
     dailyTasks: [
       { id: 'vit-sleep', label: 'Sleep 7–9 hours', evidence: 'reflection', verify: 'sleep-window', exp: 16 },
       { id: 'vit-sun', label: 'Get morning sunlight', evidence: 'photo', verify: 'live-photo', hint: 'Live photo outside.', exp: 12 },
-      { id: 'vit-water', label: 'Drink 2–3L of water', evidence: 'reflection', verify: 'check-in', exp: 10 },
+      { id: 'vit-water', label: 'Drink 2–3L of water', evidence: 'reflection', verify: 'check-in', exp: 4 },
     ],
     mainQuest: {
       title: 'Read “Why We Sleep” & fix your sleep for 2 weeks',
@@ -926,7 +926,7 @@ export const TRAITS: Trait[] = [
     howToLevel: ['Hit a protein target each meal.', 'Eat whole foods 80% of the time.', 'Stop drinking your calories.'],
     dailyTasks: [
       { id: 'nut-meal', label: 'Log a healthy, protein-rich meal', evidence: 'photo', verify: 'live-photo', hint: 'Live photo of the meal.', exp: 16 },
-      { id: 'nut-nosugar', label: 'No added sugar today', evidence: 'reflection', verify: 'check-in', exp: 14 },
+      { id: 'nut-nosugar', label: 'No added sugar today', evidence: 'reflection', verify: 'check-in', exp: 4 },
     ],
     mainQuest: {
       title: 'Track your food honestly for 14 days',

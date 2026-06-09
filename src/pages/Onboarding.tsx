@@ -18,7 +18,7 @@ import { traitById } from '../data/traits'
 import { rankForLevel } from '../data/ranks'
 import type { AttributeId } from '../data/types'
 import { PixelTitle, ExpBar } from '../components/ui'
-import CosmosScenery from '../components/CosmosScenery'
+import ThemeBackground from '../components/ThemeBackground'
 import { flushCloud } from '../store/cloudSync'
 
 const STEPS = ['Identity', 'Self-Assessment', 'Goals', 'Obstacles', 'Lifestyle', 'Commitment', 'Your Build']
@@ -54,6 +54,7 @@ function Choice({
 export default function Onboarding() {
   const navigate = useNavigate()
   const completeOnboarding = useGame((s) => s.completeOnboarding)
+  const setTheme = useGame((s) => s.setTheme)
   const [step, setStep] = useState(0)
   const [a, setA] = useState<OnboardingAnswers>(() => {
     const authUser = useAuth.getState().user
@@ -91,8 +92,8 @@ export default function Onboarding() {
     } as Partial<OnboardingAnswers>)
 
   return (
-    <div className="cosmos-bg relative min-h-screen px-4 py-10 sm:py-14">
-      <CosmosScenery />
+    <div className={`${a.theme}-bg relative min-h-screen px-4 py-10 sm:py-14`}>
+      <ThemeBackground theme={a.theme} />
       <div className="grid-overlay pointer-events-none absolute inset-0 opacity-40" />
       <div className="relative z-10 mx-auto max-w-2xl">
         {/* header */}
@@ -192,19 +193,19 @@ export default function Onboarding() {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   <Choice
                     active={a.theme === 'cosmos'}
-                    onClick={() => set({ theme: 'cosmos' })}
+                    onClick={() => { set({ theme: 'cosmos' }); setTheme('cosmos') }}
                     title="🌌 Cosmos"
                     desc="Futuristic cosmic / sci-fi"
                   />
                   <Choice
                     active={a.theme === 'rune'}
-                    onClick={() => set({ theme: 'rune' })}
+                    onClick={() => { set({ theme: 'rune' }); setTheme('rune') }}
                     title="🌿 Rune"
                     desc="Mystic fantasy realm"
                   />
                   <Choice
                     active={a.theme === 'olympus'}
-                    onClick={() => set({ theme: 'olympus' })}
+                    onClick={() => { set({ theme: 'olympus' }); setTheme('olympus') }}
                     title="🏛️ Olympus"
                     desc="Ancient Greece / mythic"
                   />
@@ -429,53 +430,6 @@ export default function Onboarding() {
                 </div>
               </div>
 
-              <div className="text-sm font-semibold text-slate-200">Choose your stakes / consent tier</div>
-              <div className="space-y-3">
-                <Choice
-                  active={a.tier === 'low'}
-                  onClick={() => set({ tier: 'low' })}
-                  title="Low — Level cap 20"
-                  desc="Foundations & habits. No sensitive questions."
-                />
-                <Choice
-                  active={a.tier === 'mid'}
-                  onClick={() => set({ tier: 'mid' })}
-                  title="Mid — Level cap 40"
-                  desc="Unlocks income & physique goals. Some proof required."
-                />
-                <Choice
-                  active={a.tier === 'high'}
-                  onClick={() => set({ tier: 'high' })}
-                  title="High — Level cap 60"
-                  desc="Business & monetary goals. All claims must be proven."
-                />
-              </div>
-
-              {a.tier === 'high' && (
-                <div className="space-y-4 rounded-xl border border-cosmos-violet/30 bg-cosmos-violet/5 p-4 animate-popIn">
-                  <p className="text-xs uppercase tracking-widest text-cosmos-violet">
-                    High-level questions (optional · provable later)
-                  </p>
-                  <div>
-                    <label className="stat-label mb-1.5 block text-xs">Approx. annual income</label>
-                    <input
-                      className="input"
-                      placeholder="e.g. $40k–$80k"
-                      value={a.income ?? ''}
-                      onChange={(e) => set({ income: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className="stat-label mb-1.5 block text-xs">Physique goal</label>
-                    <input
-                      className="input"
-                      placeholder="e.g. lose 8kg / build muscle"
-                      value={a.physique ?? ''}
-                      onChange={(e) => set({ physique: e.target.value })}
-                    />
-                  </div>
-                </div>
-              )}
             </div>
           )}
 

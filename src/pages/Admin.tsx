@@ -4,34 +4,18 @@ import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { isOwnerEmail, isCloud, type CloudProfile } from '../lib/supabase'
 import { fetchPendingReview, reviewSubmission, fetchProfilesByIds, type SubmissionRow } from '../lib/social'
-import { VERIFICATION_METHODS } from '../data/verification'
-import { PixelTitle, Pill } from '../components/ui'
+import { PixelTitle, Pill, Toast } from '../components/ui'
 
 // Engagement index — empty at launch; wire to real analytics later.
 const WEEKLY: number[] = []
-
-// Review queue from other players. Empty until real users submit proof;
-// it then populates from the backend. The current player's own pending/
-// flagged submissions always appear (see ownQueue below).
-interface SeedItem {
-  id: string
-  handle: string
-  label: string
-  method: keyof typeof VERIFICATION_METHODS
-  status: 'flagged' | 'pending'
-  reasons: string[]
-}
-const SEED_QUEUE: SeedItem[] = []
 
 export default function Admin() {
   const ownerMode = useGame((s) => s.ownerMode)
   const authUser = useAuth((s) => s.user)
   const submissions = useGame((s) => s.submissions)
-  const reviewSubmission = useGame((s) => s.reviewSubmission)
   const profile = useGame((s) => s.profile)
   const trust = useGame((s) => s.trust)
-  const [seedQueue, setSeedQueue] = useState(SEED_QUEUE)
-  const [decided, setDecided] = useState<Record<string, 'approve' | 'reject'>>({})
+  const [reviewMsg, setReviewMsg] = useState<string | null>(null)
 
   // live cross-user photo review queue (from the DB; admins see everyone's)
   const [pendingReview, setPendingReview] = useState<SubmissionRow[]>([])
@@ -59,9 +43,20 @@ export default function Admin() {
 
   const decideReview = async (id: string, decision: 'approve' | 'reject') => {
     setBusyId(id)
-    await reviewSubmission(id, decision)
-    setPendingReview((p) => p.filter((x) => x.id !== id))
+    const { data, error } = await reviewSubmission(id, decision)
     setBusyId(null)
+    if (error) {
+      setReviewMsg(`Review failed: ${error}`)
+      return
+    }
+    const r = data as { status?: string; exp_awarded?: number } | null
+    setReviewMsg(
+      decision === 'approve'
+        ? `✓ Approved — granted ${r?.exp_awarded ?? 0} EXP`
+        : '✗ Rejected — no EXP',
+    )
+    setPendingReview((p) => p.filter((x) => x.id !== id))
+    setTimeout(() => setReviewMsg(null), 3000)
   }
 
   // own submissions needing review
@@ -89,9 +84,6 @@ export default function Admin() {
     { label: 'MRR', value: '$0' },
   ]
 
-  const decideSeed = (id: string, d: 'approve' | 'reject') => {
-    setSeedQueue((q) => q.filter((x) => x.id !== id))
-  }
 
   return (
     <div>
@@ -174,144 +166,9 @@ export default function Admin() {
         ))}
       </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_360px]">
-        {/* ---------------- REVIEW QUEUE ---------------- */}
-        <div className="panel hud-corner p-5">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="font-pixel text-xs text-cosmos-gold">VERIFICATION REVIEW QUEUE</span>
-            <Pill tone="default">{ownQueue.length + seedQueue.length} open</Pill>
-          </div>
-
-          <div className="space-y-2.5">
-            {/* the player's own flagged/pending items — real actions */}
-            {ownQueue.map((s) => {
-              const m = VERIFICATION_METHODS[s.method]
-              const done = decided[s.id]
-              return (
-                <div
-                  key={s.id}
-                  className={`rounded-xl border p-3 ${
-                    done ? 'border-white/8 opacity-50' : 'border-white/12 bg-white/[0.02]'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    {s.thumb ? (
-                      <img src={s.thumb} className="h-14 w-14 rounded-lg object-cover" alt="" />
-                    ) : (
-                      <div className="flex h-14 w-14 items-center justify-center rounded-lg border border-white/10 text-2xl">
-                        {m.icon}
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-display font-bold text-white">{profile?.handle}</span>
-                        <Pill tone="exp">you</Pill>
-                        <span
-                          className={`text-[10px] uppercase tracking-wide ${
-                            s.status === 'flagged' ? 'text-cosmos-magenta' : 'text-amber-300'
-                          }`}
-                        >
-                          {s.status}
-                        </span>
-                      </div>
-                      <div className="text-xs text-[var(--muted)]">
-                        {s.label} · {m.label}
-                      </div>
-                      <div className="mt-1 text-[11px] text-[var(--muted)]">
-                        {s.meta.gps && `📍 ${s.meta.gps.lat.toFixed(3)}, ${s.meta.gps.lng.toFixed(3)} · `}
-                        {s.meta.dwellSec && `⏱ ${Math.round(s.meta.dwellSec / 60)}m · `}
-                        {s.meta.wordCount && `📝 ${s.meta.wordCount}w · `}
-                        {s.meta.livenessCode && `🔑 ${s.meta.livenessCode}`}
-                      </div>
-                      {s.meta.flags?.map((f) => (
-                        <div key={f} className="mt-1 text-[11px] text-cosmos-magenta">⚠ {f}</div>
-                      ))}
-                    </div>
-                  </div>
-                  {!done && (
-                    <div className="mt-2 flex justify-end gap-2">
-                      <button
-                        onClick={() => {
-                          reviewSubmission(s.id, 'reject')
-                          setDecided((d) => ({ ...d, [s.id]: 'reject' }))
-                        }}
-                        className="btn btn-ghost border-cosmos-magenta/40 text-cosmos-magenta text-[11px]"
-                      >
-                        Reject
-                      </button>
-                      <button
-                        onClick={() => {
-                          reviewSubmission(s.id, 'approve')
-                          setDecided((d) => ({ ...d, [s.id]: 'approve' }))
-                        }}
-                        className="btn btn-primary text-[11px]"
-                      >
-                        Approve
-                      </button>
-                    </div>
-                  )}
-                  {done && (
-                    <div className="mt-2 text-right text-[11px] uppercase tracking-wide text-[var(--muted)]">
-                      {done === 'approve' ? '✓ Approved' : '✗ Rejected'}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-
-            {/* seeded items from other players */}
-            {seedQueue.map((s) => {
-              const m = VERIFICATION_METHODS[s.method]
-              return (
-                <div key={s.id} className="rounded-xl border border-white/12 bg-white/[0.02] p-3">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-lg border border-white/10 text-2xl">
-                      {m.icon}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-display font-bold text-white">{s.handle}</span>
-                        <span
-                          className={`text-[10px] uppercase tracking-wide ${
-                            s.status === 'flagged' ? 'text-cosmos-magenta' : 'text-amber-300'
-                          }`}
-                        >
-                          {s.status}
-                        </span>
-                      </div>
-                      <div className="text-xs text-[var(--muted)]">
-                        {s.label} · {m.label}
-                      </div>
-                      {s.reasons.map((r) => (
-                        <div key={r} className="mt-1 text-[11px] text-cosmos-magenta">⚠ {r}</div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="mt-2 flex justify-end gap-2">
-                    <button
-                      onClick={() => decideSeed(s.id, 'reject')}
-                      className="btn btn-ghost border-cosmos-magenta/40 text-cosmos-magenta text-[11px]"
-                    >
-                      Reject
-                    </button>
-                    <button onClick={() => decideSeed(s.id, 'approve')} className="btn btn-primary text-[11px]">
-                      Approve
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
-
-            {ownQueue.length === 0 && seedQueue.length === 0 && (
-              <p className="py-6 text-center text-sm text-[var(--muted)]">
-                Queue clear — no submissions awaiting review. 🎉
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* ---------------- side column ---------------- */}
-        <div className="space-y-5">
+      <div className="mt-5 grid gap-5 md:grid-cols-3">
+        {/* analytics (illustrative until backend aggregates are wired) */}
+        <div className="contents">
           {/* anti-cheat breakdown */}
           <div className="panel p-5">
             <span className="font-pixel text-xs text-cosmos-magenta">TOP FLAG REASONS</span>
@@ -357,6 +214,8 @@ export default function Admin() {
           or free (memberships, ebooks) to start.
         </p>
       </div>
+
+      <Toast message={reviewMsg} />
     </div>
   )
 }

@@ -48,7 +48,7 @@ export const DEFAULT_ANSWERS: OnboardingAnswers = {
   region: 'OCE',
   occupation: '',
   theme: 'cosmos',
-  tier: 'mid',
+  tier: 'high',
   selfRating: { mind: 3, will: 3, heart: 3, charisma: 3, body: 3 },
   goals: [],
   outcomes: [],
@@ -149,12 +149,6 @@ export function computeOnboarding(a: OnboardingAnswers): OnboardingResult {
   rationale.push(
     'Everyone starts at Level 1 — the ladder is earned purely through verified progress. No head starts.',
   )
-  if (a.tier === 'low')
-    rationale.push('You chose the Low-stakes tier — your climb caps at Level 20 until you verify more.')
-  if (a.tier === 'mid')
-    rationale.push('Mid tier unlocks income & physique goals, with a Level 40 cap (some proof required).')
-  if (a.tier === 'high')
-    rationale.push('High tier unlocks business & monetary goals up to Level 60 — these require proof.')
 
   // ---- trait recommendations ----
   // priority = goals + weakness + chosen outcomes + obstacles to overcome
