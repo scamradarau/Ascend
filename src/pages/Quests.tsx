@@ -86,7 +86,7 @@ export default function Quests() {
             ? '⚠ Flagged — no EXP'
             : r.status === 'pending'
               ? '⏳ Sent for review'
-              : `+${r.exp} EXP (verified by server)`,
+              : `+${r.exp} EXP`,
         )
       })
       return
@@ -128,7 +128,7 @@ export default function Quests() {
         flash(
           r.status === 'flagged'
             ? '⚠ Flagged — no progress'
-            : `+${r.exp} EXP (verified by server)`,
+            : `+${r.exp} EXP`,
         )
       })
       return

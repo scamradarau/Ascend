@@ -72,18 +72,19 @@ export default function Landing() {
 
         <div className="relative z-10 mx-auto max-w-4xl">
           <div className="mb-6 flex items-center justify-center gap-3">
-            <span className="chip border-white/40 text-white/80">Treat life like a game</span>
+            <span className="chip border-white/40 text-white/80">Self-improvement, gamified</span>
           </div>
           <h1 className="mb-6">
             <PixelTitle className="block text-5xl text-black drop-shadow-[0_4px_0_rgba(255,255,255,0.25)] sm:text-7xl md:text-8xl">
               ASCEND
             </PixelTitle>
           </h1>
-          <p className="font-display text-lg font-bold uppercase tracking-[0.25em] text-white sm:text-2xl">
-            Treating self improvement as game progression
+          <p className="font-display text-lg font-bold uppercase tracking-[0.2em] text-white sm:text-2xl">
+            Level up your real life
           </p>
-          <p className="mt-3 font-display text-sm font-semibold uppercase tracking-[0.3em] text-white/80 sm:text-lg">
-            Let’s get you to the endgame
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">
+            Pick the traits you want to build, complete quests you can’t fake, and climb a leaderboard
+            of real people doing the work. Progress you can actually prove.
           </p>
 
           <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -95,7 +96,7 @@ export default function Landing() {
                 Log in
               </Link>
             )}
-            <a href="#what" className="btn btn-ghost text-base text-white">
+            <a href="/brochure.html" target="_blank" rel="noopener" className="btn btn-ghost text-base text-white">
               Learn more
             </a>
           </div>
