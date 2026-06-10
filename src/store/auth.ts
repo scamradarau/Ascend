@@ -8,6 +8,7 @@ import {
   cloudSignOut,
   loadCloudSave,
 } from '../lib/supabase'
+import { validateHandle } from '../lib/handles'
 
 // ================================================================
 // AUTH — accounts, sessions & per-account saves.
@@ -206,7 +207,8 @@ export const useAuth = create<AuthState>((set) => ({
   signup: async (username, email, password, dob) => {
     username = username.trim()
     email = email.trim()
-    if (username.length < 3) return { ok: false, error: 'Username must be at least 3 characters.' }
+    const handleErr = validateHandle(username)
+    if (handleErr) return { ok: false, error: handleErr }
     if (!EMAIL_RE.test(email)) return { ok: false, error: 'Please enter a valid email address.' }
     if (password.length < 6) return { ok: false, error: 'Password must be at least 6 characters.' }
     const age = ageFromDob(dob)

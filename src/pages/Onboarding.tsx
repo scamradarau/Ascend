@@ -15,6 +15,7 @@ import {
 } from '../data/onboarding'
 import { ATTRIBUTES } from '../data/attributes'
 import { traitById } from '../data/traits'
+import { validateHandle } from '../lib/handles'
 import { rankForLevel } from '../data/ranks'
 import type { AttributeId } from '../data/types'
 import { PixelTitle, ExpBar } from '../components/ui'
@@ -70,8 +71,11 @@ export default function Onboarding() {
 
   const result = useMemo(() => computeOnboarding(a), [a])
 
+  const handleErr = useMemo(() => (a.handle.trim() ? validateHandle(a.handle) : null), [a.handle])
+
   const canNext = useMemo(() => {
-    if (step === 0) return a.handle.trim().length > 0 && a.age !== '' && Number(a.age) >= 13
+    if (step === 0)
+      return validateHandle(a.handle) === null && a.age !== '' && Number(a.age) >= 13
     if (step === 2) return a.goals.length > 0 || a.outcomes.length > 0
     return true
   }, [step, a])
@@ -147,6 +151,7 @@ export default function Onboarding() {
                   onChange={(e) => set({ handle: e.target.value })}
                   maxLength={20}
                 />
+                {handleErr && <p className="mt-1.5 text-xs text-cosmos-magenta">{handleErr}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -336,12 +341,21 @@ export default function Onboarding() {
           {/* ---------- STEP 4: LIFESTYLE ---------- */}
           {step === 4 && (
             <div className="space-y-6">
-              <div>
-                <PixelTitle className="text-xs text-cosmos-cyan">LIFESTYLE SCAN</PixelTitle>
-                <h2 className="mt-2 font-display text-2xl font-bold text-white">Your current habits</h2>
-                <p className="mt-1 text-sm text-slate-400">
-                  These calibrate your starting level. No judgment — just a baseline.
-                </p>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <PixelTitle className="text-xs text-cosmos-cyan">LIFESTYLE SCAN</PixelTitle>
+                  <h2 className="mt-2 font-display text-2xl font-bold text-white">Your current habits</h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    Optional — these fine-tune your suggested quests. No judgment, just a baseline.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStep((s) => s + 1)}
+                  className="btn btn-ghost shrink-0 text-[11px]"
+                >
+                  Skip — use defaults →
+                </button>
               </div>
 
               {(

@@ -3,7 +3,17 @@ import { Navigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { isOwnerEmail, isCloud, type CloudProfile } from '../lib/supabase'
-import { fetchPendingReview, reviewSubmission, fetchProfilesByIds, type SubmissionRow } from '../lib/social'
+import {
+  fetchPendingReview,
+  reviewSubmission,
+  fetchProfilesByIds,
+  fetchReports,
+  resolveReport,
+  renameProfileHandle,
+  type SubmissionRow,
+  type ReportRow,
+} from '../lib/social'
+import { validateHandle } from '../lib/handles'
 import { PixelTitle, Pill, Toast } from '../components/ui'
 
 // Engagement index — empty at launch; wire to real analytics later.
@@ -21,25 +31,55 @@ export default function Admin() {
   const [pendingReview, setPendingReview] = useState<SubmissionRow[]>([])
   const [revProfiles, setRevProfiles] = useState<Record<string, CloudProfile>>({})
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [reports, setReports] = useState<ReportRow[]>([])
+
+  const loadProfilesFor = async (ids: string[]) => {
+    const need = [...new Set(ids)].filter((id) => id && !revProfiles[id])
+    if (!need.length) return
+    const ps = await fetchProfilesByIds(need)
+    setRevProfiles((p) => {
+      const n = { ...p }
+      for (const x of ps) n[x.id] = x
+      return n
+    })
+  }
 
   const loadPending = async () => {
     if (!isCloud) return
     const rows = await fetchPendingReview()
     setPendingReview(rows)
-    const ids = [...new Set(rows.map((r) => r.user_id))].filter((id) => !revProfiles[id])
-    if (ids.length) {
-      const ps = await fetchProfilesByIds(ids)
-      setRevProfiles((p) => {
-        const n = { ...p }
-        for (const x of ps) n[x.id] = x
-        return n
-      })
-    }
+    await loadProfilesFor(rows.map((r) => r.user_id))
+  }
+  const loadReports = async () => {
+    if (!isCloud) return
+    const rows = await fetchReports()
+    setReports(rows)
+    await loadProfilesFor(rows.map((r) => r.target_user))
   }
   useEffect(() => {
     loadPending()
+    loadReports()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const renameReported = async (userId: string, current: string) => {
+    const next = window.prompt(`Rename "${current}" to:`, current)
+    if (!next) return
+    const err = validateHandle(next)
+    if (err) {
+      setReviewMsg(err)
+      setTimeout(() => setReviewMsg(null), 3000)
+      return
+    }
+    const res = await renameProfileHandle(userId, next.trim())
+    setReviewMsg(res.error ? `Rename failed: ${res.error}` : `Renamed to "${next.trim()}".`)
+    if (!res.error) await loadProfilesFor([userId])
+    setTimeout(() => setReviewMsg(null), 3000)
+  }
+  const dismissReport = async (id: string) => {
+    await resolveReport(id)
+    setReports((r) => r.filter((x) => x.id !== id))
+  }
 
   const decideReview = async (id: string, decision: 'approve' | 'reject') => {
     setBusyId(id)
@@ -152,6 +192,55 @@ export default function Admin() {
                 </button>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* player reports queue */}
+      <div className="panel hud-corner mb-5 p-5">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="font-pixel text-xs text-cosmos-magenta">PLAYER REPORTS</span>
+          <div className="flex items-center gap-2">
+            <Pill tone={reports.length ? 'gold' : 'default'}>{reports.length} open</Pill>
+            <button onClick={loadReports} className="btn btn-ghost text-[11px]">⟳ Refresh</button>
+          </div>
+        </div>
+        {!isCloud ? (
+          <p className="py-6 text-center text-sm text-[var(--muted)]">Cloud only.</p>
+        ) : reports.length === 0 ? (
+          <p className="py-6 text-center text-sm text-[var(--muted)]">No open reports. 🎉</p>
+        ) : (
+          <div className="space-y-2">
+            {reports.map((r) => {
+              const handle = revProfiles[r.target_user]?.handle ?? 'Ascender'
+              return (
+                <div
+                  key={r.id}
+                  className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="font-display font-bold text-white">
+                      {handle}{' '}
+                      <span className="ml-1 rounded border border-white/10 px-1.5 text-[9px] uppercase tracking-wide text-[var(--muted)]">
+                        {r.context}
+                      </span>
+                    </div>
+                    <div className="truncate text-xs text-[var(--muted)]">
+                      {r.reason}{r.detail ? ` — “${r.detail}”` : ''} · {new Date(r.created_at).toLocaleString()}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => renameReported(r.target_user, handle)}
+                    className="btn btn-ghost text-[11px] text-cosmos-gold"
+                  >
+                    🔨 Rename
+                  </button>
+                  <button onClick={() => dismissReport(r.id)} className="btn btn-primary text-[11px]">
+                    Resolve
+                  </button>
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

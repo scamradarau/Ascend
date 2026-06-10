@@ -166,3 +166,69 @@ export async function fetchIsAdmin(me: string): Promise<boolean> {
   const { data } = await supabase.from('admins').select('user_id').eq('user_id', me).maybeSingle()
   return Boolean(data)
 }
+
+// ---- player count (drives the community soft-gate) ----
+export async function fetchPlayerCount(): Promise<number> {
+  if (!supabase) return 0
+  const { count } = await supabase.from('profiles').select('id', { count: 'exact', head: true })
+  return count ?? 0
+}
+
+// ---- trust & safety: reports + rename hammer ----
+export interface ReportRow {
+  id: string
+  reporter: string | null
+  target_user: string
+  context: string | null
+  reason: string | null
+  detail: string | null
+  resolved: boolean
+  created_at: string
+}
+
+// File a report against a user (from a profile, guild message, or DM).
+export async function submitReport(
+  reporter: string,
+  target: string,
+  context: 'profile' | 'guild' | 'dm',
+  reason: string,
+  detail?: string,
+): Promise<{ error?: string }> {
+  if (!supabase) return { error: 'unavailable' }
+  const { error } = await supabase
+    .from('reports')
+    .insert({ reporter, target_user: target, context, reason, detail: detail ?? null })
+  return { error: error?.message }
+}
+
+// Admin-only: read the open report queue.
+export async function fetchReports(limit = 100): Promise<ReportRow[]> {
+  if (!supabase) return []
+  const { data } = await supabase
+    .from('reports')
+    .select('*')
+    .eq('resolved', false)
+    .order('created_at', { ascending: true })
+    .limit(limit)
+  return (data as ReportRow[]) ?? []
+}
+
+// Admin-only: mark a report handled.
+export async function resolveReport(id: string) {
+  if (!supabase) return
+  await supabase.from('reports').update({ resolved: true }).eq('id', id)
+}
+
+// Admin-only "rename hammer": force-rename an offensive handle.
+// Relies on the profiles_admin_update RLS policy (step4_safety.sql).
+export async function renameProfileHandle(
+  userId: string,
+  handle: string,
+): Promise<{ error?: string }> {
+  if (!supabase) return { error: 'unavailable' }
+  const { error } = await supabase
+    .from('profiles')
+    .update({ handle, updated_at: new Date().toISOString() })
+    .eq('id', userId)
+  return { error: error?.message }
+}

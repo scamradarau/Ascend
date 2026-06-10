@@ -4,7 +4,8 @@ import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { useSocial, selectFriendIds, selectOutgoing } from '../store/social'
 import { getAllPlayers, getAllPlayersCloud, type PlayerRow } from '../store/leaderboard'
-import { isCloud } from '../lib/supabase'
+import { isCloud, isOwnerEmail } from '../lib/supabase'
+import { socialUnlocked } from '../lib/community'
 import { rankForLevel } from '../data/ranks'
 import ClassAvatar from '../components/ClassAvatar'
 import InviteButton from '../components/InviteButton'
@@ -42,6 +43,8 @@ export default function Friends() {
   const navigate = useNavigate()
   const authUser = useAuth((s) => s.user)
   const localFriends = useGame((s) => s.friends)
+  const ownerMode = useGame((s) => s.ownerMode)
+  const owner = ownerMode && isOwnerEmail(authUser?.email)
   const addFriend = useGame((s) => s.addFriend)
   const removeFriend = useGame((s) => s.removeFriend)
 
@@ -74,6 +77,8 @@ export default function Friends() {
   const matches = query.trim()
     ? others.filter((p) => p.handle.toLowerCase().includes(query.trim().toLowerCase()))
     : others
+  // soft-gate discovery until there's real density (owner bypasses)
+  const discoverUnlocked = socialUnlocked(players.length, owner)
 
   return (
     <div>
@@ -89,15 +94,17 @@ export default function Friends() {
       </div>
 
       {/* search / add */}
-      <div className="panel mb-6 p-4">
-        <label className="stat-label mb-1.5 block text-xs">Find players by handle</label>
-        <input
-          className="input"
-          placeholder="Search handle…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </div>
+      {discoverUnlocked && (
+        <div className="panel mb-6 p-4">
+          <label className="stat-label mb-1.5 block text-xs">Find players by handle</label>
+          <input
+            className="input"
+            placeholder="Search handle…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* my friends */}
@@ -147,8 +154,21 @@ export default function Friends() {
         <div>
           <div className="mb-3 flex items-center justify-between">
             <span className="font-pixel text-xs text-[var(--accent)]">DISCOVER PLAYERS</span>
-            <Pill>{matches.length}</Pill>
+            {discoverUnlocked && <Pill>{matches.length}</Pill>}
           </div>
+          {!discoverUnlocked ? (
+            <div className="panel p-6 text-center">
+              <div className="mb-2 text-3xl">🧭</div>
+              <p className="text-sm text-white">Player discovery opens soon</p>
+              <p className="mx-auto mt-1.5 max-w-xs text-xs text-[var(--muted)]">
+                We’re still gathering the founding members. For now, grow your circle by inviting
+                people directly — your invites work right away.
+              </p>
+              <div className="mt-4 flex justify-center">
+                <InviteButton />
+              </div>
+            </div>
+          ) : (
           <div className="space-y-2">
             {matches.length === 0 && (
               <div className="panel p-6 text-center text-sm text-[var(--muted)]">
@@ -189,6 +209,7 @@ export default function Friends() {
               )
             })}
           </div>
+          )}
         </div>
       </div>
       <Toast message={toast} />

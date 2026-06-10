@@ -98,8 +98,12 @@ export interface GameState {
   // social — friends are other accounts' ids
   friends: string[]
 
+  // chosen main-quest path per trait: 'book' (read) or 'practical' (2-week challenge)
+  mainVariant: Record<string, 'book' | 'practical'>
+
   // ---- actions ----
   setTheme: (t: 'cosmos' | 'rune' | 'olympus') => void
+  setMainVariant: (traitId: string, v: 'book' | 'practical') => void
   toggleReduceMotion: () => void
   acceptTerms: () => void
   completeOnboarding: (answers: OnboardingAnswers) => void
@@ -195,8 +199,11 @@ export const useGame = create<GameState>()(
       pendingSleep: null,
       challenges: {},
       friends: [],
+      mainVariant: {},
 
       setTheme: (t) => set({ theme: t }),
+      setMainVariant: (traitId, v) =>
+        set({ mainVariant: { ...get().mainVariant, [traitId]: v } }),
       toggleReduceMotion: () => set({ reduceMotion: !get().reduceMotion }),
       acceptTerms: () => set({ acceptedTerms: true }),
 
@@ -499,6 +506,7 @@ export const useGame = create<GameState>()(
           pendingSleep: null,
           challenges: {},
           friends: [],
+          mainVariant: {},
         }),
     }),
     {

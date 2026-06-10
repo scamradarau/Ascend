@@ -79,7 +79,7 @@ export default function Landing() {
             Level up your real life
           </p>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">
-            Pick the traits you want to build, complete quests you can’t fake, and climb a leaderboard
+            Pick the traits you want to build, complete quests you have to prove, and climb a leaderboard
             of real people doing the work. Progress you can actually prove.
           </p>
 

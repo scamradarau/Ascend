@@ -6,10 +6,11 @@ import {
   conversationWith,
 } from '../store/social'
 import { isCloud } from '../lib/supabase'
+import { submitReport } from '../lib/social'
 import { levelFromTotalExp } from '../data/leveling'
 import { DEFAULT_AVATAR, type AvatarConfig } from '../data/cosmetics'
 import ClassAvatar from '../components/ClassAvatar'
-import { PixelTitle } from '../components/ui'
+import { PixelTitle, Toast } from '../components/ui'
 
 export default function Messages() {
   const { id: activeId } = useParams()
@@ -24,7 +25,15 @@ export default function Messages() {
 
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
   const endRef = useRef<HTMLDivElement | null>(null)
+
+  const reportUser = async () => {
+    if (!activeId || !meId) return
+    await submitReport(meId, activeId, 'dm', 'Reported from direct messages')
+    setToast('Reported to the moderators. Thank you.')
+    setTimeout(() => setToast(null), 2200)
+  }
 
   useEffect(() => {
     refresh()
@@ -148,6 +157,13 @@ export default function Messages() {
                 >
                   {handle(activeId)}
                 </button>
+                <button
+                  onClick={reportUser}
+                  title="Report this user"
+                  className="ml-auto text-[11px] uppercase tracking-widest text-[var(--muted)] transition hover:text-cosmos-magenta"
+                >
+                  ⚐ Report
+                </button>
               </div>
 
               <div className="flex-1 space-y-3 overflow-y-auto p-4">
@@ -200,6 +216,7 @@ export default function Messages() {
           )}
         </div>
       </div>
+      <Toast message={toast} />
     </div>
   )
 }

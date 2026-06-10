@@ -1,19 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
-import { isCloud, uploadProof, type CloudProfile } from '../lib/supabase'
+import { isCloud, isOwnerEmail, uploadProof, type CloudProfile } from '../lib/supabase'
 import {
   fetchGuildMessages,
   sendGuildMessage,
   fetchChannelActivity,
   type GuildMessageRow,
 } from '../lib/guild'
-import { fetchProfilesByIds } from '../lib/social'
+import { fetchProfilesByIds, fetchPlayerCount, submitReport } from '../lib/social'
+import { socialUnlocked, COMMUNITY_MIN } from '../lib/community'
 import { rankForLevel } from '../data/ranks'
 import { levelFromTotalExp } from '../data/leveling'
 import { DEFAULT_AVATAR, type AvatarConfig } from '../data/cosmetics'
 import ClassAvatar from '../components/ClassAvatar'
-import { PixelTitle, Pill } from '../components/ui'
+import { PixelTitle, Pill, Toast } from '../components/ui'
 
 const CHANNELS = [
   { id: 'general', name: 'general', icon: '💬' },
@@ -57,9 +58,29 @@ const loadSeen = (): Record<string, string> => {
 export default function Guild() {
   const profile = useGame((s) => s.profile)
   const avatar = useGame((s) => s.avatar)
+  const ownerMode = useGame((s) => s.ownerMode)
   const { level } = usePlayerLevel()
   const authUser = useAuth((s) => s.user)
   const me = authUser?.id ?? null
+  const owner = ownerMode && isOwnerEmail(authUser?.email)
+
+  // community soft-gate: hide the chat until there's real density
+  const [playerCount, setPlayerCount] = useState(0)
+  useEffect(() => {
+    if (isCloud) fetchPlayerCount().then(setPlayerCount).catch(() => setPlayerCount(0))
+  }, [])
+  const unlocked = !isCloud || socialUnlocked(playerCount, owner)
+
+  const [toast, setToast] = useState<string | null>(null)
+  const flash = (m: string) => {
+    setToast(m)
+    setTimeout(() => setToast(null), 2000)
+  }
+  const report = async (senderId: string | undefined, text: string) => {
+    if (!me || !senderId || senderId === me) return
+    await submitReport(me, senderId, 'guild', 'Inappropriate guild message', text.slice(0, 300))
+    flash('Reported to the moderators. Thank you.')
+  }
 
   const [channel, setChannel] = useState('general')
   const [draft, setDraft] = useState('')
@@ -213,10 +234,28 @@ export default function Guild() {
         <PixelTitle className="text-xs text-[var(--accent)]">THE GUILD</PixelTitle>
         <h1 className="mt-2 font-display text-2xl font-bold text-white">One server. Everyone climbing.</h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
-          A huge community of like-minded people — all working toward the endgame together.
+          A growing community of people doing the real work — together.
         </p>
       </div>
 
+      {!unlocked && (
+        <div className="panel hud-corner p-10 text-center">
+          <div className="mb-3 text-4xl">🏛️</div>
+          <h2 className="font-display text-xl font-bold text-white">The Guild opens soon</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-[var(--muted)]">
+            We’re onboarding the founding members now. The guild halls unlock once enough
+            ascenders have joined — so when you walk in, it’s already alive. Invite people you
+            want climbing beside you.
+          </p>
+          {owner && (
+            <p className="mt-4 text-[11px] uppercase tracking-widest text-cosmos-gold">
+              Owner preview · {playerCount} players joined · unlocks at {COMMUNITY_MIN}
+            </p>
+          )}
+        </div>
+      )}
+
+      {unlocked && (
       <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
         {/* channels */}
         <div className="panel h-fit p-3">
@@ -239,12 +278,14 @@ export default function Guild() {
               )}
             </button>
           ))}
-          <div className="mt-3 rounded-lg border border-white/8 bg-black/30 p-3 text-center">
-            <div className="font-pixel text-sm text-exp">{online}</div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
-              ascender{online === 1 ? '' : 's'} online
+          {online > 1 && (
+            <div className="mt-3 rounded-lg border border-white/8 bg-black/30 p-3 text-center">
+              <div className="font-pixel text-sm text-exp">{online}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">
+                ascenders online
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* chat */}
@@ -279,6 +320,15 @@ export default function Guild() {
                       <span className="text-[10px] text-[var(--muted)]" title={new Date(m.at).toLocaleString()}>
                         {fmtStamp(m.at)}
                       </span>
+                      {m.senderId && m.senderId !== me && (
+                        <button
+                          onClick={() => report(m.senderId, m.text)}
+                          title="Report this message"
+                          className="text-[10px] text-[var(--muted)] opacity-60 transition hover:text-cosmos-magenta hover:opacity-100"
+                        >
+                          ⚐ Report
+                        </button>
+                      )}
                     </div>
                     {m.text && <p className="mt-0.5 text-sm text-slate-200">{m.text}</p>}
                     {m.image && (
@@ -335,6 +385,8 @@ export default function Guild() {
           </div>
         </div>
       </div>
+      )}
+      <Toast message={toast} />
     </div>
   )
 }

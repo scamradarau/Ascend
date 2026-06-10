@@ -5,6 +5,7 @@ import { useSocial } from '../store/social'
 import { isCloud } from '../lib/supabase'
 import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
+import { practicalQuestFor, practicalQuestId } from '../data/practicalQuests'
 import { attributeById } from '../data/attributes'
 import { VerificationModal } from '../components/VerificationModal'
 import { methodForTask, type VerificationResult, type VerificationMethodId } from '../data/verification'
@@ -28,6 +29,15 @@ export default function Quests() {
     return m?.status ?? null
   }
   const activeTraits = useGame((s) => s.activeTraits)
+  const mainVariant = useGame((s) => s.mainVariant)
+  const setMainVariant = useGame((s) => s.setMainVariant)
+  const variantOf = (traitId: string) => mainVariant[traitId] ?? 'book'
+  const mainQuestOf = (traitId: string) => {
+    const t = traitById(traitId)!
+    return variantOf(traitId) === 'practical' ? practicalQuestFor(t) : t.mainQuest
+  }
+  const mainQuestIdOf = (traitId: string) =>
+    variantOf(traitId) === 'practical' ? practicalQuestId(traitId) : `main:${traitId}`
   const dailyLog = useGame((s) => s.dailyLog)
   const completedQuests = useGame((s) => s.completedQuests)
   const questsThisMonth = useGame((s) => s.questsThisMonth)
@@ -66,7 +76,6 @@ export default function Quests() {
 
   const submit = (result: VerificationResult) => {
     if (!pending) return
-    const t = traitById(pending.traitId)!
 
     if (serverVerify) {
       // server decides status + EXP
@@ -82,9 +91,9 @@ export default function Quests() {
               result,
             }
           : {
-              questId: `main:${pending.traitId}`,
+              questId: mainQuestIdOf(pending.traitId),
               method: result.method,
-              label: `Main quest · ${t.mainQuest.title}`,
+              label: `Main quest · ${mainQuestOf(pending.traitId).title}`,
               kind: 'main' as const,
               traitId: pending.traitId,
               result,
@@ -112,7 +121,7 @@ export default function Quests() {
             : `+${pending.task.exp} EXP`,
       )
     } else {
-      advanceMainQuest(pending.traitId, { label: `Main quest · ${t.mainQuest.title}`, steps: 4 }, result)
+      advanceMainQuest(pending.traitId, { label: `Main quest · ${mainQuestOf(pending.traitId).title}`, steps: 4 }, result)
       flash(result.status === 'flagged' ? '⚠ Flagged' : 'Main quest progress logged!')
     }
   }
@@ -120,7 +129,7 @@ export default function Quests() {
   // resolve the verification method for the current pending item
   const pendingMethod: VerificationMethodId | null = pending
     ? pending.kind === 'main'
-      ? mainQuestMethod(pending.traitId)
+      ? mainQuestMethod(mainQuestOf(pending.traitId).checkIn)
       : methodForTask(pending.task!)
     : null
 
@@ -222,15 +231,36 @@ export default function Quests() {
               </div>
 
               {/* main quest */}
-              <div className="mt-4 rounded-xl border border-white/8 bg-white/[0.02] p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-sm font-semibold text-white">
-                    🗡️ {t.mainQuest.title}
-                  </span>
-                  {(() => {
-                    const mainReview = reviewStatusOf(`main:${at.id}`, false)
-                    const mainUnderReview = !at.mainQuestDone && mainReview === 'pending'
-                    return (
+              {(() => {
+                const variant = variantOf(at.id)
+                const mq = mainQuestOf(at.id)
+                const locked = at.mainQuestProgress > 0 || at.mainQuestDone
+                const mainReview = reviewStatusOf(mainQuestIdOf(at.id), false)
+                const mainUnderReview = !at.mainQuestDone && mainReview === 'pending'
+                return (
+                  <div className="mt-4 rounded-xl border border-white/8 bg-white/[0.02] p-4">
+                    {/* path chooser: read a book, or take the 2-week practical challenge */}
+                    <div className="mb-3 flex items-center gap-1.5">
+                      {(['book', 'practical'] as const).map((v) => (
+                        <button
+                          key={v}
+                          disabled={locked && variant !== v}
+                          onClick={() => setMainVariant(at.id, v)}
+                          className={`rounded-lg border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide transition ${
+                            variant === v
+                              ? 'border-cosmos-cyan bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] text-cosmos-cyan'
+                              : 'border-white/10 text-[var(--muted)] hover:border-white/25 disabled:opacity-40'
+                          }`}
+                        >
+                          {v === 'book' ? '📖 Read a book' : '💪 2-week challenge'}
+                        </button>
+                      ))}
+                      {locked && (
+                        <span className="ml-1 text-[10px] text-[var(--muted)]">path locked while in progress</span>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="text-sm font-semibold text-white">🗡️ {mq.title}</span>
                       <button
                         disabled={at.mainQuestDone || mainUnderReview}
                         onClick={() => setPending({ traitId: at.id, kind: 'main' })}
@@ -238,13 +268,14 @@ export default function Quests() {
                       >
                         {at.mainQuestDone ? '✓ Complete' : mainUnderReview ? '⏳ Under review' : 'Check in'}
                       </button>
-                    )
-                  })()}
-                </div>
-                <div className="mt-2">
-                  <ExpBar pct={mqPct} height="h-2" />
-                </div>
-              </div>
+                    </div>
+                    <p className="mt-1 text-xs text-[var(--muted)]">{mq.why}</p>
+                    <div className="mt-2">
+                      <ExpBar pct={mqPct} height="h-2" />
+                    </div>
+                  </div>
+                )
+              })()}
 
               {/* dailies */}
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -365,11 +396,11 @@ export default function Quests() {
           method={pendingMethod}
           label={
             pending.kind === 'main'
-              ? traitById(pending.traitId)?.mainQuest.title ?? ''
+              ? mainQuestOf(pending.traitId).title
               : pending.task?.label ?? ''
           }
           minMinutes={pending.kind === 'daily' ? pending.task?.minMinutes : undefined}
-          book={pending.kind === 'main' ? traitById(pending.traitId)?.mainQuest.book : undefined}
+          book={pending.kind === 'main' ? mainQuestOf(pending.traitId).book : undefined}
           onResult={submit}
         />
       )}
@@ -389,9 +420,8 @@ export default function Quests() {
   )
 }
 
-// Map a trait's main-quest check-in type to a verification method.
-function mainQuestMethod(traitId: string): VerificationMethodId {
-  const ci = traitById(traitId)?.mainQuest.checkIn
+// Map a main-quest check-in type to a verification method.
+function mainQuestMethod(ci: import('../data/types').CheckInType): VerificationMethodId {
   switch (ci) {
     case 'photo':
       return 'live-photo'

@@ -3,7 +3,9 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { getPlayer, getPlayerCloud, type PlayerRow } from '../store/leaderboard'
-import { isCloud } from '../lib/supabase'
+import { isCloud, isOwnerEmail } from '../lib/supabase'
+import { submitReport, renameProfileHandle } from '../lib/social'
+import { validateHandle } from '../lib/handles'
 import { rankForLevel } from '../data/ranks'
 import { attributeById } from '../data/attributes'
 import { BADGES } from '../data/badges'
@@ -15,11 +17,14 @@ export default function PlayerProfile() {
   const { id } = useParams()
   const navigate = useNavigate()
   const authUser = useAuth((s) => s.user)
+  const ownerMode = useGame((s) => s.ownerMode)
+  const owner = ownerMode && isOwnerEmail(authUser?.email)
   const friends = useGame((s) => s.friends)
   const addFriend = useGame((s) => s.addFriend)
   const removeFriend = useGame((s) => s.removeFriend)
 
   const [cloudP, setCloudP] = useState<PlayerRow | null | undefined>(isCloud ? undefined : null)
+  const [reported, setReported] = useState(false)
   useEffect(() => {
     if (isCloud && id) getPlayerCloud(id).then(setCloudP).catch(() => setCloudP(null))
   }, [id])
@@ -80,6 +85,38 @@ export default function PlayerProfile() {
               className={`mt-5 w-full text-sm ${isFriend ? 'btn btn-ghost' : 'btn btn-primary'}`}
             >
               {isFriend ? '✓ Friends — remove' : '+ Add friend'}
+            </button>
+          )}
+          {!isSelf && isCloud && (
+            <button
+              onClick={async () => {
+                if (reported || !authUser?.id) return
+                await submitReport(authUser.id, p.id, 'profile', 'Reported from profile', p.handle)
+                setReported(true)
+              }}
+              disabled={reported}
+              className="mt-3 w-full text-[11px] uppercase tracking-widest text-[var(--muted)] transition hover:text-cosmos-magenta disabled:opacity-60"
+            >
+              {reported ? '✓ Reported — thank you' : '⚐ Report player'}
+            </button>
+          )}
+          {!isSelf && owner && (
+            <button
+              onClick={async () => {
+                const next = window.prompt(`Rename "${p.handle}" to:`, p.handle)
+                if (!next) return
+                const err = validateHandle(next)
+                if (err) {
+                  window.alert(err)
+                  return
+                }
+                const res = await renameProfileHandle(p.id, next.trim())
+                window.alert(res.error ? `Rename failed: ${res.error}` : `Renamed to "${next.trim()}".`)
+                if (!res.error) navigate(0)
+              }}
+              className="mt-3 w-full text-[11px] uppercase tracking-widest text-cosmos-gold transition hover:text-white"
+            >
+              🔨 Rename handle (owner)
             </button>
           )}
           {isSelf && <Pill tone="violet">This is you</Pill>}
