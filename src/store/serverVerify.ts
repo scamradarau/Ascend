@@ -50,6 +50,20 @@ export interface ServerSubmitArgs {
 export interface ServerSubmitResult {
   status: 'verified' | 'pending' | 'flagged'
   exp: number
+  mainDone?: boolean
+}
+
+// Reset a main quest's server-side progress (only allowed while unfinished —
+// the Edge Function refuses completed quests so EXP can't be farmed).
+export async function resetQuestProgress(questId: string): Promise<{ ok: boolean; error?: string }> {
+  if (!supabase) return { ok: true } // offline: nothing server-side to clear
+  const res = await supabase.functions.invoke('reset-quest', { body: { quest_id: questId } })
+  const data = (res.data as { ok?: boolean; error?: string } | null) ?? {}
+  if (res.error || data.error) return { ok: false, error: data.error ?? res.error?.message }
+  // pull authoritative values back (progress reset doesn't change EXP, but keep in sync)
+  const userId = useAuth.getState().user?.id
+  if (userId) await reconcileEarned(userId)
+  return { ok: Boolean(data.ok) }
 }
 
 export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubmitResult> {
@@ -133,5 +147,5 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
   // refresh social so the quest's review state (pending/verified) + alerts update
   void useSocial.getState().refresh()
 
-  return { status, exp }
+  return { status, exp, mainDone: Boolean(res.main_done) }
 }

@@ -5,7 +5,7 @@ import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
 import { levelFromTotalExp } from '../data/leveling'
 import { VerificationModal } from '../components/VerificationModal'
-import BookLinks from '../components/BookLinks'
+import MainQuestCard from '../components/MainQuestCard'
 import {
   methodForTask,
   VERIFICATION_METHODS,
@@ -35,9 +35,8 @@ export default function TraitDetail() {
   const addTrait = useGame((s) => s.addTrait)
   const dropTrait = useGame((s) => s.dropTrait)
   const completeDailyTask = useGame((s) => s.completeDailyTask)
-  const advanceMainQuest = useGame((s) => s.advanceMainQuest)
 
-  const [pending, setPending] = useState<{ kind: 'daily' | 'main'; taskId?: string } | null>(null)
+  const [pending, setPending] = useState<{ taskId: string } | null>(null)
   const [toast, setToast] = useState<string | null>(null)
 
   if (!t) {
@@ -70,40 +69,20 @@ export default function TraitDetail() {
 
   const submit = (result: VerificationResult) => {
     if (!pending) return
-    if (pending.kind === 'daily' && pending.taskId) {
-      const task = t.dailyTasks.find((x) => x.id === pending.taskId)!
-      const before = levelFromTotalExp(totalExp).level
-      completeDailyTask(t.id, task.id, { exp: task.exp, label: task.label }, result)
-      if (result.status === 'flagged') flash('⚠ Flagged — no EXP')
-      else if (result.status === 'pending') flash('⏳ Sent for review')
-      else {
-        const after = levelFromTotalExp(totalExp + task.exp).level
-        flash(after > before ? `LEVEL UP → Lv ${after}` : `+${task.exp} EXP`)
-      }
-    } else {
-      advanceMainQuest(t.id, { label: `Main quest check-in · ${t.mainQuest.title}`, steps: 4 }, result)
-      flash(result.status === 'flagged' ? '⚠ Flagged' : 'Main quest progress logged!')
+    const task = t.dailyTasks.find((x) => x.id === pending.taskId)!
+    const before = levelFromTotalExp(totalExp).level
+    completeDailyTask(t.id, task.id, { exp: task.exp, label: task.label }, result)
+    if (result.status === 'flagged') flash('⚠ Flagged — no EXP')
+    else if (result.status === 'pending') flash('⏳ Sent for review')
+    else {
+      const after = levelFromTotalExp(totalExp + task.exp).level
+      flash(after > before ? `LEVEL UP → Lv ${after}` : `+${task.exp} EXP`)
     }
   }
 
-  // resolve verification method for the active pending item
-  const mainMethod: VerificationMethodId =
-    t.mainQuest.checkIn === 'photo'
-      ? 'live-photo'
-      : t.mainQuest.checkIn === 'summary'
-        ? 'reading-check'
-        : t.mainQuest.checkIn === 'schedule'
-          ? 'geo-photo'
-          : 'journal'
-  const pendingTask =
-    pending?.kind === 'daily' ? t.dailyTasks.find((x) => x.id === pending.taskId) : undefined
-  const pendingMethod: VerificationMethodId | null = pending
-    ? pending.kind === 'main'
-      ? mainMethod
-      : pendingTask
-        ? methodForTask(pendingTask)
-        : 'journal'
-    : null
+  // resolve verification method for the active pending daily task
+  const pendingTask = pending ? t.dailyTasks.find((x) => x.id === pending.taskId) : undefined
+  const pendingMethod: VerificationMethodId | null = pendingTask ? methodForTask(pendingTask) : null
 
   return (
     <div>
@@ -211,7 +190,7 @@ export default function TraitDetail() {
                   <button
                     key={task.id}
                     disabled={!isActive || done}
-                    onClick={() => setPending({ kind: 'daily', taskId: task.id })}
+                    onClick={() => setPending({ taskId: task.id })}
                     className={`flex w-full items-start gap-3 rounded-lg border p-3 text-left transition ${
                       done
                         ? 'border-exp/30 bg-exp/5'
@@ -249,34 +228,10 @@ export default function TraitDetail() {
           <div className="panel hud-corner relative overflow-hidden p-5">
             <div className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full bg-[var(--accent)]/10 blur-3xl" />
             <span className="font-pixel text-xs text-[var(--accent)] glow-text">MAIN QUEST</span>
-            <h3 className="mt-3 font-display text-lg font-bold text-white">{t.mainQuest.title}</h3>
-            {t.mainQuest.book && (
-              <>
-                <div className="mt-2 inline-flex items-center gap-2 rounded-lg border border-cosmos-gold/40 bg-cosmos-gold/5 px-3 py-1.5 text-xs text-cosmos-gold">
-                  📚 {t.mainQuest.book}
-                </div>
-                <div className="mt-2">
-                  <BookLinks book={t.mainQuest.book} compact />
-                </div>
-              </>
-            )}
-            <div className="mt-4">
-              <span className="stat-label text-xs">Why?</span>
-              <p className="mt-1 text-sm leading-relaxed text-slate-300">{t.mainQuest.why}</p>
-            </div>
-
-            {isActive && (
-              <div className="mt-5">
-                <ExpBar pct={mqProgress} label="Quest progress" />
-                <button
-                  disabled={mqDone}
-                  onClick={() => setPending({ kind: 'main' })}
-                  className="btn btn-primary mt-3 w-full text-xs"
-                >
-                  {mqDone ? '✓ Quest complete' : `Check in (+${t.mainQuest.exp} EXP on completion)`}
-                </button>
-              </div>
-            )}
+            <p className="mb-3 mt-1 text-xs text-[var(--muted)]">
+              Choose your path: read the book, or take the 2-week practical challenge.
+            </p>
+            <MainQuestCard traitId={t.id} onFlash={flash} />
           </div>
 
           <div className="panel p-5">
@@ -329,9 +284,8 @@ export default function TraitDetail() {
           open={!!pending}
           onClose={() => setPending(null)}
           method={pendingMethod}
-          label={pending.kind === 'main' ? t.mainQuest.title : pendingTask?.label ?? ''}
+          label={pendingTask?.label ?? ''}
           minMinutes={pendingTask?.minMinutes}
-          book={pending.kind === 'main' ? t.mainQuest.book : undefined}
           onResult={submit}
         />
       )}

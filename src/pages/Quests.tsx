@@ -5,9 +5,9 @@ import { useSocial } from '../store/social'
 import { isCloud } from '../lib/supabase'
 import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
-import { practicalQuestFor, practicalQuestId } from '../data/practicalQuests'
 import { attributeById } from '../data/attributes'
 import { VerificationModal } from '../components/VerificationModal'
+import MainQuestCard from '../components/MainQuestCard'
 import { methodForTask, type VerificationResult, type VerificationMethodId } from '../data/verification'
 import { CHALLENGES, periodKeyFor, type Challenge } from '../data/challenges'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
@@ -29,29 +29,16 @@ export default function Quests() {
     return m?.status ?? null
   }
   const activeTraits = useGame((s) => s.activeTraits)
-  const mainVariant = useGame((s) => s.mainVariant)
-  const setMainVariant = useGame((s) => s.setMainVariant)
-  const variantOf = (traitId: string) => mainVariant[traitId] ?? 'book'
-  const mainQuestOf = (traitId: string) => {
-    const t = traitById(traitId)!
-    return variantOf(traitId) === 'practical' ? practicalQuestFor(t) : t.mainQuest
-  }
-  const mainQuestIdOf = (traitId: string) =>
-    variantOf(traitId) === 'practical' ? practicalQuestId(traitId) : `main:${traitId}`
   const dailyLog = useGame((s) => s.dailyLog)
   const completedQuests = useGame((s) => s.completedQuests)
   const questsThisMonth = useGame((s) => s.questsThisMonth)
   const completeDailyTask = useGame((s) => s.completeDailyTask)
-  const advanceMainQuest = useGame((s) => s.advanceMainQuest)
   const challenges = useGame((s) => s.challenges)
   const logChallenge = useGame((s) => s.logChallenge)
   const [challengePending, setChallengePending] = useState<Challenge | null>(null)
 
-  const [pending, setPending] = useState<{
-    traitId: string
-    kind: 'daily' | 'main'
-    task?: DailyTask
-  } | null>(null)
+  // main quests now live in <MainQuestCard/>; this page only handles dailies
+  const [pending, setPending] = useState<{ traitId: string; task: DailyTask } | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const flash = (m: string) => {
     setToast(m)
@@ -76,30 +63,19 @@ export default function Quests() {
 
   const submit = (result: VerificationResult) => {
     if (!pending) return
+    const task = pending.task
 
     if (serverVerify) {
-      // server decides status + EXP
-      const args =
-        pending.kind === 'daily' && pending.task
-          ? {
-              questId: `${pending.traitId}:${pending.task.id}`,
-              method: result.method,
-              label: pending.task.label,
-              kind: 'daily' as const,
-              traitId: pending.traitId,
-              taskId: pending.task.id,
-              result,
-            }
-          : {
-              questId: mainQuestIdOf(pending.traitId),
-              method: result.method,
-              label: `Main quest · ${mainQuestOf(pending.traitId).title}`,
-              kind: 'main' as const,
-              traitId: pending.traitId,
-              result,
-            }
       flash('⏳ Verifying…')
-      serverSubmitQuest(args).then((r) => {
+      serverSubmitQuest({
+        questId: `${pending.traitId}:${task.id}`,
+        method: result.method,
+        label: task.label,
+        kind: 'daily',
+        traitId: pending.traitId,
+        taskId: task.id,
+        result,
+      }).then((r) => {
         flash(
           r.status === 'flagged'
             ? '⚠ Flagged — no EXP'
@@ -111,27 +87,18 @@ export default function Quests() {
       return
     }
 
-    if (pending.kind === 'daily' && pending.task) {
-      completeDailyTask(pending.traitId, pending.task.id, { exp: pending.task.exp, label: pending.task.label }, result)
-      flash(
-        result.status === 'flagged'
-          ? '⚠ Flagged — no EXP'
-          : result.status === 'pending'
-            ? '⏳ Sent for review'
-            : `+${pending.task.exp} EXP`,
-      )
-    } else {
-      advanceMainQuest(pending.traitId, { label: `Main quest · ${mainQuestOf(pending.traitId).title}`, steps: 4 }, result)
-      flash(result.status === 'flagged' ? '⚠ Flagged' : 'Main quest progress logged!')
-    }
+    completeDailyTask(pending.traitId, task.id, { exp: task.exp, label: task.label }, result)
+    flash(
+      result.status === 'flagged'
+        ? '⚠ Flagged — no EXP'
+        : result.status === 'pending'
+          ? '⏳ Sent for review'
+          : `+${task.exp} EXP`,
+    )
   }
 
-  // resolve the verification method for the current pending item
-  const pendingMethod: VerificationMethodId | null = pending
-    ? pending.kind === 'main'
-      ? mainQuestMethod(mainQuestOf(pending.traitId).checkIn)
-      : methodForTask(pending.task!)
-    : null
+  // resolve the verification method for the current pending daily task
+  const pendingMethod: VerificationMethodId | null = pending ? methodForTask(pending.task) : null
 
   const submitChallenge = (result: VerificationResult) => {
     if (!challengePending) return
@@ -206,7 +173,6 @@ export default function Quests() {
           const t = traitById(at.id)!
           const attr = attributeById(t.attribute)
           const tl = traitLevel(at.exp)
-          const mqPct = Math.round(at.mainQuestProgress * 100)
           return (
             <div key={at.id} className="panel hud-corner p-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -230,52 +196,10 @@ export default function Quests() {
                 </div>
               </div>
 
-              {/* main quest */}
-              {(() => {
-                const variant = variantOf(at.id)
-                const mq = mainQuestOf(at.id)
-                const locked = at.mainQuestProgress > 0 || at.mainQuestDone
-                const mainReview = reviewStatusOf(mainQuestIdOf(at.id), false)
-                const mainUnderReview = !at.mainQuestDone && mainReview === 'pending'
-                return (
-                  <div className="mt-4 rounded-xl border border-white/8 bg-white/[0.02] p-4">
-                    {/* path chooser: read a book, or take the 2-week practical challenge */}
-                    <div className="mb-3 flex items-center gap-1.5">
-                      {(['book', 'practical'] as const).map((v) => (
-                        <button
-                          key={v}
-                          disabled={locked && variant !== v}
-                          onClick={() => setMainVariant(at.id, v)}
-                          className={`rounded-lg border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide transition ${
-                            variant === v
-                              ? 'border-cosmos-cyan bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] text-cosmos-cyan'
-                              : 'border-white/10 text-[var(--muted)] hover:border-white/25 disabled:opacity-40'
-                          }`}
-                        >
-                          {v === 'book' ? '📖 Read a book' : '💪 2-week challenge'}
-                        </button>
-                      ))}
-                      {locked && (
-                        <span className="ml-1 text-[10px] text-[var(--muted)]">path locked while in progress</span>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="text-sm font-semibold text-white">🗡️ {mq.title}</span>
-                      <button
-                        disabled={at.mainQuestDone || mainUnderReview}
-                        onClick={() => setPending({ traitId: at.id, kind: 'main' })}
-                        className="btn btn-ghost text-[11px]"
-                      >
-                        {at.mainQuestDone ? '✓ Complete' : mainUnderReview ? '⏳ Under review' : 'Check in'}
-                      </button>
-                    </div>
-                    <p className="mt-1 text-xs text-[var(--muted)]">{mq.why}</p>
-                    <div className="mt-2">
-                      <ExpBar pct={mqPct} height="h-2" />
-                    </div>
-                  </div>
-                )
-              })()}
+              {/* main quest — book path or 2-week practical challenge */}
+              <div className="mt-4">
+                <MainQuestCard traitId={at.id} onFlash={flash} />
+              </div>
 
               {/* dailies */}
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -287,7 +211,7 @@ export default function Quests() {
                     <button
                       key={task.id}
                       disabled={done || underReview}
-                      onClick={() => setPending({ traitId: at.id, kind: 'daily', task })}
+                      onClick={() => setPending({ traitId: at.id, task })}
                       className={`flex items-center gap-2.5 rounded-lg border p-2.5 text-left text-sm transition ${
                         done
                           ? 'border-exp/30 bg-exp/5 text-exp'
@@ -394,13 +318,8 @@ export default function Quests() {
           open={!!pending}
           onClose={() => setPending(null)}
           method={pendingMethod}
-          label={
-            pending.kind === 'main'
-              ? mainQuestOf(pending.traitId).title
-              : pending.task?.label ?? ''
-          }
-          minMinutes={pending.kind === 'daily' ? pending.task?.minMinutes : undefined}
-          book={pending.kind === 'main' ? mainQuestOf(pending.traitId).book : undefined}
+          label={pending.task.label}
+          minMinutes={pending.task.minMinutes}
           onResult={submit}
         />
       )}
@@ -418,19 +337,4 @@ export default function Quests() {
       <Toast message={toast} />
     </div>
   )
-}
-
-// Map a main-quest check-in type to a verification method.
-function mainQuestMethod(ci: import('../data/types').CheckInType): VerificationMethodId {
-  switch (ci) {
-    case 'photo':
-      return 'live-photo'
-    case 'summary':
-      return 'reading-check'
-    case 'schedule':
-      return 'geo-photo'
-    case 'reflection':
-    default:
-      return 'journal'
-  }
 }

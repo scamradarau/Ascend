@@ -183,6 +183,9 @@ Deno.serve(async (req) => {
   const mult = status === 'verified' ? 1 : 0
 
   // --- 5. EXP from catalog (main quests step in 4) ---
+  // Main quests pay their full reward ONLY on completion (the 4th verified
+  // step). Intermediate steps advance progress but pay 0 — so resetting an
+  // unfinished quest forfeits nothing and EXP can't be farmed by resetting.
   let expBase = quest.base_exp
   let mainDone = false
   if (quest.scope === 'main') {
@@ -195,19 +198,19 @@ Deno.serve(async (req) => {
     const prevCount = qp?.count ?? 0
     if (qp?.done) {
       expBase = 0 // already finished
+    } else if (status === 'verified') {
+      const nextCount = Math.min(4, prevCount + 1)
+      mainDone = nextCount >= 4
+      expBase = mainDone ? quest.base_exp : 0 // reward lands on completion only
+      await admin.from('quest_progress').upsert({
+        user_id: user.id,
+        quest_id: quest.id,
+        count: nextCount,
+        done: mainDone,
+        updated_at: new Date().toISOString(),
+      })
     } else {
-      expBase = Math.round(quest.base_exp / 4)
-      if (status === 'verified') {
-        const nextCount = Math.min(4, prevCount + 1)
-        mainDone = nextCount >= 4
-        await admin.from('quest_progress').upsert({
-          user_id: user.id,
-          quest_id: quest.id,
-          count: nextCount,
-          done: mainDone,
-          updated_at: new Date().toISOString(),
-        })
-      }
+      expBase = 0 // pending/flagged: no progress, no EXP
     }
   }
   const expAwarded = Math.round(expBase * mult)

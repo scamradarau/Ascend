@@ -13,35 +13,42 @@ import type { Trait, MainQuest, AttributeId } from './types'
 
 export const PRACTICAL_QUEST_PREFIX = 'main-practical:'
 
-// per-attribute framing for the 2-week challenge
+// per-attribute framing for the 2-week challenge. Each defines a
+// `commitmentPrompt` — the player locks in their specific commitment, then
+// photographs it across the challenge as proof.
 const TEMPLATES: Record<
   AttributeId,
-  (t: Trait) => Pick<MainQuest, 'title' | 'why' | 'checkIn'>
+  (t: Trait) => Pick<MainQuest, 'title' | 'why' | 'checkIn' | 'commitmentPrompt'>
 > = {
   body: (t) => ({
     title: `14-Day ${t.name} Challenge`,
     checkIn: 'photo',
-    why: `Skip the reading — train it instead. For two weeks, do one ${t.name.toLowerCase()} session and snap a photo as proof. Showing up beats reading about showing up.`,
+    commitmentPrompt: 'Define your training commitment (e.g. “Push workout”, “5 km run”, “100 push-ups”)',
+    why: `Skip the reading — train it instead. Lock in your commitment, then photograph it across the next two weeks. Showing up beats reading about showing up.`,
   }),
   mind: (t) => ({
     title: `14-Day ${t.name} Sprint`,
     checkIn: 'photo',
-    why: `A practical, no-book path: for two weeks put ${t.name.toLowerCase()} to work on something real and photograph the result. Reps over theory.`,
+    commitmentPrompt: 'Define your daily practice (e.g. “30 min deep work on my project”, “20 Anki cards”)',
+    why: `A practical, no-book path: lock in what you’ll practise, then photograph the work across two weeks. Reps over theory.`,
   }),
   will: (t) => ({
     title: `14-Day ${t.name} Streak`,
     checkIn: 'photo',
-    why: `Forget the book — live it. For two weeks hold your keystone ${t.name.toLowerCase()} habit and capture proof each check-in. Discipline is built, not read.`,
+    commitmentPrompt: 'Define your keystone habit (e.g. “5 AM wake-up”, “cold shower”, “no phone till noon”)',
+    why: `Forget the book — live it. Lock in your keystone habit, then capture photo proof each check-in. Discipline is built, not read.`,
   }),
   heart: (t) => ({
     title: `14-Day ${t.name} Challenge`,
-    checkIn: 'reflection',
-    why: `Instead of reading, do the work: for two weeks take one real action that stretches your ${t.name.toLowerCase()} and log honest proof. Growth lives outside the comfort zone.`,
+    checkIn: 'photo',
+    commitmentPrompt: 'Define your daily action (e.g. “one thing that scares me”, “10-min cold exposure”)',
+    why: `Instead of reading, do the work: lock in a daily action that stretches you, then photograph the proof over two weeks. Growth lives outside the comfort zone.`,
   }),
   charisma: (t) => ({
     title: `14-Day ${t.name} Challenge`,
-    checkIn: 'reflection',
-    why: `No book needed — practise it. For two weeks initiate one real interaction that builds your ${t.name.toLowerCase()} and log what happened. Skills come from reps, not pages.`,
+    checkIn: 'photo',
+    commitmentPrompt: 'Define your daily rep (e.g. “start one real conversation”, “speak up in a meeting”)',
+    why: `No book needed — practise it. Lock in your daily rep, then capture proof across two weeks. Skills come from reps, not pages.`,
   }),
 }
 

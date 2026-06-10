@@ -100,10 +100,14 @@ export interface GameState {
 
   // chosen main-quest path per trait: 'book' (read) or 'practical' (2-week challenge)
   mainVariant: Record<string, 'book' | 'practical'>
+  // locked-in commitment text for a practical main quest, keyed by traitId
+  mainCommitment: Record<string, string>
 
   // ---- actions ----
   setTheme: (t: 'cosmos' | 'rune' | 'olympus') => void
   setMainVariant: (traitId: string, v: 'book' | 'practical') => void
+  setCommitment: (traitId: string, text: string) => void
+  resetMainQuestLocal: (traitId: string) => void
   toggleReduceMotion: () => void
   acceptTerms: () => void
   completeOnboarding: (answers: OnboardingAnswers) => void
@@ -200,10 +204,24 @@ export const useGame = create<GameState>()(
       challenges: {},
       friends: [],
       mainVariant: {},
+      mainCommitment: {},
 
       setTheme: (t) => set({ theme: t }),
       setMainVariant: (traitId, v) =>
         set({ mainVariant: { ...get().mainVariant, [traitId]: v } }),
+      setCommitment: (traitId, text) =>
+        set({ mainCommitment: { ...get().mainCommitment, [traitId]: text } }),
+      resetMainQuestLocal: (traitId) =>
+        set((s) => {
+          const mc = { ...s.mainCommitment }
+          delete mc[traitId]
+          return {
+            mainCommitment: mc,
+            activeTraits: s.activeTraits.map((t) =>
+              t.id === traitId ? { ...t, mainQuestProgress: 0, mainQuestDone: false } : t,
+            ),
+          }
+        }),
       toggleReduceMotion: () => set({ reduceMotion: !get().reduceMotion }),
       acceptTerms: () => set({ acceptedTerms: true }),
 
@@ -507,6 +525,7 @@ export const useGame = create<GameState>()(
           challenges: {},
           friends: [],
           mainVariant: {},
+          mainCommitment: {},
         }),
     }),
     {
