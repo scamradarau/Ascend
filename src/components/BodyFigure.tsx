@@ -18,15 +18,11 @@ export default function BodyFigure({ level }: { level: number }) {
 
   return (
     <div className="relative flex h-full min-h-[440px] w-full items-center justify-center">
-      {/* full-height accent glow — runs the entire panel so the light reaches
-          the bottom edge (not just the band around the portrait) */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-1/2 w-[30rem] max-w-full -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,_color-mix(in_srgb,var(--accent)_12%,transparent),_transparent_72%)]"
-      />
-      {/* scan line */}
+      {/* scan line — sweeps the FULL panel height (top → bottom). Animating
+          `top` (relative to this container) instead of transform, so it
+          travels the whole panel rather than just its own band height. */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-full overflow-hidden">
-        <div className="h-24 w-full bg-[linear-gradient(180deg,transparent,color-mix(in_srgb,var(--accent)_16%,transparent),transparent)] animate-scan" />
+        <div className="absolute inset-x-0 top-0 h-24 w-full bg-[linear-gradient(180deg,transparent,color-mix(in_srgb,var(--accent)_16%,transparent),transparent)] animate-scanline" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center">

@@ -63,6 +63,14 @@ export default {
           '0%': { transform: 'translateY(-100%)' },
           '100%': { transform: 'translateY(100%)' },
         },
+        // sweeps a band from above the panel all the way past the bottom.
+        // `top` % is relative to the container, so it covers the full height.
+        scanline: {
+          '0%': { top: '-6rem', opacity: '0' },
+          '12%': { opacity: '1' },
+          '88%': { opacity: '1' },
+          '100%': { top: '100%', opacity: '0' },
+        },
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
@@ -85,6 +93,7 @@ export default {
         floaty: 'floaty 5s ease-in-out infinite',
         pulseGlow: 'pulseGlow 2.4s ease-in-out infinite',
         scan: 'scan 4s linear infinite',
+        scanline: 'scanline 4s linear infinite',
         shimmer: 'shimmer 2.5s linear infinite',
         twinkle: 'twinkle 3s ease-in-out infinite',
         popIn: 'popIn 0.35s ease-out',
