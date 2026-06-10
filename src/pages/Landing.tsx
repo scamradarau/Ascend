@@ -54,13 +54,9 @@ export default function Landing() {
         className="fixed inset-0 z-0 bg-cover bg-center"
         style={{ backgroundImage: 'url(/themes/cosmos.webp)' }}
       />
-      <div
-        className="fixed inset-0 z-0"
-        style={{
-          background:
-            'radial-gradient(120% 90% at 50% 20%, transparent 40%, rgba(3,5,12,0.65) 100%), linear-gradient(to bottom, rgba(3,5,12,0.3), rgba(3,5,12,0.55))',
-        }}
-      />
+      {/* uniform readability scrim — flat, so brightness does NOT shift as you
+          scroll over the fixed backdrop (no vignette / "filter" effect) */}
+      <div className="fixed inset-0 z-0" style={{ background: 'rgba(4,7,18,0.55)' }} />
       {/* ---------------- HERO (brand-blue title slide) ---------------- */}
       <section className="relative z-10 flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 text-center">
         {/* brand-blue title-slide wash over the SHARED fixed cosmos backdrop
@@ -115,15 +111,14 @@ export default function Landing() {
             Self-mastery, with a <span className="text-cosmos-cyan">progression bar.</span>
           </h2>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-slate-300">
-            Ascend is a platform dedicated to helping people self-improve — with a twist. EXP bars,
-            traits, levels and more make self-mastery easier by giving you a visual guide of where you
-            are and how to improve each trait with absolute specificity.
+            Ascend turns becoming your best self into a game you can actually win. Choose the traits
+            you want to build, get clear daily quests, and watch real EXP, levels and stats track every
+            bit of progress — so growth stops being vague and starts being visible.
           </p>
           <p className="mt-4 max-w-3xl text-lg leading-relaxed text-slate-400">
-            Think about progression in games. There are heaps of guides on how to improve your
-            character — it’s straightforward, it just takes time. You can <em>see</em> what level you’re
-            at, so you naturally know how to get stronger and what quest to complete next. What if we
-            could simplify progression in real life, just as games do?
+            Games make getting stronger feel obvious: you see your level, you know the next quest, you
+            put in the time. Real life is the same effort — it just never gave you the screen. Ascend is
+            that screen. Same you, finally with a map.
           </p>
 
           <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -139,7 +134,7 @@ export default function Landing() {
       </section>
 
       {/* ---------------- WHY ---------------- */}
-      <section className="relative z-10 overflow-hidden bg-[#0a0f24]/55 px-6 py-24">
+      <section className="relative z-10 overflow-hidden bg-[#070a18]/45 px-6 py-24">
         <div className="relative z-10 mx-auto grid max-w-5xl items-center gap-12 lg:grid-cols-2">
           <div>
             <PixelTitle className="text-sm text-cosmos-violet">WHY “ASCEND”?</PixelTitle>
@@ -147,12 +142,14 @@ export default function Landing() {
               You already know you’re meant for more.
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-slate-300">
-              How many times a day do you think “I wish I had X” or “I wish I was better at X”? You
-              think it often — but you don’t take action. Why? Because you don’t know where to start.
+              The gap is never desire — you want it badly enough. It’s the blank page: not knowing
+              where to start, no way to see if today actually moved the needle, nothing to keep you
+              honest when motivation fades.
             </p>
             <p className="mt-4 text-lg leading-relaxed text-slate-400">
-              With life as a game, we give you a clear vision and a precise understanding of how to get
-              there — no matter the goal.
+              Ascend closes that gap. Every quest is verified, so the EXP you earn is real progress you
+              proved — not a streak you tapped. Your stats can’t lie to you, which means you finally
+              can’t lie to yourself.
             </p>
           </div>
           <div className="panel hud-corner p-8">
@@ -188,8 +185,9 @@ export default function Landing() {
             Built for those who know they’re <span className="text-cosmos-cyan">more.</span>
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300">
-            Never-seen-before concepts, beautiful visuals, real accountability, and successful people
-            on the platform for inspiration. Pick your traits. Take your first quest. Ascend.
+            A world-class build, real accountability, and a leaderboard of people actually doing the
+            work — not posting about it. Your Level 1 starts the moment you do. Pick your traits, take
+            your first quest, and ascend.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to={ctaTo} className="btn btn-primary text-lg">
