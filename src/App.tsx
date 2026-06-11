@@ -29,6 +29,7 @@ import PlayerProfile from './pages/PlayerProfile'
 import Privacy from './pages/Privacy'
 import Stoic from './pages/Stoic'
 import Journal from './pages/Journal'
+import WorldMap from './pages/WorldMap'
 
 function RequireAuth({ children }: { children: JSX.Element }) {
   const user = useAuth((s) => s.user)
@@ -114,6 +115,7 @@ export default function App() {
         <Route path="traits" element={<TraitMatrix />} />
         <Route path="traits/:id" element={<TraitDetail />} />
         <Route path="quests" element={<Quests />} />
+        <Route path="world" element={<WorldMap />} />
         <Route path="level" element={<LevelExpectations />} />
         <Route path="inventory" element={<Inventory />} />
         <Route path="leaderboards" element={<Leaderboards />} />

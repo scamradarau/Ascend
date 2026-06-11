@@ -63,6 +63,19 @@ export interface ServerSubmitResult {
   error?: string
 }
 
+// Full self-service wipe — clears the SERVER's earned state (profiles,
+// quest_progress, submissions) so "Reset all progress" isn't rolled back by
+// the next earned-values sync. Server function only ever touches the caller.
+export async function serverResetProgress(): Promise<{ ok: boolean; error?: string }> {
+  if (!supabase) return { ok: true } // offline: nothing server-side to clear
+  const res = await supabase.functions.invoke('reset-progress', { body: {} })
+  const data = (res.data as { ok?: boolean; error?: string } | null) ?? {}
+  if (res.error || data.error) return { ok: false, error: data.error ?? res.error?.message }
+  // drop cached submissions so review states/alerts clear immediately
+  useSocial.setState({ submissions: [] })
+  return { ok: true }
+}
+
 // Reset a main quest's server-side progress (only allowed while unfinished —
 // the Edge Function refuses completed quests so EXP can't be farmed).
 export async function resetQuestProgress(questId: string): Promise<{ ok: boolean; error?: string }> {

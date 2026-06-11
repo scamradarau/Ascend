@@ -10,6 +10,7 @@ import {
   type CosmeticSlot,
 } from '../data/cosmetics'
 import { isOwnerEmail } from '../lib/supabase'
+import { serverResetProgress } from '../store/serverVerify'
 import { CLASSES, resolveClass, isClassUnlocked, nextClass } from '../data/classes'
 import ClassAvatar from '../components/ClassAvatar'
 import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
@@ -55,7 +56,14 @@ export default function Settings() {
   const cls = resolveClass(level, classId, isOwner)
   const next = nextClass(level)
 
-  const doReset = () => {
+  const doReset = async () => {
+    // server first — earned values live in profiles and would otherwise be
+    // synced right back within one poll
+    const r = await serverResetProgress()
+    if (!r.ok) {
+      alert(`Couldn’t reset on the server: ${r.error ?? 'unknown error'}. Nothing was changed.`)
+      return
+    }
     resetAll()
     navigate('/')
   }
