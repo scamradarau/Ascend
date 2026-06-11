@@ -9,23 +9,47 @@ import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
 import ThemeBackground from './ThemeBackground'
 
-const NAV = [
-  { to: '/app/character', label: 'Character', icon: '🧬' },
-  { to: '/app/traits', label: 'Main Quests', icon: '🧠' },
-  { to: '/app/quests', label: 'Quests', icon: '📜' },
-  { to: '/app/world', label: 'World Map', icon: '🗺️' },
-  { to: '/app/journal', label: 'Journal', icon: '📓' },
-  { to: '/app/leaderboards', label: 'Leaderboard', icon: '🏆' },
-  { to: '/app/inventory', label: 'Inventory', icon: '🎒' },
-  { to: '/app/shop', label: 'Shop', icon: '🛒' },
-  { to: '/app/guild', label: 'Guild', icon: '🛡️' },
-  { to: '/app/friends', label: 'Friends', icon: '👥' },
-  { to: '/app/notifications', label: 'Alerts', icon: '🔔' },
-  { to: '/app/messages', label: 'Messages', icon: '✉️' },
-  { to: '/app/stoic', label: 'The Stoic', icon: '🏛️' },
-  { to: '/app/guide', label: 'Codex', icon: '📖' },
-  { to: '/app/feedback', label: 'Feedback', icon: '💬' },
-  { to: '/app/settings', label: 'Settings', icon: '⚙️' },
+// Grouped nav — the daily loop first, everything else clustered so the
+// drawer reads in seconds. Alerts & Messages live as header icons (badges
+// belong in sight, not in a drawer); Feedback lives inside Settings.
+const NAV_SECTIONS: { heading: string; items: { to: string; label: string; icon: string }[] }[] = [
+  {
+    heading: 'PLAY',
+    items: [
+      { to: '/app/character', label: 'Character', icon: '🧬' },
+      { to: '/app/quests', label: 'Quests', icon: '📜' },
+      { to: '/app/world', label: 'World Map', icon: '🗺️' },
+      { to: '/app/traits', label: 'Main Quests', icon: '🧠' },
+    ],
+  },
+  {
+    heading: 'PROGRESS',
+    items: [
+      { to: '/app/leaderboards', label: 'Leaderboard', icon: '🏆' },
+      { to: '/app/journal', label: 'Journal', icon: '📓' },
+    ],
+  },
+  {
+    heading: 'SOCIAL',
+    items: [
+      { to: '/app/guild', label: 'Guild', icon: '🛡️' },
+      { to: '/app/friends', label: 'Friends', icon: '👥' },
+    ],
+  },
+  {
+    heading: 'REWARDS',
+    items: [
+      { to: '/app/shop', label: 'Shop', icon: '🛒' },
+      { to: '/app/inventory', label: 'Inventory', icon: '🎒' },
+    ],
+  },
+  {
+    heading: 'GUIDANCE',
+    items: [
+      { to: '/app/stoic', label: 'The Stoic', icon: '🏛️' },
+      { to: '/app/guide', label: 'Codex', icon: '📖' },
+    ],
+  },
 ]
 
 export default function PlatformLayout() {
@@ -41,22 +65,23 @@ export default function PlatformLayout() {
   const pendingReqs = useSocial(selectPendingCount)
   const unreadMsgs = useSocial(selectUnreadCount)
   const unreadAlerts = useSocial(unreadAlertCount)
-  const badgeFor = (to: string) =>
-    to === '/app/notifications' ? pendingReqs + unreadAlerts : to === '/app/messages' ? unreadMsgs : 0
+  const alertBadge = pendingReqs + unreadAlerts
   const { level } = usePlayerLevel()
   const rank = rankForLevel(level)
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-  const navBadges = pendingReqs + unreadMsgs + unreadAlerts
   const showOwner = ownerMode && isOwnerEmail(authUser?.email)
   const cls = resolveClass(level, classId, showOwner)
-  const nav = showOwner
-    ? [
-        ...NAV.slice(0, NAV.length - 1),
-        { to: '/app/admin', label: 'Owner', icon: '🛠️' },
-        NAV[NAV.length - 1],
-      ]
-    : NAV
+  const sections = [
+    ...NAV_SECTIONS,
+    {
+      heading: 'SYSTEM',
+      items: [
+        ...(showOwner ? [{ to: '/app/admin', label: 'Owner', icon: '🛠️' }] : []),
+        { to: '/app/settings', label: 'Settings', icon: '⚙️' },
+      ],
+    },
+  ]
 
   const bgClass = theme === 'cosmos' ? 'cosmos-bg' : theme === 'rune' ? 'rune-bg' : 'olympus-bg'
 
@@ -89,17 +114,40 @@ export default function PlatformLayout() {
             onClick={() => setMenuOpen(true)}
             title="Menu"
             aria-label="Open menu"
-            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-lg text-[var(--text)] transition hover:border-[var(--accent)]/60 hover:text-[var(--accent)]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-lg text-[var(--text)] transition hover:border-[var(--accent)]/60 hover:text-[var(--accent)]"
           >
             ☰
-            {navBadges > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
-                {navBadges > 9 ? '9+' : navBadges}
-              </span>
-            )}
           </button>
 
           <div className="flex-1" />
+
+          {/* alerts + messages — always in sight, never buried in the drawer */}
+          <button
+            onClick={() => navigate('/app/notifications')}
+            title="Alerts — quest reviews & friend requests"
+            aria-label="Alerts"
+            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-sm transition hover:border-[var(--accent)]/60"
+          >
+            🔔
+            {alertBadge > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
+                {alertBadge > 9 ? '9+' : alertBadge}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => navigate('/app/messages')}
+            title="Messages"
+            aria-label="Messages"
+            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-sm transition hover:border-[var(--accent)]/60"
+          >
+            ✉️
+            {unreadMsgs > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
+                {unreadMsgs > 9 ? '9+' : unreadMsgs}
+              </span>
+            )}
+          </button>
 
           {/* aether + integrity */}
           <button
@@ -187,30 +235,34 @@ export default function PlatformLayout() {
                 ✕
               </button>
             </div>
-            <div className="flex-1 space-y-1 p-3">
-              {nav.map((n) => (
-                <NavLink
-                  key={n.to}
-                  to={n.to}
-                  onClick={() => setMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold uppercase tracking-wider transition ${
-                      isActive
-                        ? 'bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] text-[var(--accent)] shadow-glow'
-                        : 'text-[var(--muted)] hover:bg-white/[0.04] hover:text-[var(--text)]'
-                    }`
-                  }
-                >
-                  <span aria-hidden className="text-lg leading-none">
-                    {n.icon}
-                  </span>
-                  <span className="flex-1">{n.label}</span>
-                  {badgeFor(n.to) > 0 && (
-                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-cosmos-magenta px-1.5 text-[10px] font-bold text-white">
-                      {badgeFor(n.to) > 9 ? '9+' : badgeFor(n.to)}
-                    </span>
-                  )}
-                </NavLink>
+            <div className="flex-1 p-3">
+              {sections.map((sec) => (
+                <div key={sec.heading} className="mb-2">
+                  <div className="px-3 pb-1 pt-2 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]/60">
+                    {sec.heading}
+                  </div>
+                  <div className="space-y-0.5">
+                    {sec.items.map((n) => (
+                      <NavLink
+                        key={n.to}
+                        to={n.to}
+                        onClick={() => setMenuOpen(false)}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-bold uppercase tracking-wider transition ${
+                            isActive
+                              ? 'bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] text-[var(--accent)] shadow-glow'
+                              : 'text-[var(--muted)] hover:bg-white/[0.04] hover:text-[var(--text)]'
+                          }`
+                        }
+                      >
+                        <span aria-hidden className="text-lg leading-none">
+                          {n.icon}
+                        </span>
+                        <span className="flex-1">{n.label}</span>
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </nav>
@@ -227,6 +279,10 @@ export default function PlatformLayout() {
         <div className="mt-2">
           <NavLink to="/app/guide" className="text-[var(--muted)] hover:text-[var(--accent)]">
             Codex
+          </NavLink>{' '}
+          ·{' '}
+          <NavLink to="/app/feedback" className="text-[var(--muted)] hover:text-[var(--accent)]">
+            Feedback
           </NavLink>{' '}
           ·{' '}
           <a href="#/privacy" className="text-[var(--muted)] hover:text-[var(--accent)]">

@@ -347,6 +347,19 @@ export default function Settings() {
       </div>
       )}
 
+      {/* ---------------- FEEDBACK ---------------- */}
+      <div className="panel mt-5 flex flex-wrap items-center justify-between gap-4 p-6">
+        <div>
+          <span className="font-pixel text-xs text-[var(--accent)]">FEEDBACK</span>
+          <p className="mt-1 text-sm text-slate-300">
+            Found a bug or have an idea? We read everything — early players shape the game.
+          </p>
+        </div>
+        <button onClick={() => navigate('/app/feedback')} className="btn btn-ghost shrink-0 text-xs">
+          💬 Send feedback →
+        </button>
+      </div>
+
       {/* ---------------- ACCESSIBILITY ---------------- */}
       <div className="panel mt-5 p-6">
         <span className="font-pixel text-xs text-[var(--accent)]">ACCESSIBILITY</span>

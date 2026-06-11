@@ -17,22 +17,22 @@ const FEATURES = [
   {
     icon: '🏆',
     title: 'Leaderboards',
-    body: 'Overall level, consistency and trait ladders. Climb the ranks and earn real rewards.',
+    body: 'Overall level, consistency and trait ladders — every rank on the board was earned with verified work.',
   },
   {
-    icon: '🎖️',
-    title: 'Badges & Items',
-    body: 'Earn achievements and items by levelling traits and crushing quests. Build respect in the guild.',
+    icon: '🗺️',
+    title: 'The World Map',
+    body: 'Five Paths, rendered as regions of a realm. They only light up where you’ve actually done the work.',
   },
   {
-    icon: '🛡️',
-    title: 'The Guild',
-    body: 'One massive community of like-minded people, all climbing toward the endgame together.',
+    icon: '👹',
+    title: 'Boss Fights',
+    body: 'Weekly and monthly challenges are bosses — every verified log is a strike, and the bounty lands on the kill.',
   },
   {
     icon: '🔁',
     title: 'Accountability',
-    body: 'Real-time photos, written summaries, check-ins. Progress you can actually prove.',
+    body: 'Live photos, focus timers, reading checks. Clear proof verifies instantly; the rest goes to human review.',
   },
 ]
 

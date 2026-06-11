@@ -91,7 +91,7 @@ export default function TraitDetail() {
         onClick={() => navigate('/app/traits')}
         className="mb-4 text-xs uppercase tracking-widest text-[var(--muted)] hover:text-white"
       >
-        ← Trait Matrix
+        ← Main Quests
       </button>
 
       <div className="panel hud-corner relative overflow-hidden p-6 sm:p-8">

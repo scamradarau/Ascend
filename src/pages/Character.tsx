@@ -146,6 +146,29 @@ export default function Character() {
         </div>
       </div>
 
+      {/* first-run guide — visible until the first EXP lands, then gone forever */}
+      {totalExp === 0 && (
+        <div className="panel hud-corner mb-5 border-cosmos-cyan/40 p-5">
+          <span className="font-pixel text-xs text-cosmos-cyan glow-text">⚡ FIRST STEPS</span>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            {[
+              ['1', 'Complete a daily quest', 'Start with a quick check-in or timer quest — your first EXP is 2 minutes away.'],
+              ['2', 'Prove it', 'Photo quests verify instantly when the shot is clear; otherwise a human reviews it (yellow = under review).'],
+              ['3', 'Come back tomorrow', 'Your streak is the real engine. Day 2 is where most people quit — don’t be most people.'],
+            ].map(([n, title, body]) => (
+              <div key={n} className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
+                <div className="font-pixel text-sm text-cosmos-cyan">{n}</div>
+                <div className="mt-1 font-display text-sm font-bold text-white">{title}</div>
+                <div className="mt-1 text-xs text-[var(--muted)]">{body}</div>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => navigate('/app/quests')} className="btn btn-primary mt-4 text-xs">
+            ⚔ Take your first quest →
+          </button>
+        </div>
+      )}
+
       <div className="grid gap-5 lg:grid-cols-[300px_1fr_340px]">
         {/* ----------------- LEFT: STATS ----------------- */}
         <div className="panel hud-corner p-5">

@@ -108,7 +108,8 @@ export default function Onboarding() {
   const finish = () => {
     completeOnboarding(a)
     flushCloud()
-    navigate('/app/character')
+    // land directly on the quest board — first action within seconds
+    navigate('/app/quests')
   }
 
   const toggleGoal = (id: AttributeId) =>
@@ -163,7 +164,8 @@ export default function Onboarding() {
                 <PixelTitle className="text-xs text-cosmos-cyan">CREATE YOUR CHARACTER</PixelTitle>
                 <h2 className="mt-2 font-display text-2xl font-bold text-white">Who is logging in?</h2>
                 <p className="mt-1 text-sm text-slate-400">
-                  This tailors your level and the traits we suggest you build.
+                  This shapes the quests we recommend. Everyone starts at Level 1 — every level after
+                  that is earned.
                 </p>
               </div>
 
@@ -543,8 +545,17 @@ export default function Onboarding() {
                   })}
                 </div>
                 <p className="mt-3 text-center text-xs text-slate-500">
-                  You can swap these any time from the Trait Matrix — but you can only build 3 at once.
+                  You can swap these any time from the Main Quests page — but you can only build 3 at
+                  once.
                 </p>
+
+                {/* identity framing — the psychology that makes this stick */}
+                <div className="mt-5 rounded-xl border border-cosmos-cyan/30 bg-cosmos-cyan/5 p-4 text-center">
+                  <p className="text-sm italic text-slate-200">
+                    Every verified quest is a vote for the person you’re becoming. Cast the first one
+                    today — it takes two minutes.
+                  </p>
+                </div>
               </div>
             </div>
           )}
@@ -569,7 +580,7 @@ export default function Onboarding() {
               </button>
             ) : (
               <button type="button" onClick={finish} className="btn btn-primary">
-                ▶ Enter the platform
+                ⚔ Begin your first quest
               </button>
             )}
           </div>

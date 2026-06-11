@@ -56,9 +56,9 @@ const SECTIONS: Section[] = [
           <em>where you are</em> and <em>exactly what to do next</em>.
         </P>
         <P>
-          The loop is simple: <strong>pick traits → complete daily quests & a main quest → earn EXP,
-          level up your traits and your character → climb ranks, earn badges, items and real
-          rewards.</strong>
+          The loop is simple: <strong>pick your quests → prove the work daily → earn EXP, level your
+          traits and your character → climb ranks, slay challenge bosses and watch your World Map
+          light up.</strong>
         </P>
         <Callout>
           Golden rule: the honest path is the fast path. Every quest is verified, so the only way to
@@ -100,14 +100,15 @@ const SECTIONS: Section[] = [
   },
   {
     id: 'traits',
-    title: 'Traits & the Rule of 3',
+    title: 'Main Quests & the Rule of 3',
     icon: '🧠',
     body: (
       <>
         <P>
-          The <strong>Trait Matrix</strong> holds {TRAITS.length}+ traits — confidence, focus,
-          discipline, resilience, charisma, physique and many more. Each is a skill you can level
-          with specific, proven actions.
+          The <strong>Main Quests</strong> page holds {TRAITS.length}+ traits across the five Paths —
+          confidence, focus, discipline, resilience, charisma, physique and many more. Each is a
+          skill you can level with specific, proven actions, and your progress lights up its region
+          on the <strong>World Map</strong>.
         </P>
         <Callout tone="gold">
           You can only build <strong>3 traits at a time.</strong> Focus beats scatter. Once you start

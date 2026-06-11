@@ -12,12 +12,7 @@ const CONSENTS = [
   {
     id: 'photos',
     label:
-      'I consent to taking and uploading real-time photos as proof of completing tasks (gym, schedules, physique, etc.).',
-  },
-  {
-    id: 'docs',
-    label:
-      'I consent to uploading personal / business documents where needed to verify high-level claims (income, business, physique).',
+      'I consent to taking real-time photos as proof of completing quests (gym, meals, activities). Photos come from the live camera only — never from my gallery.',
   },
   {
     id: 'terms',
@@ -74,10 +69,10 @@ export default function Disclaimers() {
         </div>
 
         <div className="mt-6 rounded-xl border border-white/10 bg-black/30 p-4 text-xs leading-relaxed text-slate-500">
-          <strong className="text-slate-400">Note:</strong> Accountability is regulated through
-          real-time photos, written summaries of reading, and human + AI review of badge completions.
-          High-level questions (business, monetary, physique) must be proven. Starting caps: Low 20 ·
-          Mid 40 · High 60.
+          <strong className="text-slate-400">How verification works:</strong> quests are proven with
+          live photos, focus timers, reading checks and written reflections. Clear proof verifies
+          instantly; anything uncertain goes to human review. Everyone starts at Level 1 — every
+          level after that is earned, never bought.
         </div>
 
         <div className="mt-8 flex items-center justify-between gap-4">
