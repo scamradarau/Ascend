@@ -1,12 +1,14 @@
 import { create } from 'zustand'
-import { isCloud, fetchEarnedProgress, type CloudProfile } from '../lib/supabase'
+import { isCloud, isOwnerEmail, fetchEarnedProgress, type CloudProfile } from '../lib/supabase'
 import { useAuth } from './auth'
 import { useGame } from './useGame'
+import { challengeById, periodKeyFor } from '../data/challenges'
 import {
   fetchMyRequests,
   fetchMyMessages,
   fetchMySubmissions,
   fetchProfilesByIds,
+  fetchQuestProgress,
   sendFriendRequest,
   respondFriendRequest,
   removeFriendship,
@@ -94,23 +96,72 @@ export const useSocial = create<SocialState>((set, get) => ({
     set({ meId: me, requests, messages, submissions, profiles, ready: true })
 
     // keep earned values in sync with the server (so an approved review's EXP
-    // shows up here within one poll, without needing a reload)
+    // shows up here within one poll, without needing a reload).
+    // Skipped in owner test-mode so "set level" experiments aren't rolled back.
+    const ownerTesting =
+      useGame.getState().ownerMode && isOwnerEmail(useAuth.getState().user?.email)
+    if (ownerTesting) return
+
     const prog = await fetchEarnedProgress(me)
     if (prog) {
-      useGame.setState((g) => ({
-        totalExp: typeof prog.total_exp === 'number' ? prog.total_exp : g.totalExp,
-        trust: typeof prog.trust === 'number' ? prog.trust : g.trust,
-        streak: typeof prog.streak === 'number' ? prog.streak : g.streak,
-        questsThisMonth:
-          typeof prog.quests_this_month === 'number' ? prog.quests_this_month : g.questsThisMonth,
-        earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : g.earnedBadges,
-        activeTraits:
-          prog.trait_exp && Object.keys(prog.trait_exp).length
-            ? g.activeTraits.map((t) =>
-                prog.trait_exp![t.id] != null ? { ...t, exp: prog.trait_exp![t.id] } : t,
-              )
-            : g.activeTraits,
-      }))
+      useGame.setState((g) => {
+        const newTotal = typeof prog.total_exp === 'number' ? prog.total_exp : g.totalExp
+        // Aether shadows EXP at 1:4 — any server-granted EXP (incl. review
+        // approvals) also grants Aether here, exactly once per delta.
+        const delta = newTotal - g.totalExp
+        return {
+          totalExp: newTotal,
+          aether: delta > 0 ? g.aether + Math.round(delta / 4) : g.aether,
+          trust: typeof prog.trust === 'number' ? prog.trust : g.trust,
+          streak: typeof prog.streak === 'number' ? prog.streak : g.streak,
+          questsThisMonth:
+            typeof prog.quests_this_month === 'number' ? prog.quests_this_month : g.questsThisMonth,
+          earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : g.earnedBadges,
+          activeTraits:
+            prog.trait_exp && Object.keys(prog.trait_exp).length
+              ? g.activeTraits.map((t) =>
+                  prog.trait_exp![t.id] != null ? { ...t, exp: prog.trait_exp![t.id] } : t,
+                )
+              : g.activeTraits,
+        }
+      })
+    }
+
+    // sync server-owned quest progress → challenge bars + main-quest bars
+    // (this is what moves the progress bar when a photo gets approved)
+    const qps = await fetchQuestProgress(me)
+    if (qps.length) {
+      useGame.setState((g) => {
+        const challenges = { ...g.challenges }
+        let activeTraits = g.activeTraits
+        for (const r of qps) {
+          const at = r.quest_id.indexOf('@')
+          if (at > 0) {
+            // challenge row: "<challengeId>@<period>" — only adopt the CURRENT period
+            const id = r.quest_id.slice(0, at)
+            const period = r.quest_id.slice(at + 1)
+            const c = challengeById(id)
+            if (c && periodKeyFor(c.scope) === period) {
+              challenges[id] = { count: r.count, period, done: r.done }
+            }
+          } else if (r.quest_id.startsWith('main:') || r.quest_id.startsWith('main-practical:')) {
+            const practical = r.quest_id.startsWith('main-practical:')
+            const traitId = r.quest_id.split(':')[1]
+            if ((g.mainVariant[traitId] ?? 'book') !== (practical ? 'practical' : 'book')) continue
+            const steps = practical ? 14 : 4
+            activeTraits = activeTraits.map((t) =>
+              t.id === traitId
+                ? {
+                    ...t,
+                    mainQuestProgress: Math.min(1, r.count / steps),
+                    mainQuestDone: r.done,
+                  }
+                : t,
+            )
+          }
+        }
+        return { challenges, activeTraits }
+      })
     }
   },
 

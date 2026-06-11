@@ -35,6 +35,45 @@ function levelFromTotalExp(total: number): number {
 }
 const clampTrust = (n: number) => Math.max(0, Math.min(100, Math.round(n)))
 
+// ---- Sydney time — ALL quest resets are anchored to Australia/Sydney,
+// matching the client's lib/time.ts (same period-key formats). ----
+const SYD = 'Australia/Sydney'
+const sydDay = (d: Date) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: SYD, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d)
+const sydWall = (d: Date) => new Date(d.toLocaleString('en-US', { timeZone: SYD }))
+function sydMonthKey(d = new Date()): string {
+  const w = sydWall(d)
+  return `${w.getFullYear()}-${w.getMonth() + 1}`
+}
+function sydWeekKey(d = new Date()): string {
+  const w = sydWall(d)
+  const date = new Date(Date.UTC(w.getFullYear(), w.getMonth(), w.getDate()))
+  const dayNum = (date.getUTCDay() + 6) % 7
+  date.setUTCDate(date.getUTCDate() - dayNum + 3)
+  const firstThursday = new Date(Date.UTC(date.getUTCFullYear(), 0, 4))
+  const week =
+    1 +
+    Math.round(
+      ((date.getTime() - firstThursday.getTime()) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7,
+    )
+  return `${date.getUTCFullYear()}-W${week}`
+}
+
+// one VERIFIED submission per quest per Sydney calendar day
+// deno-lint-ignore no-explicit-any
+async function verifiedTodaySyd(admin: any, userId: string, questId: string): Promise<boolean> {
+  const since = new Date(Date.now() - 48 * 3600 * 1000).toISOString()
+  const { data } = await admin
+    .from('submissions')
+    .select('created_at')
+    .eq('user_id', userId)
+    .eq('quest_id', questId)
+    .eq('status', 'verified')
+    .gte('created_at', since)
+  const today = sydDay(new Date())
+  return ((data ?? []) as { created_at: string }[]).some((r) => sydDay(new Date(r.created_at)) === today)
+}
+
 function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
   const R = 6371
   const dLat = ((b.lat - a.lat) * Math.PI) / 180
@@ -90,10 +129,24 @@ Deno.serve(async (req) => {
   // --- 1. quest catalog (server EXP source of truth) ---
   const { data: quest } = await admin
     .from('quests')
-    .select('id, trait_id, base_exp, scope')
+    .select('id, trait_id, base_exp, scope, target')
     .eq('id', body.quest_id)
     .maybeSingle()
   if (!quest) return json({ error: 'unknown quest' }, 400)
+
+  // ---- one verified completion per Sydney day ----
+  // dailies: once per day by definition. weekly/monthly challenges and the
+  // 14-day practical main quests: max ONE verified log per Sydney day.
+  const isPracticalMain = quest.scope === 'main' && String(quest.id).startsWith('main-practical:')
+  if (quest.scope === 'daily' || quest.scope === 'weekly' || quest.scope === 'monthly' || isPracticalMain) {
+    if (await verifiedTodaySyd(admin, user.id, quest.id))
+      return json({
+        error:
+          quest.scope === 'daily'
+            ? 'Already completed today — resets at midnight (Sydney time).'
+            : 'Already logged today — one verified log per day. Come back after midnight (Sydney time).',
+      })
+  }
 
   const flags: string[] = []
 
@@ -142,28 +195,8 @@ Deno.serve(async (req) => {
 
   // --- 4. status (server-decided) ---
   // flagged: faked liveness or impossible GPS. pending: weak signal. verified: clean.
-  // daily dedupe — one verified daily per quest per user per UTC day
-  let dupe = false
-  if (quest.scope === 'daily') {
-    const dayStart = new Date()
-    dayStart.setUTCHours(0, 0, 0, 0)
-    const { data: already } = await admin
-      .from('submissions')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('quest_id', quest.id)
-      .eq('status', 'verified')
-      .gte('created_at', dayStart.toISOString())
-      .limit(1)
-      .maybeSingle()
-    if (already) {
-      dupe = true
-      flags.push('Already completed today')
-    }
-  }
-
   let serverStatus: 'verified' | 'pending' | 'flagged'
-  if (!livenessOk || !gpsOk || dupe) serverStatus = 'flagged'
+  if (!livenessOk || !gpsOk) serverStatus = 'flagged'
   else if (body.scene_label === '__mismatch__') serverStatus = 'flagged'
   else serverStatus = 'verified'
 
@@ -182,13 +215,18 @@ Deno.serve(async (req) => {
   // approves it (review-submission grants the EXP then).
   const mult = status === 'verified' ? 1 : 0
 
-  // --- 5. EXP from catalog (main quests step in 4) ---
-  // Main quests pay their full reward ONLY on completion (the 4th verified
-  // step). Intermediate steps advance progress but pay 0 — so resetting an
-  // unfinished quest forfeits nothing and EXP can't be farmed by resetting.
+  // --- 5. EXP from catalog ---
+  // Multi-step quests (mains + weekly/monthly challenges) pay their full
+  // reward ONLY on completion. Intermediate verified steps advance progress
+  // but pay 0 — so the reward can't be farmed per-log, and resetting an
+  // unfinished quest forfeits nothing.
   let expBase = quest.base_exp
   let mainDone = false
+  let progressCount: number | null = null
+  let progressTarget: number | null = null
   if (quest.scope === 'main') {
+    // book path = 4 check-ins; 14-day practical challenge = 14 (day-gated above)
+    const steps = isPracticalMain ? 14 : 4
     const { data: qp } = await admin
       .from('quest_progress')
       .select('count, done')
@@ -196,12 +234,14 @@ Deno.serve(async (req) => {
       .eq('quest_id', quest.id)
       .maybeSingle()
     const prevCount = qp?.count ?? 0
-    if (qp?.done) {
-      expBase = 0 // already finished
-    } else if (status === 'verified') {
-      const nextCount = Math.min(4, prevCount + 1)
-      mainDone = nextCount >= 4
+    progressTarget = steps
+    progressCount = prevCount
+    expBase = 0
+    if (!qp?.done && status === 'verified') {
+      const nextCount = Math.min(steps, prevCount + 1)
+      mainDone = nextCount >= steps
       expBase = mainDone ? quest.base_exp : 0 // reward lands on completion only
+      progressCount = nextCount
       await admin.from('quest_progress').upsert({
         user_id: user.id,
         quest_id: quest.id,
@@ -209,8 +249,34 @@ Deno.serve(async (req) => {
         done: mainDone,
         updated_at: new Date().toISOString(),
       })
-    } else {
-      expBase = 0 // pending/flagged: no progress, no EXP
+    }
+  } else if (quest.scope === 'weekly' || quest.scope === 'monthly') {
+    // challenge progress is tracked per Sydney period: row id "<quest>@<period>"
+    const period = quest.scope === 'weekly' ? sydWeekKey() : sydMonthKey()
+    const rowId = `${quest.id}@${period}`
+    const target = quest.target ?? 4
+    const { data: qp } = await admin
+      .from('quest_progress')
+      .select('count, done')
+      .eq('user_id', user.id)
+      .eq('quest_id', rowId)
+      .maybeSingle()
+    const prevCount = qp?.count ?? 0
+    progressTarget = target
+    progressCount = prevCount
+    expBase = 0
+    if (!qp?.done && status === 'verified') {
+      const nextCount = Math.min(target, prevCount + 1)
+      mainDone = nextCount >= target
+      expBase = mainDone ? quest.base_exp : 0 // full reward only when the period target is hit
+      progressCount = nextCount
+      await admin.from('quest_progress').upsert({
+        user_id: user.id,
+        quest_id: rowId,
+        count: nextCount,
+        done: mainDone,
+        updated_at: new Date().toISOString(),
+      })
     }
   }
   const expAwarded = Math.round(expBase * mult)
@@ -291,6 +357,8 @@ Deno.serve(async (req) => {
     exp_awarded: expAwarded,
     trust_delta: trustDelta,
     main_done: mainDone,
+    progress_count: progressCount,
+    progress_target: progressTarget,
     flags,
   })
 })

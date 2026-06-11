@@ -1,4 +1,4 @@
-import { supabase, fetchEarnedProgress } from '../lib/supabase'
+import { supabase, isOwnerEmail, fetchEarnedProgress } from '../lib/supabase'
 import { useAuth } from './auth'
 import { useGame, type Submission } from './useGame'
 import { useSocial } from './social'
@@ -19,22 +19,30 @@ import type { VerificationResult } from '../data/verification'
 // ================================================================
 
 async function reconcileEarned(userId: string) {
+  // owner test-mode: don't roll back "set level" experiments
+  if (useGame.getState().ownerMode && isOwnerEmail(useAuth.getState().user?.email)) return
   const prog = await fetchEarnedProgress(userId)
   if (!prog) return
-  useGame.setState((s) => ({
-    totalExp: typeof prog.total_exp === 'number' ? prog.total_exp : s.totalExp,
-    trust: typeof prog.trust === 'number' ? prog.trust : s.trust,
-    streak: typeof prog.streak === 'number' ? prog.streak : s.streak,
-    questsThisMonth:
-      typeof prog.quests_this_month === 'number' ? prog.quests_this_month : s.questsThisMonth,
-    earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : s.earnedBadges,
-    activeTraits:
-      prog.trait_exp && Object.keys(prog.trait_exp).length
-        ? s.activeTraits.map((t) =>
-            prog.trait_exp![t.id] != null ? { ...t, exp: prog.trait_exp![t.id] } : t,
-          )
-        : s.activeTraits,
-  }))
+  useGame.setState((s) => {
+    const newTotal = typeof prog.total_exp === 'number' ? prog.total_exp : s.totalExp
+    // Aether shadows EXP at 1:4 — granted once per server EXP delta
+    const delta = newTotal - s.totalExp
+    return {
+      totalExp: newTotal,
+      aether: delta > 0 ? s.aether + Math.round(delta / 4) : s.aether,
+      trust: typeof prog.trust === 'number' ? prog.trust : s.trust,
+      streak: typeof prog.streak === 'number' ? prog.streak : s.streak,
+      questsThisMonth:
+        typeof prog.quests_this_month === 'number' ? prog.quests_this_month : s.questsThisMonth,
+      earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : s.earnedBadges,
+      activeTraits:
+        prog.trait_exp && Object.keys(prog.trait_exp).length
+          ? s.activeTraits.map((t) =>
+              prog.trait_exp![t.id] != null ? { ...t, exp: prog.trait_exp![t.id] } : t,
+            )
+          : s.activeTraits,
+    }
+  })
 }
 
 export interface ServerSubmitArgs {
@@ -51,6 +59,8 @@ export interface ServerSubmitResult {
   status: 'verified' | 'pending' | 'flagged'
   exp: number
   mainDone?: boolean
+  /** server refused the submission (e.g. already logged today) — show this */
+  error?: string
 }
 
 // Reset a main quest's server-side progress (only allowed while unfinished —
@@ -93,7 +103,15 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
       scene_pass: a.result.meta?.sceneChecked === true && a.result.meta?.sceneVerdict === 'verified',
     },
   })
-  const res = (verify.data as { status?: string; exp_awarded?: number; main_done?: boolean } | null) ?? {}
+  const res =
+    (verify.data as {
+      status?: string
+      exp_awarded?: number
+      main_done?: boolean
+      error?: string
+    } | null) ?? {}
+  // server refusal (e.g. "already logged today") — surface it, change nothing
+  if (res.error) return { status: 'flagged', exp: 0, error: res.error }
   const status = (res.status as ServerSubmitResult['status']) ?? 'pending'
   const exp = res.exp_awarded ?? 0
   const verified = status === 'verified'
@@ -122,16 +140,17 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
       submissions: [sub, ...s.submissions].slice(0, 120),
     }
     if (verified) {
-      patch.aether = s.aether + Math.round(exp / 4)
+      // (aether is granted by reconcileEarned from the server EXP delta)
       if (a.kind === 'daily' && a.traitId && a.taskId) {
         patch.dailyLog = { ...s.dailyLog, [`${a.traitId}:${a.taskId}:${todayKey()}`]: at }
       }
       if (a.kind === 'main' && a.traitId) {
+        const step = a.questId.startsWith('main-practical:') ? 1 / 14 : 0.25
         patch.activeTraits = s.activeTraits.map((t) =>
           t.id === a.traitId
             ? {
                 ...t,
-                mainQuestProgress: Math.min(1, t.mainQuestProgress + 0.25),
+                mainQuestProgress: Math.min(1, t.mainQuestProgress + step),
                 mainQuestDone: Boolean(res.main_done),
               }
             : t,

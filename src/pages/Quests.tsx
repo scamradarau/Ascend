@@ -10,6 +10,7 @@ import { VerificationModal } from '../components/VerificationModal'
 import MainQuestCard from '../components/MainQuestCard'
 import { methodForTask, type VerificationResult, type VerificationMethodId } from '../data/verification'
 import { CHALLENGES, periodKeyFor, type Challenge } from '../data/challenges'
+import { todayKey } from '../lib/time'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
 import ResetCountdown from '../components/ResetCountdown'
 import type { DailyTask } from '../data/types'
@@ -77,11 +78,13 @@ export default function Quests() {
         result,
       }).then((r) => {
         flash(
-          r.status === 'flagged'
-            ? '⚠ Flagged — no EXP'
-            : r.status === 'pending'
-              ? '📸 Sent for review — pass it and you’ll earn the EXP; if it doesn’t pass, no EXP and you can retry.'
-              : `+${r.exp} EXP`,
+          r.error
+            ? `⚠ ${r.error}`
+            : r.status === 'flagged'
+              ? '⚠ Flagged — no EXP'
+              : r.status === 'pending'
+                ? '📸 Sent for review — pass it and you’ll earn the EXP; if it doesn’t pass, no EXP and you can retry.'
+                : `+${r.exp} EXP`,
         )
       })
       return
@@ -112,11 +115,15 @@ export default function Quests() {
         result,
       }).then((r) => {
         flash(
-          r.status === 'flagged'
-            ? '⚠ Flagged — no progress'
-            : r.status === 'pending'
-              ? '📸 Sent for review — pass it to earn the EXP; if not, no EXP and you can retry.'
-              : `+${r.exp} EXP`,
+          r.error
+            ? `⚠ ${r.error}`
+            : r.status === 'flagged'
+              ? '⚠ Flagged — no progress'
+              : r.status === 'pending'
+                ? '📸 Sent for review — approved logs move the bar; the EXP lands when you hit the target.'
+                : r.mainDone
+                  ? `🏆 Challenge complete! +${r.exp} EXP`
+                  : '✓ Log verified — progress +1. Full EXP lands when you hit the target.',
         )
       })
       return
@@ -259,6 +266,19 @@ export default function Quests() {
             {CHALLENGES.filter((c) => c.scope === scope).map((c) => {
               const st = challengeState(c)
               const pct = Math.round((st.count / c.target) * 100)
+              // one verified log per Sydney day; pending review also blocks
+              const loggedToday = subs.some(
+                (x) =>
+                  x.quest_id === c.id &&
+                  x.status === 'verified' &&
+                  todayKey(new Date(x.created_at)) === todayKey(),
+              )
+              const reviewPending = subs.some(
+                (x) =>
+                  x.quest_id === c.id &&
+                  x.status === 'pending' &&
+                  todayKey(new Date(x.created_at)) === todayKey(),
+              )
               return (
                 <div
                   key={c.id}
@@ -281,11 +301,18 @@ export default function Quests() {
                       +{c.exp} EXP · ◈ {c.aether}
                     </span>
                     <button
-                      disabled={st.done}
+                      disabled={st.done || loggedToday || reviewPending}
                       onClick={() => setChallengePending(c)}
                       className="btn btn-ghost text-[11px]"
+                      title={loggedToday ? 'One log per day — next at midnight (Sydney)' : undefined}
                     >
-                      {st.done ? '✓ Complete' : 'Log progress'}
+                      {st.done
+                        ? '✓ Complete'
+                        : loggedToday
+                          ? '✓ Logged today'
+                          : reviewPending
+                            ? '⏳ Under review'
+                            : 'Log progress'}
                     </button>
                   </div>
                 </div>

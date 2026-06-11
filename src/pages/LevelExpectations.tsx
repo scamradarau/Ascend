@@ -84,9 +84,9 @@ export default function LevelExpectations() {
                   isCurrent ? 'border-[var(--accent)] shadow-glow' : reached ? '' : 'opacity-60'
                 }`}
               >
-                <div className="flex w-40 shrink-0 items-center gap-3">
+                <div className="flex w-44 shrink-0 items-center gap-3">
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg border font-pixel text-[10px] ${
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border font-pixel text-[10px] ${
                       reached
                         ? 'border-[var(--accent)] text-[var(--accent)]'
                         : 'border-white/15 text-[var(--muted)]'

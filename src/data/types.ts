@@ -8,6 +8,8 @@ export interface Attribute {
   id: AttributeId
   name: string
   short: string // RPG-style short stat (INT, etc.)
+  /** epic questline name shown on the Main Quests page (e.g. "Path to Enlightenment") */
+  path: string
   blurb: string
   color: string // hex for theming the node
   icon: string // emoji glyph used as a lightweight icon

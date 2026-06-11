@@ -14,11 +14,11 @@ export default function TraitMatrix() {
     <div>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <PixelTitle className="text-xs text-[var(--accent)]">TRAIT MATRIX</PixelTitle>
-          <h1 className="mt-2 font-display text-2xl font-bold text-white">Discover & choose traits</h1>
+          <PixelTitle className="text-xs text-[var(--accent)]">MAIN QUESTS</PixelTitle>
+          <h1 className="mt-2 font-display text-2xl font-bold text-white">Choose your path</h1>
           <p className="mt-1 max-w-2xl text-sm text-[var(--muted)]">
-            Browse the matrix and pick what to build. You can only build{' '}
-            <span className="text-[var(--accent)]">3 traits at a time</span> — focus beats
+            Five great paths, each with quests to master. You can only walk{' '}
+            <span className="text-[var(--accent)]">3 quests at a time</span> — focus beats
             scatter. Once you start a main quest, you’re committed until it’s done.
           </p>
         </div>
@@ -40,9 +40,14 @@ export default function TraitMatrix() {
                   {attr.icon}
                 </div>
                 <div>
-                  <h2 className="font-display text-lg font-bold uppercase tracking-wide text-white">
-                    {attr.name}{' '}
-                    <span className="text-sm font-normal text-[var(--muted)]">/ {attr.short}</span>
+                  <h2
+                    className="font-display text-lg font-bold uppercase tracking-wide text-white"
+                    style={{ textShadow: `0 0 18px ${attr.color}88` }}
+                  >
+                    {attr.path}{' '}
+                    <span className="text-sm font-normal text-[var(--muted)]">
+                      / {attr.name} · {attr.short}
+                    </span>
                   </h2>
                   <p className="text-xs text-[var(--muted)]">{attr.blurb}</p>
                 </div>

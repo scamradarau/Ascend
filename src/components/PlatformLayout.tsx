@@ -11,7 +11,7 @@ import ThemeBackground from './ThemeBackground'
 
 const NAV = [
   { to: '/app/character', label: 'Character', icon: '🧬' },
-  { to: '/app/traits', label: 'Traits', icon: '🧠' },
+  { to: '/app/traits', label: 'Main Quests', icon: '🧠' },
   { to: '/app/quests', label: 'Quests', icon: '📜' },
   { to: '/app/journal', label: 'Journal', icon: '📓' },
   { to: '/app/leaderboards', label: 'Leaderboard', icon: '🏆' },

@@ -33,7 +33,7 @@ export const CHALLENGES: Challenge[] = [
     unit: 'sessions',
     verify: 'geo-photo',
     exp: 420,
-    aether: 160,
+    aether: 105,
   },
   {
     id: 'w-meditate5',
@@ -45,7 +45,7 @@ export const CHALLENGES: Challenge[] = [
     unit: 'sessions',
     verify: 'meditation-timer',
     exp: 360,
-    aether: 130,
+    aether: 90,
   },
   {
     id: 'w-deep5',
@@ -57,7 +57,7 @@ export const CHALLENGES: Challenge[] = [
     unit: 'sprints',
     verify: 'focus-timer',
     exp: 420,
-    aether: 160,
+    aether: 105,
   },
   {
     id: 'w-read4',
@@ -69,7 +69,7 @@ export const CHALLENGES: Challenge[] = [
     unit: 'sessions',
     verify: 'reading-check',
     exp: 380,
-    aether: 140,
+    aether: 95,
     reading: true,
   },
   {
@@ -82,7 +82,7 @@ export const CHALLENGES: Challenge[] = [
     unit: 'connections',
     verify: 'journal',
     exp: 320,
-    aether: 110,
+    aether: 80,
   },
 
   // ---------------- MONTHLY ----------------
@@ -96,7 +96,7 @@ export const CHALLENGES: Challenge[] = [
     unit: 'sessions',
     verify: 'reading-check',
     exp: 1600,
-    aether: 650,
+    aether: 400,
     reading: true,
   },
   {
@@ -109,7 +109,7 @@ export const CHALLENGES: Challenge[] = [
     unit: 'sessions',
     verify: 'geo-photo',
     exp: 1900,
-    aether: 800,
+    aether: 475,
   },
   {
     id: 'm-meditate20',
@@ -121,7 +121,7 @@ export const CHALLENGES: Challenge[] = [
     unit: 'sessions',
     verify: 'meditation-timer',
     exp: 1500,
-    aether: 620,
+    aether: 375,
   },
   {
     id: 'm-journal20',
@@ -133,7 +133,7 @@ export const CHALLENGES: Challenge[] = [
     unit: 'entries',
     verify: 'journal',
     exp: 1300,
-    aether: 520,
+    aether: 325,
   },
 ]
 

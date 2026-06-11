@@ -16,6 +16,7 @@ import {
 import { ATTRIBUTES } from '../data/attributes'
 import { traitById } from '../data/traits'
 import { validateHandle } from '../lib/handles'
+import { isCloud, supabase } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
 import type { AttributeId } from '../data/types'
 import { PixelTitle, ExpBar } from '../components/ui'
@@ -71,6 +72,8 @@ export default function Onboarding() {
 
   const result = useMemo(() => computeOnboarding(a), [a])
 
+  const [handleTaken, setHandleTaken] = useState(false)
+  const [checkingHandle, setCheckingHandle] = useState(false)
   const handleErr = useMemo(() => (a.handle.trim() ? validateHandle(a.handle) : null), [a.handle])
 
   const canNext = useMemo(() => {
@@ -79,6 +82,28 @@ export default function Onboarding() {
     if (step === 2) return a.goals.length > 0 || a.outcomes.length > 0
     return true
   }, [step, a])
+
+  // handles must be UNIQUE — check the cloud profile registry before leaving step 0
+  const tryNext = async () => {
+    if (!canNext || checkingHandle) return
+    if (step === 0 && isCloud && supabase) {
+      setCheckingHandle(true)
+      const meId = useAuth.getState().user?.id ?? ''
+      const { data: taken } = await supabase
+        .from('profiles')
+        .select('id')
+        .ilike('handle', a.handle.trim())
+        .neq('id', meId)
+        .maybeSingle()
+      setCheckingHandle(false)
+      if (taken) {
+        setHandleTaken(true)
+        return
+      }
+    }
+    setHandleTaken(false)
+    setStep((s) => s + 1)
+  }
 
   const finish = () => {
     completeOnboarding(a)
@@ -148,10 +173,18 @@ export default function Onboarding() {
                   className="input"
                   placeholder="e.g. Alchy"
                   value={a.handle}
-                  onChange={(e) => set({ handle: e.target.value })}
+                  onChange={(e) => {
+                    set({ handle: e.target.value })
+                    setHandleTaken(false)
+                  }}
                   maxLength={20}
                 />
                 {handleErr && <p className="mt-1.5 text-xs text-cosmos-magenta">{handleErr}</p>}
+                {!handleErr && handleTaken && (
+                  <p className="mt-1.5 text-xs text-cosmos-magenta">
+                    That handle is already taken — every Ascender needs a unique name.
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -528,11 +561,11 @@ export default function Onboarding() {
             {step < STEPS.length - 1 ? (
               <button
                 type="button"
-                onClick={() => canNext && setStep((s) => s + 1)}
-                disabled={!canNext}
+                onClick={tryNext}
+                disabled={!canNext || checkingHandle}
                 className="btn btn-primary"
               >
-                Continue →
+                {checkingHandle ? 'Checking…' : 'Continue →'}
               </button>
             ) : (
               <button type="button" onClick={finish} className="btn btn-primary">

@@ -71,18 +71,35 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
         audio: false,
       })
       streamRef.current = stream
+      // if the OS kills the track (backgrounding, phone call), restart it
+      stream.getVideoTracks().forEach((t) => {
+        t.onended = () => {
+          if (streamRef.current === stream) start(facingMode)
+        }
+      })
       if (videoRef.current) {
         videoRef.current.srcObject = stream
         await videoRef.current.play().catch(() => {})
       }
       setPhase('ready')
+      // black-screen watchdog: if no frames arrived after 1.2s, re-acquire once
+      setTimeout(() => {
+        const v = videoRef.current
+        if (v && streamRef.current === stream && (v.videoWidth === 0 || v.paused)) {
+          v.play().catch(() => {})
+          if (v.videoWidth === 0) start(facingMode)
+        }
+      }, 1200)
     } catch (e: any) {
       setPhase(e?.name === 'NotAllowedError' ? 'denied' : 'unavailable')
     }
   }
 
   function stop() {
-    streamRef.current?.getTracks().forEach((t) => t.stop())
+    streamRef.current?.getTracks().forEach((t) => {
+      t.onended = null
+      t.stop()
+    })
     streamRef.current = null
   }
 
@@ -102,6 +119,20 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
     return stop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // returning from the background suspends the camera on mobile — resume it
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return
+      const live = streamRef.current?.getVideoTracks().some((t) => t.readyState === 'live')
+      const v = videoRef.current
+      if (!live) start(facing)
+      else if (v?.paused) v.play().catch(() => {})
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [facing])
 
   const flip = () => {
     const next = facing === 'user' ? 'environment' : 'user'
@@ -227,7 +258,15 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
       <div className="relative overflow-hidden rounded-xl border border-[var(--edge-strong)] bg-black">
         {/* the ONLY image source is the live sensor — no file input exists */}
         {phase !== 'captured' ? (
-          <video ref={videoRef} playsInline muted className="h-64 w-full object-cover" />
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            autoPlay
+            onLoadedMetadata={(e) => (e.target as HTMLVideoElement).play().catch(() => {})}
+            onClick={(e) => (e.target as HTMLVideoElement).play().catch(() => {})}
+            className="h-64 w-full object-cover"
+          />
         ) : (
           thumb && <img src={thumb} alt="capture" className="h-64 w-full object-cover" />
         )}

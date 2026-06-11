@@ -57,7 +57,9 @@ export default function MainQuestCard({
   const questId = variant === 'practical' ? practicalQuestId(traitId) : `main:${traitId}`
 
   const isActive = !!active
+  const steps = variant === 'practical' ? 14 : 4
   const mqPct = active ? Math.round(active.mainQuestProgress * 100) : 0
+  const stepCount = active ? Math.round(active.mainQuestProgress * steps) : 0
   const mqDone = !!active?.mainQuestDone
   const inProgress = (active?.mainQuestProgress ?? 0) > 0 || mqDone
 
@@ -105,17 +107,19 @@ export default function MainQuestCard({
       onFlash?.('⏳ Verifying…')
       const r = await serverSubmitQuest({ questId, method: result.method, label, kind: 'main', traitId, result })
       onFlash?.(
-        r.status === 'flagged'
-          ? '⚠ Flagged — no EXP'
-          : r.status === 'pending'
-            ? '📸 Sent for review — pass it to keep your streak; the EXP lands when the challenge is complete.'
-            : r.mainDone
-              ? `🏆 Challenge complete! +${r.exp} EXP`
-              : 'Check-in verified — progress logged.',
+        r.error
+          ? `⚠ ${r.error}`
+          : r.status === 'flagged'
+            ? '⚠ Flagged — no EXP'
+            : r.status === 'pending'
+              ? '📸 Sent for review — pass it to keep your streak; the EXP lands when the challenge is complete.'
+              : r.mainDone
+                ? `🏆 Quest complete! +${r.exp} EXP`
+                : 'Check-in verified — progress logged.',
       )
       return
     }
-    advanceMainQuest(traitId, { label, steps: 4 }, result)
+    advanceMainQuest(traitId, { label, steps }, result)
     onFlash?.(result.status === 'flagged' ? '⚠ Flagged' : 'Main quest progress logged!')
   }
 
@@ -224,7 +228,12 @@ export default function MainQuestCard({
 
       {isActive && (
         <div className="mt-3">
-          <ExpBar pct={mqPct} height="h-2" label={`Reward on completion: +${mq.exp} EXP`} showText={false} />
+          <ExpBar
+            pct={mqPct}
+            height="h-2"
+            label={`${stepCount}/${steps} check-ins${variant === 'practical' ? ' (1 per day)' : ''} · +${mq.exp} EXP on completion`}
+            showText={false}
+          />
         </div>
       )}
 

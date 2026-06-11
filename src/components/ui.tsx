@@ -131,13 +131,15 @@ export function Pill({
   tone = 'default',
 }: {
   children: React.ReactNode
-  tone?: 'default' | 'gold' | 'exp' | 'violet'
+  tone?: 'default' | 'gold' | 'exp' | 'violet' | 'amber' | 'red'
 }) {
   const tones: Record<string, string> = {
     default: 'border-white/15 text-[var(--muted)]',
     gold: 'border-cosmos-gold/50 text-cosmos-gold',
     exp: 'border-exp/50 text-exp',
     violet: 'border-cosmos-violet/50 text-cosmos-violet',
+    amber: 'border-amber-400/50 text-amber-300',
+    red: 'border-red-500/50 text-red-400',
   }
   return (
     <span

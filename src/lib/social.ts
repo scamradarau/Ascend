@@ -160,6 +160,22 @@ export async function reviewSubmission(id: string, decision: 'approve' | 'reject
   return { data, error: error?.message }
 }
 
+// ---- server-owned quest progress (mains + challenge periods) ----
+export interface QuestProgressRow {
+  quest_id: string
+  count: number
+  done: boolean
+}
+
+export async function fetchQuestProgress(me: string): Promise<QuestProgressRow[]> {
+  if (!supabase) return []
+  const { data } = await supabase
+    .from('quest_progress')
+    .select('quest_id, "count", done')
+    .eq('user_id', me)
+  return (data as QuestProgressRow[]) ?? []
+}
+
 // am I an admin (reviewer)?
 export async function fetchIsAdmin(me: string): Promise<boolean> {
   if (!supabase) return false

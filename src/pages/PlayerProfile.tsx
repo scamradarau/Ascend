@@ -76,7 +76,10 @@ export default function PlayerProfile() {
           <div className="mt-3 flex flex-wrap justify-center gap-2">
             <Pill>{p.region}</Pill>
             <Pill tone="exp">🔥 {p.streak}d streak</Pill>
-            <Pill tone={p.trust >= 80 ? 'exp' : 'default'}>Integrity {p.trust}</Pill>
+            {/* integrity tiers: 70–100 green · 40–69 yellow · 0–39 red */}
+            <Pill tone={p.trust >= 70 ? 'exp' : p.trust >= 40 ? 'amber' : 'red'}>
+              Integrity {p.trust}
+            </Pill>
           </div>
 
           {!isSelf && (

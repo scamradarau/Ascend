@@ -24,6 +24,56 @@ function levelFromTotalExp(total: number): number {
 }
 const clampTrust = (n: number) => Math.max(0, Math.min(100, Math.round(n)))
 
+// ---- Sydney time (resets anchored to Australia/Sydney, like the client) ----
+const SYD = 'Australia/Sydney'
+const sydDay = (d: Date) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: SYD, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d)
+const sydWall = (d: Date) => new Date(d.toLocaleString('en-US', { timeZone: SYD }))
+function sydMonthKey(d = new Date()): string {
+  const w = sydWall(d)
+  return `${w.getFullYear()}-${w.getMonth() + 1}`
+}
+function sydWeekKey(d = new Date()): string {
+  const w = sydWall(d)
+  const date = new Date(Date.UTC(w.getFullYear(), w.getMonth(), w.getDate()))
+  const dayNum = (date.getUTCDay() + 6) % 7
+  date.setUTCDate(date.getUTCDate() - dayNum + 3)
+  const firstThursday = new Date(Date.UTC(date.getUTCFullYear(), 0, 4))
+  const week =
+    1 +
+    Math.round(
+      ((date.getTime() - firstThursday.getTime()) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7,
+    )
+  return `${date.getUTCFullYear()}-W${week}`
+}
+
+// is there already a VERIFIED submission for this quest on the same Sydney
+// day as `atIso` (excluding this submission)? → that day's slot is used.
+// deno-lint-ignore no-explicit-any
+async function verifiedSameSydDay(
+  admin: any,
+  userId: string,
+  questId: string,
+  atIso: string,
+  excludeId: string,
+): Promise<boolean> {
+  const at = new Date(atIso)
+  const lo = new Date(at.getTime() - 48 * 3600 * 1000).toISOString()
+  const hi = new Date(at.getTime() + 48 * 3600 * 1000).toISOString()
+  const { data } = await admin
+    .from('submissions')
+    .select('id, created_at')
+    .eq('user_id', userId)
+    .eq('quest_id', questId)
+    .eq('status', 'verified')
+    .gte('created_at', lo)
+    .lte('created_at', hi)
+  const day = sydDay(at)
+  return ((data ?? []) as { id: string; created_at: string }[]).some(
+    (r) => r.id !== excludeId && sydDay(new Date(r.created_at)) === day,
+  )
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
   if (req.method !== 'POST') return json({ error: 'method' }, 405)
@@ -49,7 +99,7 @@ Deno.serve(async (req) => {
 
   const { data: sub } = await admin
     .from('submissions')
-    .select('id, user_id, quest_id, status, exp_awarded')
+    .select('id, user_id, quest_id, status, exp_awarded, created_at')
     .eq('id', body.submission_id)
     .maybeSingle()
   if (!sub) return json({ error: 'not found' }, 404)
@@ -67,26 +117,51 @@ Deno.serve(async (req) => {
   // ----- APPROVE -----
   const { data: quest } = await admin
     .from('quests')
-    .select('id, trait_id, base_exp, scope')
+    .select('id, trait_id, base_exp, scope, target')
     .eq('id', sub.quest_id)
     .maybeSingle()
   if (!quest) return json({ error: 'unknown quest' }, 400)
 
-  // main quests step in 4; others award the full catalog amount
+  // Multi-step quests (mains + weekly/monthly challenges) pay ONLY on
+  // completion; each verified log advances progress by 1, max one per Sydney
+  // day (approving extra same-day photos marks them verified but adds no
+  // progress and no EXP).
+  const isPracticalMain = quest.scope === 'main' && String(quest.id).startsWith('main-practical:')
+  const subAt: string = (sub as { created_at?: string }).created_at ?? new Date().toISOString()
   let expAwarded = quest.base_exp
   let mainDone = false
-  if (quest.scope === 'main') {
-    const { data: qp } = await admin
-      .from('quest_progress').select('count, done').eq('user_id', sub.user_id).eq('quest_id', quest.id).maybeSingle()
-    const prev = qp?.count ?? 0
-    if (qp?.done) expAwarded = 0
-    else {
-      expAwarded = Math.round(quest.base_exp / 4)
-      const next = Math.min(4, prev + 1)
-      mainDone = next >= 4
-      await admin.from('quest_progress').upsert({
-        user_id: sub.user_id, quest_id: quest.id, count: next, done: mainDone, updated_at: new Date().toISOString(),
-      })
+  let dayUsed = false
+  if (quest.scope !== 'main' && quest.scope !== 'weekly' && quest.scope !== 'monthly') {
+    // daily: the day's slot may already be used by another approval
+    if (await verifiedSameSydDay(admin, sub.user_id, quest.id, subAt, sub.id)) {
+      expAwarded = 0
+      dayUsed = true
+    }
+  } else {
+    // progress row: mains use the quest id; challenges use "<quest>@<period>"
+    const steps = quest.scope === 'main' ? (isPracticalMain ? 14 : 4) : (quest.target ?? 4)
+    const rowId =
+      quest.scope === 'main'
+        ? quest.id
+        : `${quest.id}@${quest.scope === 'weekly' ? sydWeekKey(new Date(subAt)) : sydMonthKey(new Date(subAt))}`
+    expAwarded = 0
+    const gated =
+      (quest.scope !== 'main' || isPracticalMain) &&
+      (await verifiedSameSydDay(admin, sub.user_id, quest.id, subAt, sub.id))
+    if (gated) {
+      dayUsed = true
+    } else {
+      const { data: qp } = await admin
+        .from('quest_progress').select('count, done').eq('user_id', sub.user_id).eq('quest_id', rowId).maybeSingle()
+      const prev = qp?.count ?? 0
+      if (!qp?.done) {
+        const next = Math.min(steps, prev + 1)
+        mainDone = next >= steps
+        expAwarded = mainDone ? quest.base_exp : 0 // full reward on completion only
+        await admin.from('quest_progress').upsert({
+          user_id: sub.user_id, quest_id: rowId, count: next, done: mainDone, updated_at: new Date().toISOString(),
+        })
+      }
     }
   }
   const trustDelta = 2
@@ -117,8 +192,9 @@ Deno.serve(async (req) => {
   }).eq('id', sub.user_id)
 
   await admin.from('submissions').update({
-    status: 'verified', exp_awarded: expAwarded, trust_delta: trustDelta, note: 'Review: approved.',
+    status: 'verified', exp_awarded: expAwarded, trust_delta: trustDelta,
+    note: dayUsed ? 'Review: approved (extra log for that day — no additional progress).' : 'Review: approved.',
   }).eq('id', sub.id)
 
-  return json({ status: 'verified', exp_awarded: expAwarded, main_done: mainDone })
+  return json({ status: 'verified', exp_awarded: expAwarded, main_done: mainDone, day_used: dayUsed })
 })
