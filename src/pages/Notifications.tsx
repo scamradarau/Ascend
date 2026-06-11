@@ -81,7 +81,13 @@ export default function Notifications() {
                     </div>
                   </div>
                   {ok ? (
-                    <Pill tone="exp">+{a.exp_awarded ?? 0} EXP</Pill>
+                    (a.exp_awarded ?? 0) > 0 ? (
+                      <Pill tone="exp">+{a.exp_awarded} EXP</Pill>
+                    ) : (
+                      // multi-step quest: each approved log moves the bar;
+                      // the full EXP pays out on completion
+                      <Pill tone="gold">Progress +1</Pill>
+                    )
                   ) : (
                     <span className="text-[11px] uppercase tracking-wide text-cosmos-magenta">Retry it</span>
                   )}

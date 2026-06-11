@@ -129,15 +129,24 @@ const SECTIONS: Section[] = [
           reflect). They reset every day and keep your streak alive.
         </P>
         <P>
-          <strong>Main quests</strong> are bigger commitments — usually reading a great book and
-          applying it, completed over several check-ins. Finishing one is a major EXP payout and a
-          step toward badges.
+          <strong>Main quests</strong> are bigger commitments with two paths: read a great book and
+          apply it (4 check-ins), or take the <strong>2-week practical challenge</strong> — lock in
+          your commitment, then prove it with one photo check-in per day for 14 days. Either way,
+          the big EXP payout lands when you <em>finish</em> the quest, not per check-in.
+        </P>
+        <P>
+          <strong>Weekly &amp; monthly challenges</strong> work the same way: each verified log
+          (max one per day) moves the progress bar, and the full EXP + Aether is paid out{' '}
+          <strong>in one hit when you complete every session before the reset</strong>. Miss the
+          target and the period resets with no payout — the reward is for finishing, not for
+          showing up once.
         </P>
         <List
           items={[
             'Check a quest to log it — you’ll be prompted to verify it (see below).',
-            'Verified = full EXP + Aether. Pending = half, awaiting review. Flagged = nothing.',
-            'One completion per quest per day. No backfilling yesterday.',
+            'Verified = EXP + Aether (Aether is always EXP ÷ 4). Pending = awaiting review, pays nothing until approved. Flagged = nothing.',
+            'Multi-step quests (mains, weeklies, monthlies) pay their full reward only on completion.',
+            'One completion per quest per day — days roll over at midnight Sydney time. No backfilling yesterday.',
           ]}
         />
       </>

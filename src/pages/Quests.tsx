@@ -254,7 +254,7 @@ export default function Quests() {
       {/* ---------------- WEEKLY & MONTHLY CHALLENGES ---------------- */}
       {(['weekly', 'monthly'] as const).map((scope) => (
         <div key={scope} className="mt-8">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-1 flex items-center justify-between">
             <span className="font-pixel text-xs text-cosmos-gold glow-text">
               {scope === 'weekly' ? '📅 WEEKLY CHALLENGES' : '🗓️ MONTHLY CHALLENGES'}
             </span>
@@ -262,6 +262,10 @@ export default function Quests() {
               <ResetCountdown scope={scope} /> · big rewards
             </Pill>
           </div>
+          <p className="mb-3 text-[11px] text-[var(--muted)]">
+            One verified log per day. Each approved log moves the bar — the full EXP + Aether pays
+            out in one hit when you complete every session before the {scope} reset.
+          </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {CHALLENGES.filter((c) => c.scope === scope).map((c) => {
               const st = challengeState(c)
