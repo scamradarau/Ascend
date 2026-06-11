@@ -521,9 +521,13 @@ export default function Onboarding() {
 
               {/* suggested traits */}
               <div>
-                <div className="mb-3 text-xs uppercase tracking-widest text-cosmos-cyan">
-                  Your first 3 quests to work on
+                <div className="mb-1 text-xs uppercase tracking-widest text-cosmos-cyan">
+                  Your first 3 main quests
                 </div>
+                <p className="mb-3 text-xs text-slate-400">
+                  Picked from your answers — your goals, your obstacles, your time. They’re a
+                  starting point, not a contract.
+                </p>
                 <div className="space-y-3">
                   {result.suggestedTraitIds.map((id) => {
                     const t = traitById(id)!
@@ -544,10 +548,14 @@ export default function Onboarding() {
                     )
                   })}
                 </div>
-                <p className="mt-3 text-center text-xs text-slate-500">
-                  You can swap these any time from the Main Quests page — but you can only build 3 at
-                  once.
-                </p>
+                <div className="mt-3 flex items-start gap-2 rounded-lg border border-white/10 bg-white/[0.03] p-3 text-xs text-slate-300">
+                  <span className="text-base">🔄</span>
+                  <span>
+                    <strong className="text-white">Not feeling one of these?</strong> Swap any of
+                    them on the <span className="text-cosmos-cyan">Main Quests</span> page before
+                    you start it — you just can’t build more than 3 at once.
+                  </span>
+                </div>
 
                 {/* identity framing — the psychology that makes this stick */}
                 <div className="mt-5 rounded-xl border border-cosmos-cyan/30 bg-cosmos-cyan/5 p-4 text-center">

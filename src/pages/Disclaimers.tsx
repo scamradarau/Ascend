@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { PixelTitle } from '../components/ui'
 
+// the terms consent renders its own label with a link to /terms
 const CONSENTS = [
   {
     id: 'entertainment',
@@ -63,7 +64,33 @@ export default function Disclaimers() {
                 onChange={(e) => setChecked((p) => ({ ...p, [c.id]: e.target.checked }))}
                 className="mt-1 h-5 w-5 shrink-0 accent-cosmos-cyan"
               />
-              <span className="text-sm leading-relaxed text-slate-300">{c.label}</span>
+              <span className="text-sm leading-relaxed text-slate-300">
+                {c.id === 'terms' ? (
+                  <>
+                    I accept the{' '}
+                    <Link
+                      to="/terms"
+                      target="_blank"
+                      className="text-[var(--accent)] underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Terms &amp; Community Guidelines
+                    </Link>{' '}
+                    and the{' '}
+                    <Link
+                      to="/privacy"
+                      target="_blank"
+                      className="text-[var(--accent)] underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Privacy policy
+                    </Link>
+                    .
+                  </>
+                ) : (
+                  c.label
+                )}
+              </span>
             </label>
           ))}
         </div>

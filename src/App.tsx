@@ -27,6 +27,7 @@ import Notifications from './pages/Notifications'
 import Messages from './pages/Messages'
 import PlayerProfile from './pages/PlayerProfile'
 import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
 import Stoic from './pages/Stoic'
 import Journal from './pages/Journal'
 import WorldMap from './pages/WorldMap'
@@ -83,6 +84,7 @@ export default function App() {
       <Route path="/login" element={<Auth mode="login" />} />
       <Route path="/signup" element={<Auth mode="signup" />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       <Route
         path="/disclaimers"
         element={

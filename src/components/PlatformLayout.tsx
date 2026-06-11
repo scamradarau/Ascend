@@ -285,6 +285,10 @@ export default function PlatformLayout() {
             Feedback
           </NavLink>{' '}
           ·{' '}
+          <a href="#/terms" className="text-[var(--muted)] hover:text-[var(--accent)]">
+            Terms
+          </a>{' '}
+          ·{' '}
           <a href="#/privacy" className="text-[var(--muted)] hover:text-[var(--accent)]">
             Privacy &amp; Confidentiality
           </a>

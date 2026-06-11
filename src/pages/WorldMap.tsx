@@ -158,7 +158,7 @@ export default function WorldMap() {
                 key={attr.id}
                 className="cursor-pointer transition-opacity hover:opacity-100"
                 opacity={explored ? 1 : 0.45}
-                onClick={() => navigate('/app/traits')}
+                onClick={() => navigate(`/app/traits?path=${attr.id}`)}
               >
                 <path
                   d={blobPath(g.cx, g.cy, g.r, g.mult)}
@@ -225,7 +225,7 @@ export default function WorldMap() {
         {regionStats.map(({ attr, level: rl, pct, explored }) => (
           <button
             key={attr.id}
-            onClick={() => navigate('/app/traits')}
+            onClick={() => navigate(`/app/traits?path=${attr.id}`)}
             className="panel p-4 text-left transition hover:-translate-y-0.5"
             style={{ borderColor: explored ? `${attr.color}55` : undefined }}
           >
