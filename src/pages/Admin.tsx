@@ -89,11 +89,20 @@ export default function Admin() {
       setReviewMsg(`Review failed: ${error}`)
       return
     }
-    const r = data as { status?: string; exp_awarded?: number } | null
+    const r = data as
+      | { status?: string; exp_awarded?: number; main_done?: boolean; day_used?: boolean }
+      | null
+    const exp = r?.exp_awarded ?? 0
     setReviewMsg(
-      decision === 'approve'
-        ? `✓ Approved — granted ${r?.exp_awarded ?? 0} EXP`
-        : '✗ Rejected — no EXP',
+      decision === 'reject'
+        ? '✗ Rejected — no EXP'
+        : exp > 0
+          ? r?.main_done
+            ? `✓ Approved — quest complete! Granted ${exp} EXP`
+            : `✓ Approved — granted ${exp} EXP`
+          : r?.day_used
+            ? '✓ Approved — extra log for that day (no extra progress)'
+            : '✓ Approved — progress +1 (full EXP pays out on completion)',
     )
     setPendingReview((p) => p.filter((x) => x.id !== id))
     setTimeout(() => setReviewMsg(null), 3000)
