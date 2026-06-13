@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame, usePlayerLevel } from '../store/useGame'
 import { useAuth } from '../store/auth'
@@ -11,6 +11,7 @@ import {
 } from '../data/cosmetics'
 import { isOwnerEmail } from '../lib/supabase'
 import { serverResetProgress } from '../store/serverVerify'
+import { pushSupported, isPushEnabled, enablePush, disablePush, sendTestPush } from '../lib/push'
 import { CLASSES, resolveClass, isClassUnlocked, nextClass } from '../data/classes'
 import ClassAvatar from '../components/ClassAvatar'
 import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
@@ -51,6 +52,37 @@ export default function Settings() {
   const [sound, setSound] = useState(true)
   const [soundtrack, setSoundtrack] = useState<'mmo' | 'scifi'>('scifi')
   const [confirmReset, setConfirmReset] = useState(false)
+
+  // ---- daily-reminder push notifications ----
+  const [pushOn, setPushOn] = useState(false)
+  const [pushBusy, setPushBusy] = useState(false)
+  const [pushMsg, setPushMsg] = useState<string | null>(null)
+  useEffect(() => {
+    isPushEnabled().then(setPushOn)
+  }, [])
+  const togglePush = async () => {
+    setPushBusy(true)
+    setPushMsg(null)
+    if (pushOn) {
+      await disablePush()
+      setPushOn(false)
+      setPushMsg('Daily reminders turned off.')
+    } else {
+      const r = await enablePush()
+      if (r.ok) {
+        setPushOn(true)
+        setPushMsg('Reminders on — we’ll nudge you if you haven’t checked in by evening.')
+      } else {
+        setPushMsg(r.error ?? 'Could not enable reminders.')
+      }
+    }
+    setPushBusy(false)
+  }
+  const testPush = async () => {
+    setPushMsg('Sending…')
+    const r = await sendTestPush()
+    setPushMsg(r.ok ? 'Test sent — check your notifications.' : r.error ?? 'Could not send test.')
+  }
 
   // Owner test account unlocks every cosmetic + class for testing.
   const isOwner = ownerMode && isOwnerEmail(authUser?.email)
@@ -392,6 +424,34 @@ export default function Settings() {
           </button>
         </div>
       </div>
+
+      {/* ---------------- NOTIFICATIONS ---------------- */}
+      {pushSupported() && (
+        <div className="panel mt-5 p-6">
+          <span className="font-pixel text-xs text-[var(--accent)]">NOTIFICATIONS</span>
+          <div className="mt-4 flex items-center justify-between gap-4">
+            <span className="text-sm text-slate-300">
+              <span className="font-semibold text-white">Daily streak reminders</span> — a gentle
+              nudge if you haven’t checked in, so a missed day doesn’t cost you your streak. No spam,
+              one a day.
+            </span>
+            <button
+              onClick={togglePush}
+              disabled={pushBusy}
+              aria-label="Toggle daily reminders"
+              className={`relative h-6 w-12 shrink-0 rounded-full transition ${pushOn ? 'bg-[var(--accent)]' : 'bg-white/15'}`}
+            >
+              <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${pushOn ? 'left-6' : 'left-0.5'}`} />
+            </button>
+          </div>
+          {pushOn && (
+            <button onClick={testPush} className="btn btn-ghost mt-3 text-xs">
+              🔔 Send a test notification
+            </button>
+          )}
+          {pushMsg && <p className="mt-3 text-xs text-[var(--muted)]">{pushMsg}</p>}
+        </div>
+      )}
 
       {/* ---------------- PROFILE / DATA ---------------- */}
       <div className="panel mt-5 p-6">
