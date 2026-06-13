@@ -108,8 +108,10 @@ const PLAYERS: Record<SfxName, (ac: AudioContext, t: number) => void> = {
   },
 
   submit: (ac, t) => {
-    // soft upward "whoosh" blip
-    tone(ac, t, { freq: N.E4, dur: 0.14, type: 'sine', gain: 0.1, slideTo: N.C5 })
+    // affirming "sent" chirp — you did the work and shipped the proof
+    note(ac, t, N.G4, 0, 0.1, 0.08)
+    note(ac, t, N.C5, 0.07, 0.13, 0.09)
+    tone(ac, t, { freq: N.E5, dur: 0.14, type: 'sine', gain: 0.05, at: 0.15 })
   },
 
   verified: (ac, t) => {

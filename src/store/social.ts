@@ -3,6 +3,7 @@ import { isCloud, isOwnerEmail, fetchEarnedProgress, type CloudProfile } from '.
 import { useAuth } from './auth'
 import { useGame } from './useGame'
 import { challengeById, periodKeyFor } from '../data/challenges'
+import { playSfx } from '../lib/sfx'
 import {
   fetchMyRequests,
   fetchMyMessages,
@@ -93,6 +94,24 @@ export const useSocial = create<SocialState>((set, get) => ({
       profiles = { ...have }
       for (const p of fetched) profiles[p.id] = p
     }
+
+    // reward sound when a photo review RESOLVES (the payoff for a photo quest
+    // lands at approval, not at submit) — detect pending → verified/flagged
+    // transitions. Skipped on the first populate so old reviews stay silent.
+    const prev = get().submissions
+    if (prev.length) {
+      const was = new Map(prev.map((s) => [s.id, s.status]))
+      let approved = false
+      let rejected = false
+      for (const s of submissions) {
+        const before = was.get(s.id)
+        if (before === 'pending' && s.status === 'verified') approved = true
+        else if (before === 'pending' && s.status === 'flagged') rejected = true
+      }
+      if (approved) playSfx('verified')
+      else if (rejected) playSfx('flagged')
+    }
+
     set({ meId: me, requests, messages, submissions, profiles, ready: true })
 
     // keep earned values in sync with the server (so an approved review's EXP
