@@ -30,6 +30,11 @@ const FEATURES = [
     body: 'Weekly and monthly challenges are bosses — every verified log is a strike, and the bounty lands on the kill.',
   },
   {
+    icon: '✦',
+    title: 'Lumi, your guide',
+    body: 'A little companion who floats with you on every screen. Stuck on discipline, fear or focus? Tap her and ask — she answers, anytime.',
+  },
+  {
     icon: '🔁',
     title: 'Accountability',
     body: 'Live photos, focus timers, reading checks. Clear proof verifies instantly; the rest goes to human review.',

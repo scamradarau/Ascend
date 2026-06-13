@@ -557,8 +557,19 @@ export default function Onboarding() {
                   </span>
                 </div>
 
+                {/* meet Lumi — the always-there guide */}
+                <div className="mt-5 flex items-start gap-3 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/5 p-4">
+                  <span className="mt-0.5 text-2xl">✦</span>
+                  <p className="text-sm text-slate-200">
+                    <strong className="text-white">And you won’t climb alone.</strong> Meet{' '}
+                    <span className="text-[var(--accent)]">Lumi</span> — your guide. See that glowing
+                    star at the bottom-right of every screen? That’s her. Stuck on anything —
+                    discipline, fear, motivation, a setback — tap her and ask. She’s always there.
+                  </p>
+                </div>
+
                 {/* identity framing — the psychology that makes this stick */}
-                <div className="mt-5 rounded-xl border border-cosmos-cyan/30 bg-cosmos-cyan/5 p-4 text-center">
+                <div className="mt-3 rounded-xl border border-cosmos-cyan/30 bg-cosmos-cyan/5 p-4 text-center">
                   <p className="text-sm italic text-slate-200">
                     Every verified quest is a vote for the person you’re becoming. Cast the first one
                     today — it takes two minutes.

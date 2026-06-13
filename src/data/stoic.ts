@@ -250,34 +250,37 @@ export interface StoicReply {
   attributions: Speaker[]
 }
 
-// single-voice openers and closings — the sage speaks as ONE mind
+// Lumi's voice — warm, casual, in your corner. Still grounded in real
+// Stoic substance, just delivered like a friend who's been there.
 const OPENERS = [
-  'Sit with me a moment.',
-  'Come, let us reason this through together.',
-  'I have turned this question over many times. Hear what the years have taught me.',
-  'You ask well. Be still, and listen.',
-  'Steady yourself, and consider it with me.',
+  'Okay, real talk.',
+  'I got you. Here’s how I’d look at this.',
+  'Let’s sort this out together.',
+  'Good question — here’s the honest answer.',
+  'Alright, let’s break it down.',
+  'Been there. Here’s what actually helps.',
 ]
 
 const CLOSINGS = [
-  'Begin now, while the resolve is still warm — the first small act is the whole of it.',
-  'Do not wait to feel ready. Act, and the readiness will arrive behind you.',
-  'Return to this when the world grows loud. The work is always, only, the next right action.',
-  'You already know what must be done. Go now, and be it.',
-  'Let this be enough for today. Tomorrow, the same climb — one step higher.',
+  'Start now, while you’ve still got the spark — the first small rep is the whole thing.',
+  'Don’t wait to feel ready. Move, and ready catches up to you.',
+  'Come find me whenever the noise gets loud. The work is just the next right move.',
+  'You already know what to do. Go do the small version of it right now.',
+  'That’s enough for today. Same climb tomorrow — one step higher. I’ll be here.',
 ]
+
+// drop a quote in naturally, like a friend sharing something that stuck
+function quoteLine(q: Quote): string {
+  const templates = [
+    `There’s an old line I keep coming back to: “${q.text}” — ${q.who}. Still true.`,
+    `${q.who} put it best: “${q.text}”`,
+    `Keep this one in your back pocket: “${q.text}” (${q.who}).`,
+  ]
+  return pick(templates)
+}
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
-}
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
 }
 
 function pickTheme(q: string): Theme | null {
@@ -311,7 +314,7 @@ export function counsel(question: string): StoicReply {
   if (!isOnTopic(question)) {
     return {
       text:
-        'My art is a narrow one, and I will not pretend otherwise. I teach a single craft — the craft of living well: how to master yourself, meet hardship without breaking, and become the person you intend to be. Bring me that, and I will not be silent. The rest belongs to other teachers.',
+        'Ha — that’s outside my lane. I’m here for the inner game: discipline, focus, fear, motivation, purpose, bouncing back when things go sideways. Bring me any of that and I’m all yours. The rest you’ll want to ask someone else. ✦',
       attributions: [],
     }
   }
@@ -325,35 +328,25 @@ export function counsel(question: string): StoicReply {
     return {
       text:
         `${opener}\n\n` +
-        'Whatever name your trouble wears, it yields to one discipline: separate cleanly what is yours to govern — your judgment, your effort, your next act — from what is not, and then spend yourself wholly on the first.\n\n' +
-        `Hold this close: “${q.text}” — so wrote ${q.who}, and I have found it true.\n\n` +
-        'Name one small, virtuous step that lies within your power, and take it before the day cools. Then another tomorrow. A life is built this way, or it is not built at all.\n\n' +
+        'Whatever this is, it comes down to one move: figure out what’s actually in your control — your effort, your attitude, your next action — and pour everything into that. Let the rest go; it was never yours to carry.\n\n' +
+        `${quoteLine(q)}\n\n` +
+        'Here’s the move: pick one small thing you can do today and do it before you overthink it. Then again tomorrow. That’s genuinely how it’s built.\n\n' +
         `${closing}`,
       attributions: [q.who],
     }
   }
 
-  // weave two remembered lines from different teachers where possible
-  const quotes = shuffle(theme.quotes)
-  const first = quotes[0]
-  const second = quotes.find((x) => x.who !== first.who)
-  const used: Quote[] = second ? [first, second] : [first]
-
-  const quoteProse =
-    used.length === 2
-      ? `“${used[0].text}” And again: “${used[1].text}”`
-      : `“${used[0].text}”`
-  const who = Array.from(new Set(used.map((x) => x.who))).join(' and ')
+  // one quote, dropped in naturally
+  const q = pick(theme.quotes)
 
   return {
     text:
       `${opener}\n\n` +
       `${theme.reflection}\n\n` +
-      `${theme.lens}\n\n` +
-      `Carry these words with you: ${quoteProse} — so taught ${who}, and the centuries have not worn them down.\n\n` +
-      `Now to your practice. ${theme.practice}\n\n` +
+      `Here’s the move: ${theme.practice}\n\n` +
+      `${quoteLine(q)}\n\n` +
       `${closing}`,
-    attributions: Array.from(new Set(used.map((x) => x.who))),
+    attributions: [q.who],
   }
 }
 
