@@ -10,6 +10,7 @@ import type { VerificationResult, VerificationMethodId } from '../data/verificat
 import { VerificationModal } from './VerificationModal'
 import BookLinks from './BookLinks'
 import { ExpBar } from './ui'
+import { playQuestResult, playSfx } from '../lib/sfx'
 
 function methodFor(ci: CheckInType): VerificationMethodId {
   switch (ci) {
@@ -77,6 +78,7 @@ export default function MainQuestCard({
     if (text.length < 3) return
     setCommitment(traitId, text)
     setDraft('')
+    playSfx('boss')
     onFlash?.('Commitment locked in. Now prove it across the next two weeks.')
   }
 
@@ -106,6 +108,7 @@ export default function MainQuestCard({
     if (serverVerify) {
       onFlash?.('⏳ Verifying…')
       const r = await serverSubmitQuest({ questId, method: result.method, label, kind: 'main', traitId, result })
+      playQuestResult(r.error ? 'flagged' : r.status, Boolean(r.mainDone))
       onFlash?.(
         r.error
           ? `⚠ ${r.error}`
@@ -120,6 +123,7 @@ export default function MainQuestCard({
       return
     }
     advanceMainQuest(traitId, { label, steps }, result)
+    playQuestResult(result.status, Boolean(active?.mainQuestDone))
     onFlash?.(result.status === 'flagged' ? '⚠ Flagged' : 'Main quest progress logged!')
   }
 

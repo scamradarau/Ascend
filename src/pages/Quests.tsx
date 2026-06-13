@@ -11,6 +11,8 @@ import MainQuestCard from '../components/MainQuestCard'
 import { methodForTask, type VerificationResult, type VerificationMethodId } from '../data/verification'
 import { CHALLENGES, periodKeyFor, type Challenge } from '../data/challenges'
 import { todayKey } from '../lib/time'
+import { levelFromTotalExp } from '../data/leveling'
+import { playQuestResult } from '../lib/sfx'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
 import ResetCountdown from '../components/ResetCountdown'
 import type { DailyTask } from '../data/types'
@@ -65,6 +67,7 @@ export default function Quests() {
   const submit = (result: VerificationResult) => {
     if (!pending) return
     const task = pending.task
+    const lvlBefore = levelFromTotalExp(useGame.getState().totalExp).level
 
     if (serverVerify) {
       flash('⏳ Verifying…')
@@ -77,6 +80,9 @@ export default function Quests() {
         taskId: task.id,
         result,
       }).then((r) => {
+        const status = r.error ? 'flagged' : r.status
+        const leveled = levelFromTotalExp(useGame.getState().totalExp).level > lvlBefore
+        playQuestResult(status, leveled)
         flash(
           r.error
             ? `⚠ ${r.error}`
@@ -91,6 +97,8 @@ export default function Quests() {
     }
 
     completeDailyTask(pending.traitId, task.id, { exp: task.exp, label: task.label }, result)
+    const leveled = levelFromTotalExp(useGame.getState().totalExp).level > lvlBefore
+    playQuestResult(result.status, leveled)
     flash(
       result.status === 'flagged'
         ? '⚠ Flagged — no EXP'
@@ -114,6 +122,8 @@ export default function Quests() {
         kind: 'challenge',
         result,
       }).then((r) => {
+        const status = r.error ? 'flagged' : r.status
+        playQuestResult(status, Boolean(r.mainDone))
         flash(
           r.error
             ? `⚠ ${r.error}`
@@ -129,6 +139,7 @@ export default function Quests() {
       return
     }
     const res = logChallenge(challengePending.id, result)
+    playQuestResult(result.status, res.completed)
     flash(
       result.status === 'flagged'
         ? '⚠ Flagged — no progress'

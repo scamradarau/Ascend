@@ -41,6 +41,8 @@ export default function Settings() {
   const toggleOwnerMode = useGame((s) => s.toggleOwnerMode)
   const reduceMotion = useGame((s) => s.reduceMotion)
   const toggleReduceMotion = useGame((s) => s.toggleReduceMotion)
+  const soundEnabled = useGame((s) => s.soundEnabled)
+  const toggleSound = useGame((s) => s.toggleSound)
   const authUser = useAuth((s) => s.user)
   const logout = useAuth((s) => s.logout)
   const { level } = usePlayerLevel()
@@ -362,8 +364,21 @@ export default function Settings() {
 
       {/* ---------------- ACCESSIBILITY ---------------- */}
       <div className="panel mt-5 p-6">
-        <span className="font-pixel text-xs text-[var(--accent)]">ACCESSIBILITY</span>
+        <span className="font-pixel text-xs text-[var(--accent)]">SOUND &amp; ACCESSIBILITY</span>
         <div className="mt-4 flex items-center justify-between gap-4">
+          <span className="text-sm text-slate-300">
+            <span className="font-semibold text-white">Sound effects</span> — chiptune cues when you
+            submit and complete quests, level up and slay challenge bosses.
+          </span>
+          <button
+            onClick={toggleSound}
+            aria-label="Toggle sound effects"
+            className={`relative h-6 w-12 shrink-0 rounded-full transition ${soundEnabled ? 'bg-[var(--accent)]' : 'bg-white/15'}`}
+          >
+            <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${soundEnabled ? 'left-6' : 'left-0.5'}`} />
+          </button>
+        </div>
+        <div className="mt-4 flex items-center justify-between gap-4 border-t border-white/5 pt-4">
           <span className="text-sm text-slate-300">
             <span className="font-semibold text-white">Reduce motion</span> — turn off animated
             backgrounds, glows and transitions. (Your device’s system setting is always respected

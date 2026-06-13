@@ -4,6 +4,7 @@ import { useGame, traitLevel, isTaskDoneToday } from '../store/useGame'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
 import { levelFromTotalExp } from '../data/leveling'
+import { playQuestResult } from '../lib/sfx'
 import { VerificationModal } from '../components/VerificationModal'
 import MainQuestCard from '../components/MainQuestCard'
 import {
@@ -72,10 +73,11 @@ export default function TraitDetail() {
     const task = t.dailyTasks.find((x) => x.id === pending.taskId)!
     const before = levelFromTotalExp(totalExp).level
     completeDailyTask(t.id, task.id, { exp: task.exp, label: task.label }, result)
+    const after = levelFromTotalExp(totalExp + task.exp).level
+    playQuestResult(result.status, after > before)
     if (result.status === 'flagged') flash('⚠ Flagged — no EXP')
     else if (result.status === 'pending') flash('⏳ Sent for review')
     else {
-      const after = levelFromTotalExp(totalExp + task.exp).level
       flash(after > before ? `LEVEL UP → Lv ${after}` : `+${task.exp} EXP`)
     }
   }

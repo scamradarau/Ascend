@@ -8,6 +8,7 @@ import type { VerificationResult, VerificationMethodId } from '../data/verificat
 import { DEFAULT_AVATAR, type AvatarConfig, type CosmeticSlot } from '../data/cosmetics'
 import { challengeById, periodKeyFor, monthKey } from '../data/challenges'
 import { todayKey } from '../lib/time'
+import { setSfxMuted, playSfx } from '../lib/sfx'
 
 // ----------------------------------------------------------------
 // Persistent game state
@@ -61,6 +62,7 @@ export interface GameState {
   acceptedTerms: boolean
   theme: 'cosmos' | 'rune' | 'olympus'
   reduceMotion: boolean
+  soundEnabled: boolean
   profile: Profile | null
 
   // progression
@@ -109,6 +111,7 @@ export interface GameState {
   setCommitment: (traitId: string, text: string) => void
   resetMainQuestLocal: (traitId: string) => void
   toggleReduceMotion: () => void
+  toggleSound: () => void
   acceptTerms: () => void
   completeOnboarding: (answers: OnboardingAnswers) => void
   addTrait: (traitId: string) => boolean
@@ -181,6 +184,7 @@ export const useGame = create<GameState>()(
       acceptedTerms: false,
       theme: 'cosmos',
       reduceMotion: false,
+      soundEnabled: true,
       profile: null,
       totalExp: 0,
       seasonXp: 0,
@@ -223,6 +227,12 @@ export const useGame = create<GameState>()(
           }
         }),
       toggleReduceMotion: () => set({ reduceMotion: !get().reduceMotion }),
+      toggleSound: () => {
+        const next = !get().soundEnabled
+        setSfxMuted(!next)
+        set({ soundEnabled: next })
+        if (next) playSfx('verified') // preview the sound when turning it on
+      },
       acceptTerms: () => set({ acceptedTerms: true }),
 
       completeOnboarding: (answers) => {
@@ -532,6 +542,10 @@ export const useGame = create<GameState>()(
       name: 'ascend-save',
       version: 3,
       storage: createJSONStorage(() => accountStorage),
+      onRehydrateStorage: () => (state) => {
+        // keep the sfx engine in sync with the saved preference
+        setSfxMuted(!(state?.soundEnabled ?? true))
+      },
     },
   ),
 )

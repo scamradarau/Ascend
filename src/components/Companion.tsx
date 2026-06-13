@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { counsel, STARTER_PROMPTS } from '../data/stoic'
 import { useGame } from '../store/useGame'
+import { playSfx } from '../lib/sfx'
 
 // ================================================================
 // LUMI — a little luminous guide-wisp that floats at the bottom-right
@@ -82,6 +83,7 @@ export default function Companion() {
   const openChat = () => {
     setOpen(true)
     setTease(false)
+    playSfx('open')
     if (!greetingSeen) {
       localStorage.setItem('lumi-greeted', '1')
       setGreetingSeen(true)

@@ -13,6 +13,7 @@ import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
 import { rankForLevel, nextRank } from '../data/ranks'
 import { levelFromTotalExp } from '../data/leveling'
+import { playQuestResult } from '../lib/sfx'
 import { methodForTask, VERIFICATION_METHODS, type VerificationResult } from '../data/verification'
 import { dailyWisdom } from '../data/wisdom'
 import type { DailyTask } from '../data/types'
@@ -76,6 +77,7 @@ export default function Character() {
 
     if (serverVerify) {
       setToast('⏳ Verifying…')
+      const lvlBefore = levelFromTotalExp(totalExp).level
       serverSubmitQuest({
         questId: `${pending.traitId}:${task.id}`,
         method: result.method,
@@ -85,6 +87,7 @@ export default function Character() {
         taskId: task.id,
         result,
       }).then((r) => {
+        playQuestResult(r.status, levelFromTotalExp(useGame.getState().totalExp).level > lvlBefore)
         setToast(
           r.status === 'flagged'
             ? '⚠ Flagged — no EXP'
@@ -100,6 +103,7 @@ export default function Character() {
     // local (offline) fallback
     const before = levelFromTotalExp(totalExp).level
     completeDailyTask(pending.traitId, task.id, { exp: task.exp, label: task.label }, result)
+    playQuestResult(result.status, levelFromTotalExp(totalExp + task.exp).level > before)
     setToast(
       result.status === 'flagged'
         ? '⚠ Submission flagged — no EXP'
