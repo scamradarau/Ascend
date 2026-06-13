@@ -8,6 +8,7 @@ import { useSocial, selectPendingCount, selectUnreadCount, unreadAlertCount } fr
 import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
 import ThemeBackground from './ThemeBackground'
+import Companion from './Companion'
 
 // Grouped nav — the daily loop first, everything else clustered so the
 // drawer reads in seconds. Alerts & Messages live as header icons (badges
@@ -45,10 +46,7 @@ const NAV_SECTIONS: { heading: string; items: { to: string; label: string; icon:
   },
   {
     heading: 'GUIDANCE',
-    items: [
-      { to: '/app/stoic', label: 'The Stoic', icon: '🏛️' },
-      { to: '/app/guide', label: 'Codex', icon: '📖' },
-    ],
+    items: [{ to: '/app/guide', label: 'Codex', icon: '📖' }],
   },
 ]
 
@@ -272,6 +270,9 @@ export default function PlatformLayout() {
       <main className="relative z-10 mx-auto max-w-7xl px-4 py-6 sm:py-8">
         <Outlet />
       </main>
+
+      {/* Lumi — the floating guide, present on every page */}
+      <Companion />
 
       <footer className="relative z-10 border-t border-[var(--edge)] py-6 text-center text-xs text-[var(--muted)]">
         ASCEND — Treating self improvement as game progression. ·{' '}

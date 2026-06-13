@@ -28,7 +28,6 @@ import Messages from './pages/Messages'
 import PlayerProfile from './pages/PlayerProfile'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
-import Stoic from './pages/Stoic'
 import Journal from './pages/Journal'
 import WorldMap from './pages/WorldMap'
 
@@ -124,7 +123,8 @@ export default function App() {
         <Route path="shop" element={<Shop />} />
         <Route path="admin" element={<Admin />} />
         <Route path="guide" element={<Codex />} />
-        <Route path="stoic" element={<Stoic />} />
+        {/* Lumi replaced the standalone Stoic page; redirect any old links */}
+        <Route path="stoic" element={<Navigate to="/app/character" replace />} />
         <Route path="journal" element={<Journal />} />
         <Route path="guild" element={<Guild />} />
         <Route path="friends" element={<Friends />} />

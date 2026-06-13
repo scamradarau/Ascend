@@ -1,9 +1,9 @@
 // ================================================================
-// THE STOIC — a single sage whose mind is distilled from the whole
-// Stoa: the rigour of Epictetus, the warmth of Seneca, the inward
-// steadiness of Marcus Aurelius, fused into ONE voice. It does not
-// speak as three people; it speaks as one teacher who has absorbed
-// them all.
+// WISDOM ENGINE (powers Lumi, the floating guide) — a single voice
+// distilled from the whole Stoa: the rigour of Epictetus, the warmth
+// of Seneca, the inward steadiness of Marcus Aurelius, fused into ONE
+// teacher. Lumi delivers this counsel in a warmer, companion framing,
+// but the substance is this curated tradition.
 //
 // Self-contained (no external API/key, fully private): it matches a
 // question to Stoic themes and composes a layered reply — a reflection,
