@@ -66,7 +66,27 @@ function tone(ac: AudioContext, t0: number, o: ToneOpts) {
 // note helpers (equal temperament, A4 = 440)
 const N: Record<string, number> = {
   C4: 261.63, E4: 329.63, G4: 392.0, A4: 440.0,
-  C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880.0, C6: 1046.5,
+  C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880.0,
+  C6: 1046.5, D6: 1174.66, E6: 1318.51, G6: 1567.98, C7: 2093.0,
+}
+
+// a single note layered with a soft bell harmonic — fuller, more "rewarding"
+function note(
+  ac: AudioContext,
+  t0: number,
+  freq: number,
+  at: number,
+  dur: number,
+  gain = 0.1,
+) {
+  tone(ac, t0, { freq, dur, type: 'square', gain, at })
+  tone(ac, t0, { freq, dur: dur * 1.3, type: 'triangle', gain: gain * 0.5, at }) // bell shimmer
+}
+
+// a quick high sparkle to cap a reward
+function sparkle(ac: AudioContext, t0: number, at: number) {
+  tone(ac, t0, { freq: N.C7, dur: 0.18, type: 'sine', gain: 0.05, at })
+  tone(ac, t0, { freq: N.E6, dur: 0.22, type: 'triangle', gain: 0.04, at: at + 0.04 })
 }
 
 export type SfxName =
@@ -93,17 +113,21 @@ const PLAYERS: Record<SfxName, (ac: AudioContext, t: number) => void> = {
   },
 
   verified: (ac, t) => {
-    // bright rising three-note chime
-    tone(ac, t, { freq: N.C5, dur: 0.1, type: 'square', gain: 0.1 })
-    tone(ac, t, { freq: N.E5, dur: 0.1, type: 'square', gain: 0.1, at: 0.09 })
-    tone(ac, t, { freq: N.G5, dur: 0.18, type: 'square', gain: 0.11, at: 0.18 })
+    // rewarding rising major arpeggio with bell harmony + a sparkle cap
+    const seq = [N.C5, N.E5, N.G5, N.C6]
+    seq.forEach((f, i) => note(ac, t, f, i * 0.07, 0.16, 0.1))
+    sparkle(ac, t, 0.3)
   },
 
   levelUp: (ac, t) => {
-    // triumphant ascending arpeggio + sparkle
-    const seq = [N.C5, N.E5, N.G5, N.C6]
-    seq.forEach((f, i) => tone(ac, t, { freq: f, dur: 0.16, type: 'square', gain: 0.11, at: i * 0.1 }))
-    tone(ac, t, { freq: N.G5, dur: 0.25, type: 'triangle', gain: 0.06, at: 0.4 })
+    // the grand fanfare — a full ascending run, a held triad, and sparkle
+    const run = [N.C5, N.E5, N.G5, N.C6, N.E6]
+    run.forEach((f, i) => note(ac, t, f, i * 0.085, 0.16, 0.11))
+    // triumphant sustained chord stab
+    const chord = [N.C5, N.E5, N.G5]
+    chord.forEach((f) => note(ac, t, f, 0.5, 0.42, 0.08))
+    sparkle(ac, t, 0.52)
+    sparkle(ac, t, 0.72)
   },
 
   aether: (ac, t) => {
