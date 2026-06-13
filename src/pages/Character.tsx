@@ -13,7 +13,7 @@ import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
 import { rankForLevel, nextRank } from '../data/ranks'
 import { levelFromTotalExp } from '../data/leveling'
-import { playQuestResult } from '../lib/sfx'
+import { playQuestResult, playSfx } from '../lib/sfx'
 import { methodForTask, VERIFICATION_METHODS, type VerificationResult } from '../data/verification'
 import { dailyWisdom } from '../data/wisdom'
 import type { DailyTask } from '../data/types'
@@ -36,6 +36,8 @@ export default function Character() {
   const totalExp = useGame((s) => s.totalExp)
   const completeDailyTask = useGame((s) => s.completeDailyTask)
   const streak = useGame((s) => s.streak)
+  const streakFreezes = useGame((s) => s.streakFreezes)
+  const buyStreakFreeze = useGame((s) => s.buyStreakFreeze)
   const serverVerify = isCloud
   const subs = useSocial((s) => s.submissions)
   const reviewStatusOf = (questId: string): 'verified' | 'pending' | 'flagged' | null => {
@@ -70,6 +72,18 @@ export default function Character() {
       isTaskDoneToday(dailyLog, q.traitId, q.task.id) ||
       (serverVerify && reviewStatusOf(`${q.traitId}:${q.task.id}`) === 'verified'),
   ).length
+
+  const onBuyFreeze = () => {
+    if (streakFreezes >= 2) {
+      setToast('🧊 You’re already stocked up — max 2 freezes.')
+    } else if (buyStreakFreeze()) {
+      playSfx('aether')
+      setToast('🧊 Streak Freeze purchased — your chain is protected.')
+    } else {
+      setToast('Not enough Aether — a freeze costs ◈250.')
+    }
+    setTimeout(() => setToast(null), 2600)
+  }
 
   const submitCheckIn = (result: VerificationResult) => {
     if (!pending) return
@@ -142,11 +156,24 @@ export default function Character() {
             </p>
           </div>
         </div>
-        <div className="shrink-0 rounded-lg border border-exp/30 bg-exp/5 px-3 py-2 text-center">
-          <div className="font-pixel text-sm text-exp">🔥 {streak}d</div>
-          <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">
-            {nextStreakMilestone > streak ? `${nextStreakMilestone - streak}d to reward` : 'milestone!'}
+        <div className="flex shrink-0 items-stretch gap-2">
+          <div className="rounded-lg border border-exp/30 bg-exp/5 px-3 py-2 text-center">
+            <div className="font-pixel text-sm text-exp">🔥 {streak}d</div>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">
+              {nextStreakMilestone > streak ? `${nextStreakMilestone - streak}d to reward` : 'milestone!'}
+            </div>
           </div>
+          {/* streak freeze — protects the chain across a missed day */}
+          <button
+            onClick={onBuyFreeze}
+            title="Streak Freeze protects your streak across one missed day. You get one free each week; buy more with Aether."
+            className="rounded-lg border border-cosmos-cyan/30 bg-cosmos-cyan/5 px-3 py-2 text-center transition hover:border-cosmos-cyan/60"
+          >
+            <div className="font-pixel text-sm text-cosmos-cyan">🧊 {streakFreezes}</div>
+            <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">
+              {streakFreezes >= 2 ? 'freezes' : `buy · ◈250`}
+            </div>
+          </button>
         </div>
       </div>
 

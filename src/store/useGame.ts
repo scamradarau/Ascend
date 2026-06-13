@@ -7,7 +7,7 @@ import { levelFromTotalExp, totalExpToReach } from '../data/leveling'
 import type { VerificationResult, VerificationMethodId } from '../data/verification'
 import { DEFAULT_AVATAR, type AvatarConfig, type CosmeticSlot } from '../data/cosmetics'
 import { challengeById, periodKeyFor, monthKey } from '../data/challenges'
-import { todayKey } from '../lib/time'
+import { todayKey, weekKey } from '../lib/time'
 import { setSfxMuted, playSfx } from '../lib/sfx'
 
 // ----------------------------------------------------------------
@@ -79,6 +79,14 @@ export interface GameState {
   questMonth: string // month-key the counter belongs to; resets when it changes
   streak: number
   lastActiveDate: string | null
+  // streak freeze — protects your streak across a missed day (loss-aversion
+  // is the strongest retention hook; this softens it so one slip ≠ ruin)
+  streakFreezes: number
+  freezeWeek: string | null // ISO week of the last weekly free freeze
+  freezeNotice: string | null // transient: "freeze used" banner
+  // milestone celebrations (7/30/100-day moments)
+  streakMilestone: number // highest milestone already celebrated
+  celebrateStreak: number | null // a milestone pending its celebration modal
   submissions: Submission[]
   earnedBadges: string[]
 
@@ -112,6 +120,13 @@ export interface GameState {
   resetMainQuestLocal: (traitId: string) => void
   toggleReduceMotion: () => void
   toggleSound: () => void
+  // streak freeze + milestones
+  tickStreak: () => void // run on app load: grant weekly freeze, bridge missed days, detect milestones
+  buyStreakFreeze: () => boolean // spend Aether for an extra freeze
+  registerCloudCheckIn: () => void // advance the (client-owned) streak after a verified cloud daily
+  markStreakMilestone: (m: number) => void
+  dismissCelebration: () => void
+  clearFreezeNotice: () => void
   acceptTerms: () => void
   completeOnboarding: (answers: OnboardingAnswers) => void
   addTrait: (traitId: string) => boolean
@@ -142,6 +157,19 @@ export interface GameState {
 }
 
 const todayStr = () => todayKey()
+
+// streak-freeze + milestone tuning
+export const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100, 180, 365]
+const FREEZE_CAP = 2 // most freezes you can bank
+const FREEZE_COST = 250 // Aether to buy one
+/** whole calendar days between two yyyy-mm-dd keys (b − a). */
+const daysBetween = (a: string, b: string) =>
+  Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86400000)
+/** the highest milestone strictly above `since` and at or below `streak`, else 0. */
+export const milestoneCrossed = (streak: number, since: number) => {
+  const hit = STREAK_MILESTONES.filter((m) => m > since && m <= streak)
+  return hit.length ? Math.max(...hit) : 0
+}
 const clampTrust = (n: number) => Math.max(0, Math.min(100, Math.round(n)))
 
 // Account-namespaced storage: the active save is keyed by the logged-in
@@ -198,6 +226,11 @@ export const useGame = create<GameState>()(
       questMonth: '',
       streak: 0,
       lastActiveDate: null,
+      streakFreezes: 1, // everyone starts with one freeze in their pocket
+      freezeWeek: null,
+      freezeNotice: null,
+      streakMilestone: 0,
+      celebrateStreak: null,
       submissions: [],
       earnedBadges: [],
       avatar: { ...DEFAULT_AVATAR },
@@ -233,6 +266,61 @@ export const useGame = create<GameState>()(
         set({ soundEnabled: next })
         if (next) playSfx('verified') // preview the sound when turning it on
       },
+
+      tickStreak: () => {
+        const s = get()
+        const updates: Partial<GameState> = {}
+        // 1. grant the weekly free freeze (banked up to the cap)
+        const wk = weekKey()
+        if (s.freezeWeek !== wk) {
+          updates.freezeWeek = wk
+          updates.streakFreezes = Math.min(FREEZE_CAP, s.streakFreezes + 1)
+        }
+        // 2. bridge missed days with freezes, or let the streak lapse
+        const today = todayStr()
+        const last = s.lastActiveDate
+        if (last && s.streak > 0 && last !== today) {
+          const yesterday = todayKey(new Date(Date.now() - 86400000))
+          if (last !== yesterday) {
+            const missed = daysBetween(last, today) - 1 // full days with zero activity
+            const have = updates.streakFreezes ?? s.streakFreezes
+            if (missed >= 1 && have >= missed) {
+              updates.streakFreezes = have - missed
+              updates.lastActiveDate = yesterday // bridged → streak continues at next check-in
+              updates.freezeNotice = `🧊 Streak Freeze used — your ${s.streak}-day streak is safe!`
+            } else {
+              updates.streak = 0 // beyond protection — the chain breaks
+            }
+          }
+        }
+        if (Object.keys(updates).length) set(updates)
+      },
+
+      buyStreakFreeze: () => {
+        const s = get()
+        if (s.streakFreezes >= FREEZE_CAP || s.aether < FREEZE_COST) return false
+        set({ aether: s.aether - FREEZE_COST, streakFreezes: s.streakFreezes + 1 })
+        return true
+      },
+
+      // cloud check-ins go through the server, but the STREAK is client-owned
+      // (so Streak Freeze works without a backend round-trip) — advance it here.
+      registerCloudCheckIn: () => {
+        const s = get()
+        const today = todayStr()
+        if (s.lastActiveDate === today) return // already counted today
+        const yesterday = todayKey(new Date(Date.now() - 86400000))
+        const streak = s.lastActiveDate === yesterday ? s.streak + 1 : 1
+        set({ streak, lastActiveDate: today })
+      },
+
+      markStreakMilestone: (m) => {
+        if (m <= get().streakMilestone) return
+        set((s) => ({ streakMilestone: m, celebrateStreak: m, aether: s.aether + m * 5 }))
+      },
+      dismissCelebration: () => set({ celebrateStreak: null }),
+      clearFreezeNotice: () => set({ freezeNotice: null }),
+
       acceptTerms: () => set({ acceptedTerms: true }),
 
       completeOnboarding: (answers) => {

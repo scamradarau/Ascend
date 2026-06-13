@@ -113,7 +113,7 @@ export const useSocial = create<SocialState>((set, get) => ({
           totalExp: newTotal,
           aether: delta > 0 ? g.aether + Math.round(delta / 4) : g.aether,
           trust: typeof prog.trust === 'number' ? prog.trust : g.trust,
-          streak: typeof prog.streak === 'number' ? prog.streak : g.streak,
+          // streak is client-owned (Streak Freeze) — never synced down from server
           questsThisMonth:
             typeof prog.quests_this_month === 'number' ? prog.quests_this_month : g.questsThisMonth,
           earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : g.earnedBadges,

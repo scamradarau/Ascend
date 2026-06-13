@@ -31,7 +31,7 @@ async function reconcileEarned(userId: string) {
       totalExp: newTotal,
       aether: delta > 0 ? s.aether + Math.round(delta / 4) : s.aether,
       trust: typeof prog.trust === 'number' ? prog.trust : s.trust,
-      streak: typeof prog.streak === 'number' ? prog.streak : s.streak,
+      // streak is client-owned (so Streak Freeze works) — do NOT sync it down
       questsThisMonth:
         typeof prog.quests_this_month === 'number' ? prog.quests_this_month : s.questsThisMonth,
       earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : s.earnedBadges,
@@ -134,6 +134,7 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
 
   // 4. local UI-only state (journal entry always; "done" + rewards only on a
   //    real verify — a pending photo stays NOT-done until an admin approves it)
+  let registerStreak = false
   useGame.setState((s) => {
     const at = new Date().toISOString()
     const sub: Submission = {
@@ -156,6 +157,7 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
       // (aether is granted by reconcileEarned from the server EXP delta)
       if (a.kind === 'daily' && a.traitId && a.taskId) {
         patch.dailyLog = { ...s.dailyLog, [`${a.traitId}:${a.taskId}:${todayKey()}`]: at }
+        registerStreak = true
       }
       if (a.kind === 'main' && a.traitId) {
         const step = a.questId.startsWith('main-practical:') ? 1 / 14 : 0.25
@@ -175,6 +177,9 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
     }
     return patch
   })
+
+  // streak is client-owned — advance it once per day on a verified daily
+  if (registerStreak) useGame.getState().registerCloudCheckIn()
 
   // refresh social so the quest's review state (pending/verified) + alerts update
   void useSocial.getState().refresh()

@@ -9,6 +9,7 @@ import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
 import ThemeBackground from './ThemeBackground'
 import Companion from './Companion'
+import StreakWatcher from './StreakWatcher'
 
 // Grouped nav — the daily loop first, everything else clustered so the
 // drawer reads in seconds. Alerts & Messages live as header icons (badges
@@ -54,6 +55,7 @@ export default function PlatformLayout() {
   const theme = useGame((s) => s.theme)
   const profile = useGame((s) => s.profile)
   const streak = useGame((s) => s.streak)
+  const freezes = useGame((s) => s.streakFreezes)
   const aether = useGame((s) => s.aether)
   const trust = useGame((s) => s.trust)
   const ownerMode = useGame((s) => s.ownerMode)
@@ -209,8 +211,13 @@ export default function PlatformLayout() {
           </button>
         </div>
         {streak > 0 && (
-          <div className="border-t border-[var(--edge)] bg-black/20 px-4 py-1 text-center text-[11px] font-semibold uppercase tracking-widest text-exp">
-            🔥 {streak}-day streak — keep the chain alive
+          <div className="flex items-center justify-center gap-3 border-t border-[var(--edge)] bg-black/20 px-4 py-1 text-[11px] font-semibold uppercase tracking-widest text-exp">
+            <span>🔥 {streak}-day streak — keep the chain alive</span>
+            {freezes > 0 && (
+              <span className="text-cosmos-cyan" title={`${freezes} Streak Freeze${freezes > 1 ? 's' : ''} — protects your streak across a missed day`}>
+                🧊 {freezes}
+              </span>
+            )}
           </div>
         )}
       </header>
@@ -273,6 +280,9 @@ export default function PlatformLayout() {
 
       {/* Lumi — the floating guide, present on every page */}
       <Companion />
+
+      {/* streak freeze + milestone celebrations */}
+      <StreakWatcher />
 
       <footer className="relative z-10 border-t border-[var(--edge)] py-6 text-center text-xs text-[var(--muted)]">
         ASCEND — Treating self improvement as game progression. ·{' '}
