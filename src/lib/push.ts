@@ -20,6 +20,18 @@ export const pushSupported = () =>
 
 export const pushConfigured = () => Boolean(VAPID_PUBLIC)
 
+/** iPhone/iPad (incl. iPadOS reporting as Mac with touch). */
+export const isIOS = () =>
+  typeof navigator !== 'undefined' &&
+  (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
+
+/** Running as an installed (Home Screen) app rather than a browser tab. */
+export const isStandalone = () =>
+  typeof window !== 'undefined' &&
+  (window.matchMedia?.('(display-mode: standalone)').matches ||
+    (navigator as unknown as { standalone?: boolean }).standalone === true)
+
 export function notificationPermission(): NotificationPermission | 'unsupported' {
   if (!pushSupported()) return 'unsupported'
   return Notification.permission

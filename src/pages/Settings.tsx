@@ -11,7 +11,7 @@ import {
 } from '../data/cosmetics'
 import { isOwnerEmail } from '../lib/supabase'
 import { serverResetProgress } from '../store/serverVerify'
-import { pushSupported, isPushEnabled, enablePush, disablePush, sendTestPush } from '../lib/push'
+import { pushSupported, isPushEnabled, enablePush, disablePush, sendTestPush, isIOS } from '../lib/push'
 import { CLASSES, resolveClass, isClassUnlocked, nextClass } from '../data/classes'
 import ClassAvatar from '../components/ClassAvatar'
 import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
@@ -426,32 +426,52 @@ export default function Settings() {
       </div>
 
       {/* ---------------- NOTIFICATIONS ---------------- */}
-      {pushSupported() && (
-        <div className="panel mt-5 p-6">
-          <span className="font-pixel text-xs text-[var(--accent)]">NOTIFICATIONS</span>
-          <div className="mt-4 flex items-center justify-between gap-4">
-            <span className="text-sm text-slate-300">
-              <span className="font-semibold text-white">Daily streak reminders</span> — a gentle
-              nudge if you haven’t checked in, so a missed day doesn’t cost you your streak. No spam,
-              one a day.
-            </span>
-            <button
-              onClick={togglePush}
-              disabled={pushBusy}
-              aria-label="Toggle daily reminders"
-              className={`relative h-6 w-12 shrink-0 rounded-full transition ${pushOn ? 'bg-[var(--accent)]' : 'bg-white/15'}`}
-            >
-              <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${pushOn ? 'left-6' : 'left-0.5'}`} />
-            </button>
+      <div className="panel mt-5 p-6">
+        <span className="font-pixel text-xs text-[var(--accent)]">NOTIFICATIONS</span>
+        {pushSupported() ? (
+          <>
+            <div className="mt-4 flex items-center justify-between gap-4">
+              <span className="text-sm text-slate-300">
+                <span className="font-semibold text-white">Daily streak reminders</span> — a gentle
+                nudge if you haven’t checked in, so a missed day doesn’t cost you your streak. No
+                spam, one a day.
+              </span>
+              <button
+                onClick={togglePush}
+                disabled={pushBusy}
+                aria-label="Toggle daily reminders"
+                className={`relative h-6 w-12 shrink-0 rounded-full transition ${pushOn ? 'bg-[var(--accent)]' : 'bg-white/15'}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${pushOn ? 'left-6' : 'left-0.5'}`} />
+              </button>
+            </div>
+            {pushOn && (
+              <button onClick={testPush} className="btn btn-ghost mt-3 text-xs">
+                🔔 Send a test notification
+              </button>
+            )}
+            {pushMsg && <p className="mt-3 text-xs text-[var(--muted)]">{pushMsg}</p>}
+          </>
+        ) : isIOS() ? (
+          <div className="mt-3 rounded-lg border border-cosmos-cyan/30 bg-cosmos-cyan/5 p-4 text-sm text-slate-300">
+            <p className="font-semibold text-white">Turn on reminders on your iPhone</p>
+            <p className="mt-1">
+              Apple only allows notifications for installed apps. It takes 10 seconds:
+            </p>
+            <ol className="mt-2 list-decimal space-y-1 pl-5 text-[13px] text-[var(--muted)]">
+              <li>In Safari, tap the <span className="text-white">Share</span> button (the square with an up-arrow).</li>
+              <li>Choose <span className="text-white">Add to Home Screen</span>.</li>
+              <li>Open ASCEND from the new icon, then come back to this screen — the reminder toggle will be here.</li>
+            </ol>
+            <p className="mt-2 text-[11px]">Requires iOS 16.4 or newer.</p>
           </div>
-          {pushOn && (
-            <button onClick={testPush} className="btn btn-ghost mt-3 text-xs">
-              🔔 Send a test notification
-            </button>
-          )}
-          {pushMsg && <p className="mt-3 text-xs text-[var(--muted)]">{pushMsg}</p>}
-        </div>
-      )}
+        ) : (
+          <p className="mt-3 text-sm text-[var(--muted)]">
+            This browser doesn’t support notifications. Try Chrome, Edge or Firefox on desktop or
+            Android.
+          </p>
+        )}
+      </div>
 
       {/* ---------------- PROFILE / DATA ---------------- */}
       <div className="panel mt-5 p-6">

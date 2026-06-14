@@ -1,0 +1,19 @@
+{
+  "name": "ASCEND — Level up your real life",
+  "short_name": "ASCEND",
+  "description": "Treat self-improvement like a game you can win. Real quests, verified proof, real progress.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070a18",
+  "theme_color": "#070a18",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
