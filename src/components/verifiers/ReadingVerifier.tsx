@@ -65,18 +65,17 @@ export default function ReadingVerifier({ method, label, minMinutes = 8, book, o
   const canSubmit = dwellMet && wordsMet && ansMet && chosenBook.length > 1 && !quality.gibberish
 
   const submit = () => {
-    const status: VerificationResult['status'] = quality.gibberish
-      ? 'flagged'
-      : quality.spam
-        ? 'pending'
-        : 'verified'
+    // on-device AI verdict only — no manual review for written work.
+    const status: VerificationResult['status'] =
+      quality.gibberish || quality.spam ? 'flagged' : 'verified'
     onResult({
       method,
       status,
-      note: quality.gibberish
-        ? `Auto-rejected: gibberish/spam in summary.`
-        : `“${chosenBook}” · read ${minMinutes}+ min · ${words}-word summary · comprehension answered.`,
-      trustDelta: status === 'verified' ? 3 : status === 'flagged' ? -4 : 0,
+      note:
+        status === 'flagged'
+          ? `Auto-rejected: gibberish/spam in summary.`
+          : `“${chosenBook}” · read ${minMinutes}+ min · ${words}-word summary · comprehension answered.`,
+      trustDelta: status === 'verified' ? 3 : -4,
       meta: {
         capturedAt: new Date().toISOString(),
         dwellSec: minMinutes * 60,

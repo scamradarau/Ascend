@@ -19,17 +19,18 @@ export default function JournalVerifier({ method, label, minWords = 15, onResult
   const ok = words >= minWords && !quality.gibberish
 
   const submit = () => {
-    // gibberish → flagged (no reward); mild spam → pending review
-    const status: VerificationResult['status'] = quality.gibberish
-      ? 'flagged'
-      : quality.spam
-        ? 'pending'
-        : 'verified'
+    // text is judged on-device by the AI — no human review queue. Gibberish
+    // or spam → flagged (no reward); a genuine entry → verified instantly.
+    const status: VerificationResult['status'] =
+      quality.gibberish || quality.spam ? 'flagged' : 'verified'
     onResult({
       method,
       status,
-      note: quality.gibberish ? 'Auto-rejected: gibberish/spam detected.' : `${words}-word reflection.`,
-      trustDelta: status === 'verified' ? 1 : status === 'flagged' ? -4 : 0,
+      note:
+        status === 'flagged'
+          ? 'Auto-rejected: gibberish/spam detected.'
+          : `${words}-word reflection.`,
+      trustDelta: status === 'verified' ? 1 : -4,
       meta: {
         capturedAt: new Date().toISOString(),
         wordCount: words,

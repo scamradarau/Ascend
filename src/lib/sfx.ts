@@ -18,19 +18,60 @@ export function setSfxMuted(m: boolean) {
   muted = m
 }
 
-function audio(): AudioContext | null {
-  if (muted) return null
+let unlocked = false
+
+function getCtx(): AudioContext | null {
   if (typeof window === 'undefined') return null
   try {
     if (!ctx) {
-      const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      const AC =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       ctx = new AC()
     }
-    if (ctx.state === 'suspended') void ctx.resume()
     return ctx
   } catch {
     return null
   }
+}
+
+// iOS/Android gate Web Audio behind a user gesture: the context starts
+// "suspended" and a sound scheduled before it resumes is silently dropped.
+// We resume + play a 1-sample silent buffer inside the FIRST touch so every
+// later cue (including ones fired from async callbacks) is audible.
+export function unlockAudio() {
+  const ac = getCtx()
+  if (!ac) return
+  if (ac.state === 'suspended') void ac.resume()
+  if (unlocked) return
+  try {
+    const buf = ac.createBuffer(1, 1, 22050)
+    const src = ac.createBufferSource()
+    src.buffer = buf
+    src.connect(ac.destination)
+    src.start(0)
+    unlocked = true
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Attach one-time gesture listeners that unlock audio on mobile. */
+export function initSfx() {
+  if (typeof window === 'undefined') return
+  const onGesture = () => unlockAudio()
+  // not { once: true } — iOS can re-suspend; we re-resume on every gesture
+  window.addEventListener('pointerdown', onGesture, { passive: true })
+  window.addEventListener('touchend', onGesture, { passive: true })
+  window.addEventListener('keydown', onGesture, { passive: true })
+}
+
+function audio(): AudioContext | null {
+  if (muted) return null
+  const ac = getCtx()
+  if (!ac) return null
+  if (ac.state === 'suspended') void ac.resume()
+  return ac
 }
 
 interface ToneOpts {
