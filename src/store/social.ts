@@ -54,6 +54,10 @@ interface SocialState {
 }
 
 let timer: ReturnType<typeof setInterval> | null = null
+// the first earned-sync of a session only establishes the EXP baseline; it
+// must not mint Aether (otherwise every fresh/new-device login would hand out
+// totalExp/4 in free currency). Resets to false on each page load.
+let aetherBaselineDone = false
 
 export const useSocial = create<SocialState>((set, get) => ({
   meId: null,
@@ -123,14 +127,19 @@ export const useSocial = create<SocialState>((set, get) => ({
 
     const prog = await fetchEarnedProgress(me)
     if (prog) {
+      const firstSync = !aetherBaselineDone
+      aetherBaselineDone = true
       useGame.setState((g) => {
         const newTotal = typeof prog.total_exp === 'number' ? prog.total_exp : g.totalExp
-        // Aether shadows EXP at 1:4 — any server-granted EXP (incl. review
-        // approvals) also grants Aether here, exactly once per delta.
+        // Aether shadows EXP at 1:4 — but ONLY for EXP earned WHILE playing
+        // (e.g. an approved photo review during this session). The first sync
+        // just adopts the server baseline (a fresh login jumps totalExp 0 →
+        // real), so it must not mint Aether.
         const delta = newTotal - g.totalExp
+        const grantAether = !firstSync && delta > 0
         return {
           totalExp: newTotal,
-          aether: delta > 0 ? g.aether + Math.round(delta / 4) : g.aether,
+          aether: grantAether ? g.aether + Math.round(delta / 4) : g.aether,
           trust: typeof prog.trust === 'number' ? prog.trust : g.trust,
           // streak is client-owned (Streak Freeze) — never synced down from server
           questsThisMonth:
