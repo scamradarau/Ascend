@@ -575,6 +575,16 @@ export default function Onboarding() {
                     today — it takes two minutes.
                   </p>
                 </div>
+
+                {/* install nudge — most retention happens on the installed app */}
+                <div className="mt-3 flex items-start gap-2 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-slate-300">
+                  <span className="mt-0.5 text-base">📲</span>
+                  <span>
+                    <strong className="text-white">Tip:</strong> add Ascend to your home screen so it
+                    feels like a real app and you can get daily reminders. On iPhone: Share → Add to
+                    Home Screen. Full steps live in the <span className="text-cosmos-cyan">Codex</span>.
+                  </span>
+                </div>
               </div>
             </div>
           )}

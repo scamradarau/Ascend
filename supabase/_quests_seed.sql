@@ -15,7 +15,7 @@ insert into quests (id, trait_id, base_exp, method, scope) values
   ('mindfulness:mind-med','mindfulness',18,'meditation-timer','daily'),
   ('mindfulness:mind-gratitude','mindfulness',15,null,'daily'),
   ('main:mindfulness','mindfulness',200,null,'main'),
-  ('growth:grw-learn','growth',18,null,'daily'),
+  ('growth:grw-learn','growth',35,'focus-timer','daily'),
   ('growth:grw-fail','growth',15,null,'daily'),
   ('main:growth','growth',200,null,'main'),
   ('time-management:tm-block','time-management',20,null,'daily'),

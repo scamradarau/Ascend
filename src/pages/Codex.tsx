@@ -68,6 +68,44 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: 'install',
+    title: 'Install the App',
+    icon: '📲',
+    body: (
+      <>
+        <P>
+          Ascend runs in your browser, but you can install it like a real app — your own icon, full
+          screen, and daily reminder notifications. Takes about 15 seconds.
+        </P>
+        <div className="mt-4 font-semibold text-white">📱 iPhone / iPad (Safari)</div>
+        <List
+          items={[
+            <>Open Ascend in <strong>Safari</strong> (not another browser).</>,
+            <>Tap the <strong>Share</strong> button — the square with an up-arrow.</>,
+            <>Scroll down and tap <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</>,
+            <>Open Ascend from the new icon, then turn on reminders in <strong>Settings → Notifications</strong>.</>,
+          ]}
+        />
+        <div className="mt-4 font-semibold text-white">🤖 Android (Chrome)</div>
+        <List
+          items={[
+            <>Open Ascend in <strong>Chrome</strong>.</>,
+            <>Tap the <strong>⋮</strong> menu (top-right).</>,
+            <>Tap <strong>Install app</strong> (or <strong>Add to Home screen</strong>).</>,
+          ]}
+        />
+        <div className="mt-4 font-semibold text-white">💻 Desktop (Chrome / Edge)</div>
+        <List
+          items={[<>Click the <strong>install icon</strong> in the address bar, or ⋮ menu → <strong>Install Ascend</strong>.</>]}
+        />
+        <Callout tone="gold">
+          On iPhone, notifications only work <strong>after</strong> you add Ascend to the Home Screen and
+          open it from that icon (iOS 16.4+). Android &amp; desktop work straight from the browser.
+        </Callout>
+      </>
+    ),
+  },
+  {
     id: 'character',
     title: 'Your Character',
     icon: '🧬',

@@ -126,7 +126,7 @@ export const TRAITS: Trait[] = [
     benefit: 'You take on harder challenges, recover faster from failure, and improve where others plateau.',
     howToLevel: ['Add the word “yet” to every “I can’t.”', 'Seek feedback weekly and act on it.'],
     dailyTasks: [
-      { id: 'grw-learn', label: 'Learn something new for 20 minutes', evidence: 'reflection', exp: 18 },
+      { id: 'grw-learn', label: 'Learn something new for 20 minutes', evidence: 'reflection', verify: 'focus-timer', minMinutes: 20, exp: 35 },
       { id: 'grw-fail', label: 'Log one mistake and its lesson', evidence: 'reflection', exp: 15 },
     ],
     mainQuest: {
