@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { ATTRIBUTES, attributeById } from '../data/attributes'
 import { TRAITS, traitById } from '../data/traits'
 import type { AttributeId } from '../data/types'
-import { PixelTitle, Pill } from '../components/ui'
+import { PixelTitle, Pill, Modal } from '../components/ui'
 
 // ================================================================
 // MAIN QUESTS — decluttered: first you choose a Path (5 cards), then
@@ -15,8 +16,11 @@ export default function TraitMatrix() {
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const activeTraits = useGame((s) => s.activeTraits)
+  const dropTrait = useGame((s) => s.dropTrait)
   const activeIds = new Set(activeTraits.map((t) => t.id))
   const slotsLeft = 3 - activeTraits.length
+  const [confirmDrop, setConfirmDrop] = useState<string | null>(null)
+  const dropping = confirmDrop ? traitById(confirmDrop) : null
 
   const pathParam = params.get('path') as AttributeId | null
   const attr = pathParam ? ATTRIBUTES.find((a) => a.id === pathParam) : undefined
@@ -43,28 +47,78 @@ export default function TraitMatrix() {
       {/* your current build — always visible, wherever you are */}
       {activeTraits.length > 0 && (
         <div className="panel mb-6 p-4">
-          <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">
-            Building now
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">
+              Building now
+            </span>
+            <span className="text-[10px] text-[var(--muted)]">tap ✕ to drop · EXP is kept</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {activeTraits.map((at) => {
               const t = traitById(at.id)
               if (!t) return null
               const a = attributeById(t.attribute)
+              const locked = at.mainQuestProgress > 0 || at.mainQuestDone
               return (
-                <button
+                <div
                   key={at.id}
-                  onClick={() => navigate(`/app/traits/${at.id}`)}
-                  className="flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+                  className="flex items-center gap-1 rounded-lg border pl-3 pr-1.5 transition hover:-translate-y-0.5"
                   style={{ borderColor: `${a.color}66` }}
                 >
-                  <span>{a.icon}</span> {t.name}
-                  {at.mainQuestDone && <span className="text-exp">✓</span>}
-                </button>
+                  <button
+                    onClick={() => navigate(`/app/traits/${at.id}`)}
+                    className="flex items-center gap-2 py-1.5 text-sm font-semibold text-white"
+                  >
+                    <span>{a.icon}</span> {t.name}
+                    {at.mainQuestDone && <span className="text-exp">✓</span>}
+                  </button>
+                  <button
+                    onClick={() => !locked && setConfirmDrop(at.id)}
+                    disabled={locked}
+                    title={
+                      locked
+                        ? 'Committed — finish or reset the main quest before dropping'
+                        : `Drop ${t.name}`
+                    }
+                    aria-label={locked ? 'Trait committed' : `Drop ${t.name}`}
+                    className={`flex h-6 w-6 items-center justify-center rounded text-xs ${
+                      locked
+                        ? 'cursor-not-allowed text-[var(--muted)]/60'
+                        : 'text-[var(--muted)] hover:bg-cosmos-magenta/15 hover:text-cosmos-magenta'
+                    }`}
+                  >
+                    {locked ? '🔒' : '✕'}
+                  </button>
+                </div>
               )
             })}
           </div>
         </div>
+      )}
+
+      {/* drop confirmation */}
+      {dropping && (
+        <Modal open onClose={() => setConfirmDrop(null)} title="Drop this trait?">
+          <p className="text-sm leading-relaxed text-slate-300">
+            Drop <span className="font-bold text-white">{dropping.name}</span>? This frees a build
+            slot. Your earned trait EXP is <span className="text-exp">kept</span> — re-add it any
+            time and it picks up exactly where it left off.
+          </p>
+          <div className="mt-5 flex gap-2">
+            <button onClick={() => setConfirmDrop(null)} className="btn btn-ghost flex-1">
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                if (confirmDrop) dropTrait(confirmDrop)
+                setConfirmDrop(null)
+              }}
+              className="btn flex-1 border border-cosmos-magenta/50 bg-cosmos-magenta/15 text-cosmos-magenta hover:bg-cosmos-magenta/25"
+            >
+              Drop trait
+            </button>
+          </div>
+        </Modal>
       )}
 
       {!attr ? (
