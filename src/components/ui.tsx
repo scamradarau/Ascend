@@ -1,4 +1,5 @@
 import React from 'react'
+import { createPortal } from 'react-dom'
 
 // ---- Pixel wordmark (matches the deck's title treatment) ----
 export function PixelTitle({
@@ -91,9 +92,11 @@ export function Modal({
   title?: string
 }) {
   if (!open) return null
-  return (
+  // Portal to <body> so the overlay escapes any card/stacking context it was
+  // invoked from (otherwise a later sibling card can paint over it).
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -108,7 +111,8 @@ export function Modal({
         )}
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
