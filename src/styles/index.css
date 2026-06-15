@@ -105,6 +105,19 @@ body {
   }
 }
 
+/* olympus painted backdrop — same wide-art / dark-centre issue, so phones
+   get a portrait crop instead of the empty middle. */
+.olympus-cover-bg {
+  background-image: url('/themes/olympus.webp');
+  background-size: cover;
+  background-position: center;
+}
+@media (max-width: 640px) {
+  .olympus-cover-bg {
+    background-image: url('/themes/olympus-mobile.webp');
+  }
+}
+
 .rune-bg {
   background:
     radial-gradient(900px 520px at 60% 4%, rgba(224, 214, 196, 0.16), transparent 60%),

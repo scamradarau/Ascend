@@ -51,6 +51,8 @@ export default function ThemeBackground({ theme }: { theme: Theme }) {
         {theme === 'cosmos' ? (
           // cosmos swaps to a portrait crop on phones (see .cosmos-cover-bg)
           <div className="cosmos-cover-bg fixed inset-0 z-0" />
+        ) : theme === 'olympus' ? (
+          <div className="olympus-cover-bg fixed inset-0 z-0" />
         ) : (
           <div
             className="fixed inset-0 z-0"
