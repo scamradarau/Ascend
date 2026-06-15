@@ -46,5 +46,15 @@ Deno.serve(async (req) => {
   if (qp?.done) return json({ ok: false, error: 'Quest already complete — cannot reset.' }, 409)
 
   await admin.from('quest_progress').delete().eq('user_id', user.id).eq('quest_id', quest_id)
+
+  // void any still-pending submissions for this quest, so an old photo approved
+  // after the reset can't silently re-create progress.
+  await admin
+    .from('submissions')
+    .update({ status: 'flagged', note: 'Quest reset — submission voided.' })
+    .eq('user_id', user.id)
+    .eq('quest_id', quest_id)
+    .eq('status', 'pending')
+
   return json({ ok: true })
 })
