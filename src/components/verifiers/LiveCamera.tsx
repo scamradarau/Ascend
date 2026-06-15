@@ -151,6 +151,17 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
     const ctx = canvas.getContext('2d')!
     ctx.drawImage(video, 0, 0, w, h)
 
+    // clean, higher-res square crop of the LIVE frame for the classifier —
+    // captured before the liveness overlay and at 256px (not the 160px proof
+    // thumbnail), since small/letterboxed inputs badly hurt MobileNet accuracy.
+    const side = Math.min(w, h)
+    const classCanvas = document.createElement('canvas')
+    classCanvas.width = 256
+    classCanvas.height = 256
+    classCanvas
+      .getContext('2d')!
+      .drawImage(video, (w - side) / 2, (h - side) / 2, side, side, 0, 0, 256, 256)
+
     // burn liveness overlay into the pixels (so it can't be a stale image)
     const ts = new Date()
     const pad = Math.round(w * 0.02)
@@ -204,7 +215,7 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
           setDetecting(false)
         }
       }
-      probe.src = tc.toDataURL('image/jpeg', 0.8)
+      probe.src = classCanvas.toDataURL('image/jpeg', 0.92)
     }
   }
 

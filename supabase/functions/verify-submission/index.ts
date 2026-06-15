@@ -324,7 +324,9 @@ Deno.serve(async (req) => {
       total_exp: (prof?.total_exp ?? 0) + expAwarded,
       trust: clampTrust((prof?.trust ?? 100) + trustDelta),
       streak,
-      quests_this_month: (prof?.quests_this_month ?? 0) + (status !== 'flagged' ? 1 : 0),
+      // count only verified completions; a pending photo is tallied later, on
+      // approval (review-submission), so it isn't double-counted.
+      quests_this_month: (prof?.quests_this_month ?? 0) + (status === 'verified' ? 1 : 0),
       trait_exp: traitExp,
       traits,
       last_active: status !== 'flagged' ? today : prof?.last_active ?? null,

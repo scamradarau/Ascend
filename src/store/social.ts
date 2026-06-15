@@ -54,10 +54,11 @@ interface SocialState {
 }
 
 let timer: ReturnType<typeof setInterval> | null = null
-// the first earned-sync of a session only establishes the EXP baseline; it
+// the first earned-sync per account only establishes the EXP baseline; it
 // must not mint Aether (otherwise every fresh/new-device login would hand out
-// totalExp/4 in free currency). Resets to false on each page load.
+// totalExp/4 in free currency). Reset whenever the signed-in user changes.
 let aetherBaselineDone = false
+let baselineUser: string | null = null
 
 export const useSocial = create<SocialState>((set, get) => ({
   meId: null,
@@ -70,6 +71,11 @@ export const useSocial = create<SocialState>((set, get) => ({
 
   refresh: async () => {
     const me = useAuth.getState().user?.id ?? null
+    if (me !== baselineUser) {
+      // account switched (or first load) — re-establish the Aether baseline
+      baselineUser = me
+      aetherBaselineDone = false
+    }
     if (!isCloud || !me) {
       set({ meId: me, requests: [], messages: [], submissions: [], ready: true })
       return
@@ -112,8 +118,15 @@ export const useSocial = create<SocialState>((set, get) => ({
         if (before === 'pending' && s.status === 'verified') approved = true
         else if (before === 'pending' && s.status === 'flagged') rejected = true
       }
-      if (approved) playSfx('verified')
-      else if (rejected) playSfx('flagged')
+      if (approved) {
+        playSfx('verified')
+        // an approved photo is the player showing up — count it toward the
+        // (client-owned) streak. Idempotent per Sydney day, so doing other
+        // quests too won't double-count.
+        useGame.getState().registerCloudCheckIn()
+      } else if (rejected) {
+        playSfx('flagged')
+      }
     }
 
     set({ meId: me, requests, messages, submissions, profiles, ready: true })

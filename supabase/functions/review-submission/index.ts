@@ -90,9 +90,19 @@ Deno.serve(async (req) => {
 
   const admin = createClient(url, service)
 
-  // caller must be an admin
+  // caller must be an admin (seeded in `admins`) OR the configured owner email.
+  // If the owner email matches but they're not yet in `admins`, auto-heal by
+  // seeding them — so the review queue RLS + this function both work without a
+  // manual SQL step (set the OWNER_EMAIL function secret to enable).
+  const ownerEmail = Deno.env.get('OWNER_EMAIL')?.toLowerCase()
+  const isOwner = !!ownerEmail && user.email?.toLowerCase() === ownerEmail
   const { data: isAdmin } = await admin.from('admins').select('user_id').eq('user_id', user.id).maybeSingle()
-  if (!isAdmin) return json({ error: 'forbidden' }, 403)
+  if (!isAdmin && !isOwner) {
+    return json({ error: 'forbidden — this account is not an admin' }, 403)
+  }
+  if (isOwner && !isAdmin) {
+    await admin.from('admins').upsert({ user_id: user.id })
+  }
 
   const body = (await req.json().catch(() => ({}))) as { submission_id?: string; decision?: 'approve' | 'reject' }
   if (!body.submission_id || !body.decision) return json({ error: 'submission_id + decision required' }, 400)

@@ -157,7 +157,23 @@ export async function reviewSubmission(id: string, decision: 'approve' | 'reject
   const { data, error } = await supabase.functions.invoke('review-submission', {
     body: { submission_id: id, decision },
   })
-  return { data, error: error?.message }
+  if (error) return { error: await edgeErrorMessage(error) }
+  return { data }
+}
+
+// supabase.functions.invoke only gives a generic "non-2xx" message; the real
+// reason is in the Response body. Pull it out so failures are diagnosable.
+async function edgeErrorMessage(error: unknown): Promise<string> {
+  const ctx = (error as { context?: Response }).context
+  if (ctx && typeof ctx.json === 'function') {
+    try {
+      const body = await ctx.json()
+      if (body?.error) return String(body.error)
+    } catch {
+      /* not JSON */
+    }
+  }
+  return (error as { message?: string }).message ?? 'request failed'
 }
 
 // ---- server-owned quest progress (mains + challenge periods) ----
