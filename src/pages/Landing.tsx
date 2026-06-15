@@ -73,7 +73,7 @@ export default function Landing() {
             <span className="chip border-white/40 text-white/80">Self-improvement, gamified</span>
           </div>
           <h1 className="mb-6">
-            <PixelTitle className="block text-5xl text-black drop-shadow-[0_4px_0_rgba(255,255,255,0.25)] sm:text-7xl md:text-8xl">
+            <PixelTitle className="block bg-gradient-to-br from-cosmos-cyan via-cosmos-violet to-cosmos-magenta bg-clip-text text-5xl text-transparent drop-shadow-[0_3px_16px_rgba(56,225,255,0.4)] sm:text-7xl md:text-8xl">
               ASCEND
             </PixelTitle>
           </h1>
