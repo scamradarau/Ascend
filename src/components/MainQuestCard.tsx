@@ -57,6 +57,16 @@ export default function MainQuestCard({
   const mq = variant === 'practical' ? practicalQuestFor(t) : t.mainQuest
   const questId = variant === 'practical' ? practicalQuestId(traitId) : `main:${traitId}`
 
+  // The "Read a book" path is ALWAYS a reading check-in (or a written
+  // reflection) — never a photo, whatever the quest's authored checkIn says.
+  // Only the practical 2-week challenge uses photo/geo proof.
+  const checkInMethod: VerificationMethodId =
+    variant === 'practical'
+      ? methodFor(mq.checkIn)
+      : mq.checkIn === 'reflection'
+        ? 'journal'
+        : 'reading-check'
+
   const isActive = !!active
   const steps = variant === 'practical' ? 14 : 4
   const mqPct = active ? Math.round(active.mainQuestProgress * 100) : 0
@@ -249,7 +259,7 @@ export default function MainQuestCard({
         <VerificationModal
           open={pending}
           onClose={() => setPending(false)}
-          method={methodFor(mq.checkIn)}
+          method={checkInMethod}
           label={
             variant === 'practical' && mainCommitment[traitId]
               ? `${mq.title} — ${mainCommitment[traitId]}`
