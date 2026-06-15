@@ -73,6 +73,10 @@ export interface GameState {
   activeTraits: ActiveTrait[]
   // progress of dropped traits, preserved so re-adding doesn't reset their level
   archivedTraits: Record<string, { exp: number; mainQuestProgress: number; mainQuestDone: boolean }>
+  // anti-farm: cap how many traits you can ADD per Sydney day (swapping traits
+  // to reach more dailies is the main EXP-farm vector).
+  traitAddsToday: number
+  traitAddDate: string
   dailyLog: DailyLog
   completedQuests: CompletedQuest[]
   questsThisMonth: number
@@ -161,6 +165,7 @@ const todayStr = () => todayKey()
 // streak-freeze + milestone tuning
 export const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100, 180, 365]
 const FREEZE_CAP = 2 // most freezes you can bank
+export const TRAIT_ADD_CAP = 2 // most traits you can add per Sydney day (anti-farm)
 const FREEZE_COST = 250 // Aether to buy one
 /** whole calendar days between two yyyy-mm-dd keys (b − a). */
 const daysBetween = (a: string, b: string) =>
@@ -220,6 +225,8 @@ export const useGame = create<GameState>()(
       trust: STARTING_TRUST,
       activeTraits: [],
       archivedTraits: {},
+      traitAddsToday: 0,
+      traitAddDate: '',
       dailyLog: {},
       completedQuests: [],
       questsThisMonth: 0,
@@ -368,6 +375,10 @@ export const useGame = create<GameState>()(
         const { activeTraits, archivedTraits } = get()
         if (activeTraits.length >= 3) return false
         if (activeTraits.some((t) => t.id === traitId)) return false
+        // anti-farm: at most TRAIT_ADD_CAP additions per Sydney day
+        const today = todayStr()
+        const addsToday = get().traitAddDate === today ? get().traitAddsToday : 0
+        if (addsToday >= TRAIT_ADD_CAP) return false
         // restore prior progress if this trait was dropped before
         const saved = archivedTraits[traitId]
         const rest = { ...archivedTraits }
@@ -383,6 +394,8 @@ export const useGame = create<GameState>()(
             },
           ],
           archivedTraits: rest,
+          traitAddsToday: addsToday + 1,
+          traitAddDate: today,
         })
         return true
       },

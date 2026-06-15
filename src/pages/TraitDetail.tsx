@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useGame, traitLevel, isTaskDoneToday } from '../store/useGame'
+import { useGame, traitLevel, isTaskDoneToday, TRAIT_ADD_CAP } from '../store/useGame'
+import { todayKey } from '../lib/time'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
 import { levelFromTotalExp } from '../data/leveling'
@@ -59,12 +60,22 @@ export default function TraitDetail() {
   const mqProgress = active ? Math.round(active.mainQuestProgress * 100) : 0
   const mqDone = active?.mainQuestDone
 
+  // anti-farm: limited trait additions per day
+  const traitAddsToday = useGame((s) => s.traitAddsToday)
+  const traitAddDate = useGame((s) => s.traitAddDate)
+  const changesLeft = traitAddDate === todayKey() ? Math.max(0, TRAIT_ADD_CAP - traitAddsToday) : TRAIT_ADD_CAP
+  const capReached = changesLeft <= 0
+
   const flash = (msg: string) => {
     setToast(msg)
     setTimeout(() => setToast(null), 2400)
   }
 
   const onAccept = () => {
+    if (capReached) {
+      flash(`Daily limit reached — you can add up to ${TRAIT_ADD_CAP} traits per day.`)
+      return
+    }
     if (addTrait(t.id)) flash(`${t.name} added to your stats!`)
   }
 
@@ -145,11 +156,13 @@ export default function TraitDetail() {
                 <p className="text-xs text-[var(--muted)]">
                   {slotsFull
                     ? 'All 3 trait slots are full. Finish or drop one to add this.'
-                    : 'Add this trait to your stats and start levelling it.'}
+                    : capReached
+                      ? `You’ve hit today’s limit of ${TRAIT_ADD_CAP} new traits. Come back tomorrow — this stops quest-farming.`
+                      : `Add this trait to your stats and start levelling it. (${changesLeft} trait change${changesLeft === 1 ? '' : 's'} left today.)`}
                 </p>
                 <button
                   onClick={onAccept}
-                  disabled={slotsFull}
+                  disabled={slotsFull || capReached}
                   className="btn btn-primary mt-3 w-full text-xs"
                 >
                   ✦ Accept trait

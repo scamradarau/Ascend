@@ -32,6 +32,10 @@ export default function BookLinks({ book, compact = false }: { book: string; com
         <A href={l.amazon}>🛒 Amazon</A>
         <A href={l.bookshop}>🛍️ Bookshop.org</A>
       </div>
+      <p className="mt-2 text-[10px] leading-snug text-[var(--muted)]/80">
+        Free borrowing depends on availability — a copy may be on loan. If it’s out, join the
+        waitlist, pick another source, or swap in any book on the same topic.
+      </p>
     </div>
   )
 }

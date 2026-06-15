@@ -215,7 +215,19 @@ export default function Leaderboards() {
                         {e.isMe && <Pill tone="exp">You</Pill>}
                       </div>
                       <div className="text-[10px] uppercase tracking-wide text-[var(--muted)]">
-                        {rankForLevel(e.level).title} · {e.region}
+                        {rankForLevel(e.level).title} · {e.region} ·{' '}
+                        <span
+                          title="Integrity — anti-cheat trust score"
+                          className={
+                            e.trust >= 80
+                              ? 'text-exp'
+                              : e.trust >= 50
+                                ? 'text-amber-300'
+                                : 'text-cosmos-magenta'
+                          }
+                        >
+                          🛡 {e.trust}
+                        </span>
                       </div>
                       {/* STAT board: show individual trait levels */}
                       {board === 'stat' && e.traits.length > 0 && (

@@ -119,27 +119,6 @@ export default function PlatformLayout() {
             ☰
           </button>
 
-          {/* back / forward — needed in the installed Home Screen app, which has
-              no browser chrome. Hidden on desktop (the browser has its own). */}
-          <div className="flex shrink-0 items-center gap-1 md:hidden">
-            <button
-              onClick={() => navigate(-1)}
-              title="Back"
-              aria-label="Go back"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-lg leading-none text-[var(--text)] transition hover:border-[var(--accent)]/60 hover:text-[var(--accent)]"
-            >
-              ‹
-            </button>
-            <button
-              onClick={() => navigate(1)}
-              title="Forward"
-              aria-label="Go forward"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-lg leading-none text-[var(--text)] transition hover:border-[var(--accent)]/60 hover:text-[var(--accent)]"
-            >
-              ›
-            </button>
-          </div>
-
           <div className="flex-1" />
 
           {/* alerts + messages — always in sight, never buried in the drawer */}
