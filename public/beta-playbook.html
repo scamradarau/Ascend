@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ASCEND — Closed Beta Playbook</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="/favicon-32.png" />
+<style>
+  :root{
+    --bg:#070b18; --panel:rgba(15,22,43,.6); --edge:rgba(120,160,255,.18);
+    --cyan:#38e1ff; --gold:#ffcf5c; --green:#5cff9d; --text:#eaf0ff; --muted:#9fb0d6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;color:var(--text);
+    background:radial-gradient(1100px 700px at 80% -10%,rgba(56,225,255,.10),transparent 60%),
+      radial-gradient(900px 600px at 10% 10%,rgba(154,123,255,.10),transparent 55%),var(--bg);
+    line-height:1.6;}
+  .wrap{max-width:820px;margin:0 auto;padding:48px 22px 80px}
+  .badge{display:inline-block;font-size:12px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--gold);border:1px solid var(--edge);border-radius:999px;padding:5px 12px}
+  h1{font-size:clamp(28px,5vw,44px);margin:18px 0 6px;font-weight:800;letter-spacing:-.01em}
+  h2{font-size:22px;margin:38px 0 8px;border-bottom:1px solid var(--edge);padding-bottom:8px}
+  h3{font-size:16px;margin:22px 0 6px;color:var(--cyan)}
+  p,li{color:#d6def5}
+  .lead{color:var(--muted);font-size:18px}
+  .card{background:var(--panel);border:1px solid var(--edge);border-radius:14px;padding:18px 20px;margin:16px 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--edge);vertical-align:top}
+  th{color:var(--muted);text-transform:uppercase;font-size:12px;letter-spacing:1px}
+  .go{color:var(--green);font-weight:700}
+  blockquote{margin:14px 0;padding:12px 16px;border-left:3px solid var(--cyan);
+    background:rgba(56,225,255,.05);border-radius:0 10px 10px 0;color:#e7eeff}
+  strong{color:#fff}
+  code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;font-size:.9em}
+  .foot{margin-top:48px;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid var(--edge);padding-top:20px}
+  a{color:var(--cyan)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">ASCEND · Founder Doc</span>
+  <h1>Closed Beta Playbook</h1>
+  <p class="lead">A 2–4 week closed beta exists to answer <strong>two questions no code can</strong>:
+    (1) will people tolerate the verification friction? (2) is “verified effort” actually trustworthy,
+    or gameable? Everything here serves those two.</p>
+
+  <h2>1 · Who to recruit</h2>
+  <div class="card">
+    <ul>
+      <li><strong>15–30 people</strong> — small enough to talk to each one, big enough to see a curve.</li>
+      <li><strong>Bias toward people who already want this</strong> — fitness / reading / self-improvement types. The beta tests whether the people most likely to love it stick, not whether you can convert skeptics.</li>
+      <li><strong>Mix of devices</strong> — some iPhone (they hit the “Add to Home Screen” path), some Android/desktop.</li>
+      <li>Avoid favor-doers who sign up once to be nice — they pollute your retention signal.</li>
+    </ul>
+    <blockquote><strong>Recruiting line:</strong> “I built a self-improvement app that works like an RPG — real quests you have to <em>prove</em> you did (photo/timer/reading checks), levels, streaks, a leaderboard. Want to use it for 2 weeks and tell me where it’s annoying or broken? Free, ~2 min/day.”</blockquote>
+  </div>
+
+  <h2>2 · What to tell testers</h2>
+  <ul>
+    <li><strong>“It’s early. Things will break — tell me when they do.”</strong> Turns bugs into contributions, not disappointments.</li>
+    <li><strong>“Aim for one quest a day. Don’t binge.”</strong> The daily habit is the behavior you’re testing.</li>
+    <li><strong>“Be honest in the app — it’s built to catch fakes, and the leaderboard only means something if everyone’s real.”</strong></li>
+    <li><strong>iPhone users:</strong> walk them through Add to Home Screen on day 1, or they get no notifications.</li>
+  </ul>
+
+  <h2>3 · The only metrics that matter</h2>
+  <table>
+    <tr><th>Metric</th><th>How to read it</th><th>“Go” threshold</th></tr>
+    <tr><td>D1 → first quest</td><td>% who did any quest on day 1</td><td class="go">&gt;70%</td></tr>
+    <tr><td><strong>D2 retention</strong></td><td>% back doing a quest on day 2 — your single most important number</td><td class="go">&gt;40%</td></tr>
+    <tr><td>D7 retention</td><td>% still active after a week</td><td class="go">&gt;20%</td></tr>
+    <tr><td>First-photo drop-off</td><td>Do people bounce at the first live-photo quest?</td><td>No visible cliff</td></tr>
+    <tr><td>Verification integrity</td><td>Spot-check the review queue — any obvious fakes verified?</td><td class="go">Zero</td></tr>
+    <tr><td>Streak survival</td><td>How many keep a streak past 3 days</td><td>Rising</td></tr>
+  </table>
+  <blockquote><strong>Decision rule:</strong> strong D2 (&gt;40%) + clean integrity = you have a product, scale recruiting. People bouncing at the first photo = a <em>friction</em> problem to solve before launch — don’t fix it by adding features.</blockquote>
+
+  <h2>4 · How to collect feedback</h2>
+  <ul>
+    <li><strong>In-app feedback + Lumi</strong> — in-the-moment beats a survey later.</li>
+    <li><strong>One group chat</strong> (Discord/WhatsApp) with all testers — highest-value channel; they bond as a cohort, which itself boosts retention.</li>
+    <li><strong>One 10-min call</strong> with 3–5 of them mid-beta. Watch them use it <em>without helping</em>.</li>
+    <li><strong>The one survey question</strong> (end of week 2): “How would you feel if you could no longer use Ascend?” — <strong class="go">&gt;40% “very disappointed” = product-market-fit signal.</strong></li>
+  </ul>
+
+  <h2>5 · Timeline</h2>
+  <ul>
+    <li><strong>Day 0:</strong> onboard each tester personally; get their first quest done while you watch/chat.</li>
+    <li><strong>Days 1–7:</strong> mostly observe. Fix only show-stoppers — collect signal before redesigning.</li>
+    <li><strong>Day 7:</strong> read D2/D7. Talk to the quiet ones (silence is data).</li>
+    <li><strong>Days 8–14:</strong> ship fixes to the top 3 friction points; see if retention responds.</li>
+    <li><strong>Day 14:</strong> run the Sean-Ellis question. Decide: scale, iterate, or pivot.</li>
+  </ul>
+
+  <h2>6 · Known risks to watch</h2>
+  <ul>
+    <li><strong>Anti-cheat is advisory, not bulletproof.</strong> On-device AI + liveness code + GPS catch casual fakes; a determined tester can bypass scene detection. If integrity is what people love, harden it server-side later.</li>
+    <li><strong>Rewards are “coming soon.”</strong> Make sure testers know Aether is for cosmetics + bragging rights right now.</li>
+    <li><strong>Empty social.</strong> Under ~30 people the leaderboard/guild are quiet — the founding-member framing helps; don’t over-index on social this round.</li>
+    <li><strong>iOS push needs the Home-Screen install.</strong> “No notifications” on iPhone is almost always the missing install step.</li>
+  </ul>
+
+  <div class="card" style="border-color:var(--gold)">
+    <strong>The one-sentence version:</strong> get 20 people who want this to use it for two weeks; watch whether they come back on day 2 and whether anyone games the verification — those two answers tell you if you’re ready to launch.
+  </div>
+
+  <p class="foot">Internal founder document · ASCEND · not indexed</p>
+</div>
+</body>
+</html>
