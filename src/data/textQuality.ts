@@ -16,6 +16,25 @@ const KEYBOARD_RUNS = [
   'qwerty', 'asdf', 'asdfgh', 'zxcv', 'jkl', 'hjkl', 'qwer', 'wasd', 'uiop', 'sdfg', 'fghj',
 ]
 
+// Words that show up in almost any genuine English sentence. A real
+// reflection of any length contains several of these; keyboard-mashing
+// contains none. (Matched against apostrophe-stripped tokens.)
+const FUNCTION_WORDS = new Set([
+  'the', 'a', 'an', 'and', 'or', 'but', 'so', 'if', 'then', 'than', 'as', 'of', 'to', 'in', 'on',
+  'at', 'by', 'for', 'with', 'from', 'into', 'about', 'over', 'out', 'up', 'down', 'off',
+  'i', 'im', 'ive', 'me', 'my', 'mine', 'myself', 'we', 'us', 'our', 'you', 'your', 'he', 'she',
+  'they', 'them', 'it', 'this', 'that', 'these', 'those',
+  'is', 'am', 'are', 'was', 'were', 'be', 'been', 'being', 'do', 'did', 'done', 'does', 'have',
+  'has', 'had', 'will', 'would', 'can', 'could', 'should', 'shall', 'may', 'might', 'must', 'not',
+  'no', 'yes',
+  'today', 'tomorrow', 'yesterday', 'day', 'time', 'now', 'more', 'less', 'just', 'really', 'very',
+  'feel', 'felt', 'feeling', 'want', 'wanted', 'need', 'needed', 'go', 'going', 'got', 'get', 'make',
+  'made', 'work', 'working', 'worked', 'because', 'when', 'what', 'who', 'how', 'why', 'all', 'some',
+  'good', 'bad', 'better', 'best', 'like', 'know', 'think', 'thought', 'much', 'many', 'and',
+])
+
+const VOWELS = /[aeiouy]/
+
 export function assessText(raw: string): TextAssessment {
   const text = raw.trim()
   const reasons: string[] = []
@@ -25,6 +44,7 @@ export function assessText(raw: string): TextAssessment {
   const letters = lower.replace(/[^a-z]/g, '')
   const words = lower.split(/\s+/).filter(Boolean)
   const tokens = lower.match(/[a-z']+/g) ?? []
+  const cleanTokens = tokens.map((t) => t.replace(/'/g, ''))
 
   // 1) keyboard mashing
   if (KEYBOARD_RUNS.some((k) => lower.includes(k))) {
@@ -39,13 +59,16 @@ export function assessText(raw: string): TextAssessment {
     flags += 2
   }
 
-  // 3) vowel ratio — real prose is ~35–45% vowels
+  // 3) vowel ratio — real prose is ~35–45% vowels; anything this low is junk
   if (letters.length >= 12) {
     const vowels = (letters.match(/[aeiou]/g) ?? []).length
     const ratio = vowels / letters.length
-    if (ratio < 0.18) {
-      reasons.push('Almost no vowels — not real words')
+    if (ratio < 0.24) {
+      reasons.push('Far too few vowels — not real words')
       flags += 2
+    } else if (ratio < 0.3) {
+      reasons.push('Unusually few vowels')
+      flags += 1
     }
   }
 
@@ -56,19 +79,19 @@ export function assessText(raw: string): TextAssessment {
   }
 
   // 5) repeated same word (spam / filler)
-  if (tokens.length >= 4) {
+  if (cleanTokens.length >= 4) {
     const counts: Record<string, number> = {}
-    tokens.forEach((t) => (counts[t] = (counts[t] ?? 0) + 1))
+    cleanTokens.forEach((t) => (counts[t] = (counts[t] ?? 0) + 1))
     const topRepeat = Math.max(...Object.values(counts))
-    if (topRepeat / tokens.length > 0.5) {
+    if (topRepeat / cleanTokens.length > 0.5) {
       reasons.push('Same word repeated as filler')
       flags += 2
     }
   }
 
   // 6) low lexical diversity
-  if (tokens.length >= 5) {
-    const unique = new Set(tokens).size / tokens.length
+  if (cleanTokens.length >= 5) {
+    const unique = new Set(cleanTokens).size / cleanTokens.length
     if (unique < 0.5) {
       reasons.push('Very low lexical diversity')
       flags += 1
@@ -95,11 +118,34 @@ export function assessText(raw: string): TextAssessment {
   }
 
   // 9) lots of very short tokens (mostly 1–3 char "words")
-  if (tokens.length >= 6) {
-    const shortRatio = tokens.filter((t) => t.length <= 3).length / tokens.length
+  if (cleanTokens.length >= 6) {
+    const shortRatio = cleanTokens.filter((t) => t.length <= 3).length / cleanTokens.length
     if (shortRatio > 0.7) {
       reasons.push('Mostly tiny non-words')
       flags += 1
+    }
+  }
+
+  // 10) vowel-less tokens — real words almost always contain a vowel (incl. y).
+  //     Tokens like "rhf", "gdrt", "txh", "rghdftw" are unambiguous junk. This
+  //     is the strongest single signal for scattered keyboard-mashing.
+  const vowellessJunk = cleanTokens.filter((t) => t.length >= 3 && !VOWELS.test(t))
+  if (vowellessJunk.length >= 2) {
+    reasons.push('Contains made-up words with no vowels')
+    flags += 3
+  } else if (vowellessJunk.length === 1 && cleanTokens.length <= 8) {
+    reasons.push('Contains a vowel-less non-word')
+    flags += 1
+  }
+
+  // 11) no real words — a genuine reflection of any length contains common
+  //     English function words ("I", "the", "to", "and"…). Zero of them across
+  //     many tokens means it isn't real writing.
+  if (cleanTokens.length >= 8) {
+    const realWords = cleanTokens.filter((t) => FUNCTION_WORDS.has(t)).length
+    if (realWords === 0) {
+      reasons.push('No recognisable English words')
+      flags += 3
     }
   }
 
