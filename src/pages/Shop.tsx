@@ -63,8 +63,8 @@ export default function Shop() {
           <PixelTitle className="text-xs text-[var(--accent)]">SHOP</PixelTitle>
           <h1 className="mt-2 font-display text-2xl font-bold text-white">Spend your Aether</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">
-            Aether (◈) is earned by verified quests. Spend it on cosmetics or redeem real-world
-            rewards funded by sponsors.
+            Aether (◈) is earned by verified quests. Spend it on cosmetics now — sponsor-funded
+            real-world rewards are coming as the community grows.
           </p>
         </div>
         <div className="rounded-xl border border-cosmos-gold/40 bg-cosmos-gold/5 px-4 py-2 text-center">
@@ -125,30 +125,37 @@ export default function Shop() {
       )}
 
       {tab === 'rewards' && (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {REWARDS.map((r) => {
-            const locked = level < r.reqLevel
-            const afford = aether >= r.cost
-            return (
-              <div key={r.id} className={`panel p-5 text-center ${locked ? 'opacity-60' : ''}`}>
-                <div className="text-4xl">{r.icon}</div>
-                <h3 className="mt-2 font-display text-base font-bold text-white">{r.name}</h3>
-                <Pill tone={TIER_TONE[r.tier as keyof typeof TIER_TONE]}>{r.tier} reward</Pill>
-                <div className="mt-3 font-pixel text-sm text-cosmos-gold">◈ {r.cost.toLocaleString()}</div>
-                <button
-                  disabled={locked || !afford}
-                  onClick={() => flash(locked ? 'Level too low' : 'Redeemed — check your email!')}
-                  className="btn btn-primary mt-3 w-full text-xs"
-                >
-                  {locked ? `🔒 Lv ${r.reqLevel}` : afford ? 'Redeem' : 'Not enough ◈'}
-                </button>
-              </div>
-            )
-          })}
-          <p className="col-span-full mt-2 text-center text-[11px] text-[var(--muted)]">
-            Rewards are sponsor-funded and rotate to keep the ladder fair. Redemptions are verified
-            against your integrity score before fulfilment.
-          </p>
+        <div>
+          <div className="mb-4 rounded-xl border border-cosmos-gold/30 bg-cosmos-gold/5 p-4 text-sm text-slate-200">
+            <span className="font-semibold text-cosmos-gold">🚧 Real rewards are on the way.</span>{' '}
+            We’re lining up sponsor-funded perks for launch. For now, your Aether is for cosmetics
+            and bragging rights — these unlock as the community grows.{' '}
+            <span className="text-[var(--muted)]">Nothing here spends your Aether yet.</span>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {REWARDS.map((r) => {
+              const reached = level >= r.reqLevel
+              return (
+                <div key={r.id} className="panel p-5 text-center opacity-80">
+                  <div className="text-4xl">{r.icon}</div>
+                  <h3 className="mt-2 font-display text-base font-bold text-white">{r.name}</h3>
+                  <Pill tone={TIER_TONE[r.tier as keyof typeof TIER_TONE]}>{r.tier} reward</Pill>
+                  <div className="mt-3 font-pixel text-sm text-cosmos-gold">
+                    ◈ {r.cost.toLocaleString()}
+                  </div>
+                  <div className="mt-1 text-[10px] uppercase tracking-wide text-[var(--muted)]">
+                    {reached ? 'Level unlocked' : `Unlocks at Lv ${r.reqLevel}`}
+                  </div>
+                  <button
+                    disabled
+                    className="btn btn-ghost mt-3 w-full cursor-not-allowed text-xs opacity-70"
+                  >
+                    🔜 Coming soon
+                  </button>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 

@@ -86,6 +86,9 @@ export default function Leaderboards() {
 
   const info = REWARD_INFO[board]
   const empty = ranked.length === 0
+  // a board with only a handful of climbers reads as exclusive, not dead —
+  // frame it as founding-member early access (self-hides once it fills out).
+  const founding = ranked.length > 0 && ranked.length <= 12
   const podium = ranked.slice(0, 3)
   // deck-style order: 2nd, 1st, 3rd
   const podiumOrder = [podium[1], podium[0], podium[2]].filter(Boolean) as Ranked[]
@@ -117,6 +120,19 @@ export default function Leaderboards() {
           </button>
         ))}
       </div>
+
+      {founding && (
+        <div className="mb-5 flex items-center gap-3 rounded-xl border border-cosmos-gold/30 bg-gradient-to-r from-cosmos-gold/10 to-transparent p-4">
+          <span className="text-2xl">🌱</span>
+          <div>
+            <div className="font-display text-sm font-bold text-white">You’re a founding Ascender</div>
+            <p className="text-xs text-[var(--muted)]">
+              The ladder is brand new — every name here is one of the very first. Climb now and you’re
+              the rank everyone who comes later has to chase.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ---------------- PODIUM (class-portrait heads) ---------------- */}
       {!empty && (
@@ -239,7 +255,7 @@ export default function Leaderboards() {
             </div>
           </div>
           <div className="panel p-5 text-center">
-            <div className="text-xs uppercase tracking-widest text-[var(--muted)]">Rewards pool</div>
+            <div className="text-xs uppercase tracking-widest text-[var(--muted)]">Rewards · coming soon</div>
             <div className="mt-2 grid grid-cols-3 gap-2 text-center">
               {[
                 ['🧘', 'Free Memberships'],
@@ -256,8 +272,8 @@ export default function Leaderboards() {
               ))}
             </div>
             <p className="mt-3 text-[10px] text-[var(--muted)]">
-              Low-cost, sustainable perks — rotated to keep the ladder fair. (Bigger sponsor prizes
-              can come later as the community grows.)
+              A preview of what climbing will earn. These perks unlock as we onboard sponsors —
+              Aether and bragging rights are live now.
             </p>
           </div>
         </div>
