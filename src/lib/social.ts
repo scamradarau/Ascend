@@ -30,17 +30,21 @@ export interface MessageRow {
 // instead (mutual → instant friends).
 export async function sendFriendRequest(me: string, to: string): Promise<{ error?: string }> {
   if (!supabase || me === to) return { error: 'unavailable' }
-  // did they already request me?
-  const { data: incoming } = await supabase
+  // look at any existing rows between us (either direction)
+  const { data: existing } = await supabase
     .from('friend_requests')
-    .select('id,status')
-    .eq('from_user', to)
-    .eq('to_user', me)
-    .maybeSingle()
+    .select('id, from_user, to_user, status')
+    .or(`and(from_user.eq.${me},to_user.eq.${to}),and(from_user.eq.${to},to_user.eq.${me})`)
+  const rows = (existing as FriendRequestRow[]) ?? []
+  // already friends → never overwrite that (the upsert would downgrade it)
+  if (rows.some((r) => r.status === 'accepted')) return {}
+  // they already requested me → accepting theirs makes us instant friends
+  const incoming = rows.find((r) => r.from_user === to && r.to_user === me && r.status === 'pending')
   if (incoming) {
     await supabase.from('friend_requests').update({ status: 'accepted' }).eq('id', incoming.id)
     return {}
   }
+  // otherwise create/refresh my outgoing pending request
   const { error } = await supabase
     .from('friend_requests')
     .upsert({ from_user: me, to_user: to, status: 'pending' }, { onConflict: 'from_user,to_user' })
@@ -79,7 +83,7 @@ export async function fetchMyRequests(me: string): Promise<FriendRequestRow[]> {
 // ---- messages ----
 
 export async function sendMessage(me: string, to: string, body: string): Promise<{ error?: string }> {
-  if (!supabase) return { error: 'unavailable' }
+  if (!supabase || me === to) return { error: 'unavailable' }
   const text = body.trim().slice(0, 2000)
   if (!text) return { error: 'empty' }
   const { error } = await supabase.from('messages').insert({ sender: me, recipient: to, body: text })
