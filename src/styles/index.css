@@ -91,6 +91,20 @@ body {
     linear-gradient(180deg, #070a18 0%, #05070f 100%);
 }
 
+/* cosmos painted backdrop — the wide art has its vivid nebula on the edges
+   and a dark "stage" center, so on phones we swap to a portrait crop instead
+   of letting bg-cover zoom into the empty middle. */
+.cosmos-cover-bg {
+  background-image: url('/themes/cosmos.webp');
+  background-size: cover;
+  background-position: center;
+}
+@media (max-width: 640px) {
+  .cosmos-cover-bg {
+    background-image: url('/themes/cosmos-mobile.webp');
+  }
+}
+
 .rune-bg {
   background:
     radial-gradient(900px 520px at 60% 4%, rgba(224, 214, 196, 0.16), transparent 60%),

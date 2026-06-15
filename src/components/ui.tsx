@@ -98,7 +98,7 @@ export function Modal({
     >
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       <div
-        className="panel hud-corner relative z-10 w-full max-w-lg animate-popIn p-6"
+        className="panel hud-corner relative z-10 max-h-[90vh] w-full max-w-lg animate-popIn overflow-y-auto overscroll-contain p-6"
         onClick={(e) => e.stopPropagation()}
       >
         {title && (

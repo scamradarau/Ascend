@@ -96,7 +96,7 @@ export default function PlatformLayout() {
 
       {/* top navigation bar */}
       <header className="sticky top-0 z-40 border-b border-[var(--edge)] bg-[var(--bg)]/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
+        <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 sm:gap-3">
           <button
             onClick={() => navigate('/app/character')}
             className="group flex items-center gap-2"
@@ -118,6 +118,27 @@ export default function PlatformLayout() {
           >
             ☰
           </button>
+
+          {/* back / forward — needed in the installed Home Screen app, which has
+              no browser chrome. Hidden on desktop (the browser has its own). */}
+          <div className="flex shrink-0 items-center gap-1 md:hidden">
+            <button
+              onClick={() => navigate(-1)}
+              title="Back"
+              aria-label="Go back"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-lg leading-none text-[var(--text)] transition hover:border-[var(--accent)]/60 hover:text-[var(--accent)]"
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => navigate(1)}
+              title="Forward"
+              aria-label="Go forward"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-lg leading-none text-[var(--text)] transition hover:border-[var(--accent)]/60 hover:text-[var(--accent)]"
+            >
+              ›
+            </button>
+          </div>
 
           <div className="flex-1" />
 

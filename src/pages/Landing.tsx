@@ -54,11 +54,8 @@ export default function Landing() {
 
   return (
     <div className="relative min-h-screen bg-[#070a18] text-white">
-      {/* fixed cosmos backdrop for the whole page */}
-      <div
-        className="fixed inset-0 z-0 bg-cover bg-center"
-        style={{ backgroundImage: 'url(/themes/cosmos.webp)' }}
-      />
+      {/* fixed cosmos backdrop for the whole page (portrait crop on phones) */}
+      <div className="cosmos-cover-bg fixed inset-0 z-0" />
       {/* uniform readability scrim — flat, so brightness does NOT shift as you
           scroll over the fixed backdrop (no vignette / "filter" effect) */}
       <div className="fixed inset-0 z-0" style={{ background: 'rgba(4,7,18,0.55)' }} />

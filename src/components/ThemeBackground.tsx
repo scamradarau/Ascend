@@ -48,10 +48,15 @@ export default function ThemeBackground({ theme }: { theme: Theme }) {
   if (present) {
     return (
       <>
-        <div
-          className="fixed inset-0 z-0"
-          style={{ backgroundImage: `url(${SRC[theme]})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-        />
+        {theme === 'cosmos' ? (
+          // cosmos swaps to a portrait crop on phones (see .cosmos-cover-bg)
+          <div className="cosmos-cover-bg fixed inset-0 z-0" />
+        ) : (
+          <div
+            className="fixed inset-0 z-0"
+            style={{ backgroundImage: `url(${SRC[theme]})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+          />
+        )}
         {/* readability vignette */}
         <div
           className="fixed inset-0 z-0"
