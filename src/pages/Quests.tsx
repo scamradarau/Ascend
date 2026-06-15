@@ -33,6 +33,7 @@ export default function Quests() {
   }
   const activeTraits = useGame((s) => s.activeTraits)
   const dailyLog = useGame((s) => s.dailyLog)
+  const totalExp = useGame((s) => s.totalExp)
   const completedQuests = useGame((s) => s.completedQuests)
   const questsThisMonth = useGame((s) => s.questsThisMonth)
   const completeDailyTask = useGame((s) => s.completeDailyTask)
@@ -149,6 +150,34 @@ export default function Quests() {
     )
   }
 
+  // Low-friction on-ramp: for brand-new (0-EXP) players, find the easiest
+  // not-yet-done daily so their FIRST win doesn't have to be a live photo.
+  // (Lower number = less friction; photos are last.)
+  const firstWin = useMemo(() => {
+    if (totalExp > 0) return null
+    const FRICTION: Record<string, number> = {
+      'check-in': 1,
+      journal: 2,
+      'focus-timer': 3,
+      'meditation-timer': 3,
+      'sleep-window': 3,
+      'reading-check': 4,
+      'geo-photo': 5,
+      'live-photo': 5,
+    }
+    let best: { traitId: string; task: DailyTask; friction: number } | null = null
+    for (const at of activeTraits) {
+      const t = traitById(at.id)
+      if (!t) continue
+      for (const task of t.dailyTasks) {
+        if (isTaskDoneToday(dailyLog, at.id, task.id)) continue
+        const friction = FRICTION[methodForTask(task)] ?? 3
+        if (!best || friction < best.friction) best = { traitId: at.id, task, friction }
+      }
+    }
+    return best
+  }, [totalExp, activeTraits, dailyLog])
+
   const challengeState = (c: Challenge) => {
     const st = challenges[c.id]
     const period = periodKeyFor(c.scope)
@@ -176,6 +205,27 @@ export default function Quests() {
           <Pill tone="gold">{questsThisMonth} this month</Pill>
         </div>
       </div>
+
+      {/* first-win on-ramp — gentle, no-camera start for brand-new players */}
+      {firstWin && (
+        <div className="panel hud-corner mb-5 border-cosmos-cyan/40 p-5">
+          <span className="font-pixel text-xs text-cosmos-cyan glow-text">⚡ START HERE</span>
+          <h3 className="mt-2 font-display text-lg font-bold text-white">
+            Your first win{firstWin.friction < 5 ? ' — no camera needed' : ''}
+          </h3>
+          <p className="mt-1 max-w-xl text-sm text-[var(--muted)]">
+            {firstWin.friction < 5
+              ? 'Get your first EXP with one simple check-in. Photo-verified quests come later — start here and feel how the loop works.'
+              : 'Get your first EXP with one quick verified check-in to start the loop.'}
+          </p>
+          <button
+            onClick={() => setPending({ traitId: firstWin.traitId, task: firstWin.task })}
+            className="btn btn-primary mt-3 text-sm"
+          >
+            ⚡ {firstWin.task.label} →
+          </button>
+        </div>
+      )}
 
       {activeTraits.length === 0 && (
         <div className="panel p-10 text-center">
