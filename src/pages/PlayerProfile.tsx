@@ -22,6 +22,7 @@ export default function PlayerProfile() {
   const friends = useGame((s) => s.friends)
   const addFriend = useGame((s) => s.addFriend)
   const removeFriend = useGame((s) => s.removeFriend)
+  const myBadges = useGame((s) => s.earnedBadges)
 
   const [cloudP, setCloudP] = useState<PlayerRow | null | undefined>(isCloud ? undefined : null)
   const [reported, setReported] = useState(false)
@@ -49,7 +50,10 @@ export default function PlayerProfile() {
   const isFriend = friends.includes(p.id)
   const rank = rankForLevel(p.level)
   const cls = classForLevel(p.level)
-  const earned = BADGES.filter((b) => p.badges.includes(b.id))
+  // for your own profile, the local store has freshly-earned badges that may
+  // not have synced to the cloud row yet — merge so they show immediately.
+  const badgeIds = isSelf ? Array.from(new Set([...p.badges, ...myBadges])) : p.badges
+  const earned = BADGES.filter((b) => badgeIds.includes(b.id))
 
   return (
     <div>

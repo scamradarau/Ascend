@@ -240,6 +240,12 @@ export default function Leaderboards() {
                         >
                           🛡 {e.trust}
                         </span>
+                        {e.streak > 0 && (
+                          <span className="text-amber-300" title={`${e.streak}-day streak`}>
+                            {' '}
+                            · 🔥 {e.streak}
+                          </span>
+                        )}
                       </div>
                       {/* STAT board: show individual trait levels */}
                       {board === 'stat' && e.traits.length > 0 && (
