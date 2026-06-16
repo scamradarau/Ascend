@@ -156,6 +156,17 @@ export async function fetchPendingReview(limit = 100): Promise<SubmissionRow[]> 
   return (data as SubmissionRow[]) ?? []
 }
 
+// Claim a real reward — server enforces Integrity 80+ + level (see the
+// redeem-reward Edge Function). Returns the redemption result or an error.
+export async function redeemReward(rewardId: string) {
+  if (!supabase) return { error: 'unavailable' as const }
+  const { data, error } = await supabase.functions.invoke('redeem-reward', {
+    body: { reward_id: rewardId },
+  })
+  if (error) return { error: await edgeErrorMessage(error) }
+  return { data: data as { ok: boolean; redemption_id?: string; cost?: number; message?: string } }
+}
+
 export async function reviewSubmission(id: string, decision: 'approve' | 'reject') {
   if (!supabase) return { error: 'unavailable' as const }
   const { data, error } = await supabase.functions.invoke('review-submission', {
