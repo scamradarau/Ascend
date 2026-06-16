@@ -10,6 +10,7 @@ import { challengeById, periodKeyFor, monthKey } from '../data/challenges'
 import { todayKey, weekKey } from '../lib/time'
 import { setSfxMuted, playSfx } from '../lib/sfx'
 import { earnedBadgeIds } from '../data/badgeEngine'
+import { BADGES } from '../data/badges'
 
 // ----------------------------------------------------------------
 // Persistent game state
@@ -352,7 +353,15 @@ export const useGame = create<GameState>()(
           onboarded: s.onboarded,
         })
         const newly = earned.filter((id) => !s.earnedBadges.includes(id))
-        if (newly.length) set({ earnedBadges: [...s.earnedBadges, ...newly] })
+        if (newly.length) {
+          // Aether reward on earning a badge, scaled by its tier.
+          const BADGE_AETHER: Record<string, number> = { LOW: 150, MID: 350, HIGH: 750 }
+          const bonus = newly.reduce(
+            (sum, id) => sum + (BADGE_AETHER[BADGES.find((b) => b.id === id)?.reward ?? 'LOW'] ?? 150),
+            0,
+          )
+          set({ earnedBadges: [...s.earnedBadges, ...newly], aether: s.aether + bonus })
+        }
       },
 
       markStreakMilestone: (m) => {

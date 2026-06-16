@@ -20,19 +20,33 @@ const SKIN_COLORS: Record<string, [string, string]> = {
 export const AURA_COLORS: Record<string, string> = {
   none: 'transparent',
   spark: '#9ad8ff',
+  tide: '#38bdf8',
   ember: '#ff7a18',
   frost: '#7dd3fc',
+  bloom: '#4ade80',
+  starlight: '#c4b5fd',
   void: '#7c3aed',
+  tempest: '#818cf8',
+  inferno: '#f97316',
   solar: '#fbbf24',
+  radiant: '#fde047',
   phoenix: '#ff4d1c',
+  prismatic: '#e879f9',
 }
 
 export const FRAME_COLORS: Record<string, string> = {
   basic: '#3a4a78',
   bronze: '#b08d57',
+  silver: '#cbd5e1',
+  verdant: '#4ade80',
   cyan: '#22d3ee',
+  neon: '#f472b6',
+  'ember-frame': '#fb923c',
+  obsidian: '#a78bfa',
   gold: '#fbbf24',
+  royal: '#facc15',
   prism: 'url(#prismFrame)',
+  celestial: '#67e8f9',
 }
 
 export default function Avatar({
@@ -175,7 +189,9 @@ export default function Avatar({
         <circle cx="100" cy="100" r="84" fill="none" stroke={frame} strokeWidth="1" opacity={0.4} />
       )}
       {/* frame ticks for fancier frames */}
-      {(config.frame === 'cyan' || config.frame === 'gold' || config.frame === 'prism') &&
+      {['cyan', 'gold', 'prism', 'neon', 'obsidian', 'royal', 'celestial', 'silver'].includes(
+        config.frame,
+      ) &&
         [...Array(24)].map((_, i) => {
           const a = (i / 24) * Math.PI * 2
           return (

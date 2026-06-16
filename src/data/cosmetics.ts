@@ -50,20 +50,34 @@ export const HELMETS: Cosmetic[] = [
 export const AURAS: Cosmetic[] = [
   { id: 'none', name: 'None', rarity: 'common', unlock: { default: true }, desc: 'No aura.' },
   { id: 'spark', name: 'Spark', rarity: 'uncommon', unlock: { level: 5 }, desc: 'A faint energetic shimmer.' },
-  { id: 'ember', name: 'Ember', rarity: 'rare', unlock: { badge: 'scholar' }, desc: 'Smouldering focus. Earned by finishing a book.' },
+  { id: 'tide', name: 'Tidal', rarity: 'uncommon', unlock: { buy: 600 }, desc: 'Gentle ripples of cool water.' },
+  { id: 'ember', name: 'Ember', rarity: 'rare', unlock: { badge: 'scholar' }, desc: 'Smouldering focus. Earned by finishing books.' },
   { id: 'frost', name: 'Frost', rarity: 'rare', unlock: { buy: 800 }, desc: 'Cool, calm, collected.' },
+  { id: 'bloom', name: 'Verdant Bloom', rarity: 'rare', unlock: { level: 18 }, desc: 'Drifting leaves and fresh growth.' },
+  { id: 'starlight', name: 'Starlight', rarity: 'rare', unlock: { badge: 'sage' }, desc: 'A quiet halo of distant stars.' },
   { id: 'void', name: 'Void', rarity: 'epic', unlock: { buy: 1800 }, desc: 'Deep cosmic pull.' },
+  { id: 'tempest', name: 'Tempest', rarity: 'epic', unlock: { buy: 1400 }, desc: 'Crackling arcs of stormlight.' },
+  { id: 'inferno', name: 'Inferno', rarity: 'epic', unlock: { badge: 'titan' }, desc: 'The heat haze of raw strength.' },
   { id: 'solar', name: 'Solar Flare', rarity: 'legendary', unlock: { badge: 'overachiever' }, desc: 'Radiance of a ladder-topper.' },
+  { id: 'radiant', name: 'Radiant', rarity: 'legendary', unlock: { level: 45 }, desc: 'You glow like a small sun.' },
   { id: 'phoenix', name: 'Phoenix Flame', rarity: 'mythic', unlock: { streak: 30 }, desc: 'Living fire of relentless consistency.' },
+  { id: 'prismatic', name: 'Prismatic', rarity: 'mythic', unlock: { level: 60 }, desc: 'Every colour at once.' },
 ]
 
 // ---- FRAMES (rank ring around the avatar portrait) ----
 export const FRAMES: Cosmetic[] = [
   { id: 'basic', name: 'Basic Ring', rarity: 'common', unlock: { default: true }, desc: 'Standard issue.' },
   { id: 'bronze', name: 'Bronze Sigil', rarity: 'uncommon', unlock: { level: 10 }, desc: 'First milestone frame.' },
+  { id: 'silver', name: 'Silver Sigil', rarity: 'uncommon', unlock: { level: 18 }, desc: 'Polished and precise.' },
+  { id: 'verdant', name: 'Verdant Frame', rarity: 'rare', unlock: { buy: 700 }, desc: 'Etched with living growth.' },
   { id: 'cyan', name: 'Cyber Frame', rarity: 'rare', unlock: { level: 25 }, desc: 'Angular HUD frame.' },
+  { id: 'neon', name: 'Neon Frame', rarity: 'rare', unlock: { buy: 1200 }, desc: 'Pulsing arcade glow.' },
+  { id: 'ember-frame', name: 'Ember Frame', rarity: 'epic', unlock: { streak: 30 }, desc: 'Forged in a 30-day streak.' },
+  { id: 'obsidian', name: 'Obsidian Frame', rarity: 'epic', unlock: { badge: 'polymath' }, desc: 'Five-attribute mastery, set in black glass.' },
   { id: 'gold', name: 'Gilded Frame', rarity: 'legendary', unlock: { level: 50 }, desc: 'For the warlords.' },
+  { id: 'royal', name: 'Royal Frame', rarity: 'legendary', unlock: { badge: 'overachiever' }, desc: 'Crown of the ladder-topper.' },
   { id: 'prism', name: 'Prism Frame', rarity: 'mythic', unlock: { buy: 3000 }, desc: 'Refracts every colour.' },
+  { id: 'celestial', name: 'Celestial Frame', rarity: 'mythic', unlock: { level: 70 }, desc: 'Ringed in living starlight.' },
 ]
 
 // ---- SKINS (avatar body energy colour) ----

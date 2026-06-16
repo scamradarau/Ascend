@@ -42,6 +42,8 @@ const RARITY_TONE: Record<string, string> = {
 }
 
 const REWARD_TONE = { LOW: 'exp', MID: 'default', HIGH: 'gold' } as const
+// Aether granted when a badge is earned (must match the store's syncBadges).
+const BADGE_AETHER = { LOW: 150, MID: 350, HIGH: 750 } as const
 
 export default function Inventory() {
   const [tab, setTab] = useState<Tab>('Badges')
@@ -110,9 +112,11 @@ export default function Inventory() {
                     {b.icon}
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <h3 className="font-display text-lg font-bold text-white">{b.name}</h3>
-                      <Pill tone={REWARD_TONE[b.reward]}>{b.reward} reward</Pill>
+                      <Pill tone={REWARD_TONE[b.reward]}>
+                        {complete ? '✓ earned' : `◈ ${BADGE_AETHER[b.reward]}`}
+                      </Pill>
                     </div>
                     <p className="text-xs text-[var(--muted)]">{b.desc}</p>
                   </div>
