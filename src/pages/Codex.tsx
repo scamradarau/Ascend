@@ -233,9 +233,9 @@ const SECTIONS: Section[] = [
         </P>
         <List
           items={[
-            'High integrity unlocks high-value reward redemptions.',
+            <><strong>Real rewards require an Integrity of 80+.</strong> Cheating gets submissions flagged, which drops your Integrity below the line and locks you out of rewards — so faking your way to a prize is self-defeating.</>,
             'Flagged submissions go to human review — approved restores trust, rejected docks it.',
-            'It’s the cheapest thing to protect and the most expensive to lose. Play straight.',
+            'Integrity recovers as you complete honest, verified quests. It’s the cheapest thing to protect and the most expensive to lose. Play straight.',
           ]}
         />
       </>

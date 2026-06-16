@@ -77,6 +77,31 @@ Track these in a simple spreadsheet (one row per tester). You can read most from
 
 ---
 
+## Post-beta: risk-based verification (don't punish everyone)
+
+Verification should be **lenient by default and strict only where the stakes are real** —
+the way real anti-fraud works (banks don't friction every coffee, only the suspicious 1%).
+Tightening the everyday check just re-breaks honest users; the false-rejection of real
+effort is the #1 retention killer, so minimize it ruthlessly.
+
+Keep the *appearance* of rigor (burned-in liveness code, "anti-cheat" badge, foreground-locked
+timers) — that feeling of accountability does ~90% of the work at near-zero friction. For a
+self-improvement app the verification's real job is manufacturing a **moment of intentionality**,
+not perfect fraud detection: a cheater mostly deceives themselves.
+
+Concentrate strictness on the two places with something to gain:
+
+- **Reward redemption** — gated on Integrity. Real rewards require an **Integrity score of 80+**;
+  flagged submissions drop Integrity below the line, so cheating *for a prize* is self-defeating.
+  When redemption goes live, **enforce this server-side** (in the redemption Edge Function), not
+  just in the UI. *Cheating for rewards is the single biggest business risk — this neutralizes it.*
+- **Top of the leaderboard** — the handful of people competing for #1 are where a stricter check
+  (e.g. a real server-side vision pass on stored images, or manual spot-check) is worth the cost.
+
+Everywhere else: stay lenient, let social trust + self-accountability carry integrity while the
+numbers are small. Watch the **false-rejection rate** like a hawk; treat "cheat-through rate" as a
+later, surgical problem — never solved by punishing the honest majority.
+
 ## The one-sentence version
 
 **Get 20 people who want this to use it for two weeks; watch whether they come back on day 2 and whether anyone games the verification — those two answers tell you if you're ready to launch.**

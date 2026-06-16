@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useGame, usePlayerLevel } from '../store/useGame'
+import { useGame, usePlayerLevel, REWARD_INTEGRITY_MIN } from '../store/useGame'
 import {
   COSMETIC_GROUPS,
   RARITY_COLOR,
@@ -25,6 +25,8 @@ export default function Shop() {
   const purchased = useGame((s) => s.purchasedCosmetics)
   const purchaseCosmetic = useGame((s) => s.purchaseCosmetic)
   const setAvatar = useGame((s) => s.setAvatar)
+  const trust = useGame((s) => s.trust)
+  const rewardEligible = trust >= REWARD_INTEGRITY_MIN
   const { level } = usePlayerLevel()
   const [tab, setTab] = useState<'cosmetics' | 'rewards'>('cosmetics')
   const [toast, setToast] = useState<string | null>(null)
@@ -132,6 +134,33 @@ export default function Shop() {
             and bragging rights — these unlock as the community grows.{' '}
             <span className="text-[var(--muted)]">Nothing here spends your Aether yet.</span>
           </div>
+
+          {/* integrity gate — rewards are only redeemable above the threshold,
+              so cheating (which drops Integrity via flags) locks you out. */}
+          <div
+            className={`mb-4 flex items-start gap-2 rounded-xl border p-4 text-sm ${
+              rewardEligible
+                ? 'border-exp/30 bg-exp/5 text-slate-200'
+                : 'border-cosmos-magenta/40 bg-cosmos-magenta/5 text-slate-200'
+            }`}
+          >
+            <span className="mt-0.5 text-base">🛡</span>
+            {rewardEligible ? (
+              <span>
+                <span className="font-semibold text-exp">Eligible · Integrity {trust}/100.</span>{' '}
+                Real rewards require an Integrity score of <strong>{REWARD_INTEGRITY_MIN}+</strong>.
+                Keep playing fair and you stay eligible.
+              </span>
+            ) : (
+              <span>
+                <span className="font-semibold text-cosmos-magenta">
+                  Rewards locked · Integrity {trust}/100.
+                </span>{' '}
+                Real rewards require <strong>{REWARD_INTEGRITY_MIN}+</strong>. Integrity falls when
+                submissions are flagged and recovers as you complete honest, verified quests.
+              </span>
+            )}
+          </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {REWARDS.map((r) => {
               const reached = level >= r.reqLevel
@@ -150,7 +179,7 @@ export default function Shop() {
                     disabled
                     className="btn btn-ghost mt-3 w-full cursor-not-allowed text-xs opacity-70"
                   >
-                    🔜 Coming soon
+                    {rewardEligible ? '🔜 Coming soon' : `🔒 Needs Integrity ${REWARD_INTEGRITY_MIN}+`}
                   </button>
                 </div>
               )
