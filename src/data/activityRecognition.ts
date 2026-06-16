@@ -125,21 +125,32 @@ export function evaluate(category: ActivityCategory, preds: Prediction[]): Activ
     preds.filter((p) => p.probability >= minP && frags.some((f) => p.className.toLowerCase().includes(f)))
   const first = (frags: string[], minP: number) => matches(frags, minP)[0]
 
-  // 1) photo OF a screen showing the activity → never auto-verify
-  const screen = first(SCREEN_LABELS, 0.3)
-  if (screen) {
+  // 1) ACCEPT on any reasonable evidence of the activity. The on-device image
+  //    model (ImageNet MobileNet) is noisy on real gym/outdoor/meal scenes —
+  //    e.g. a rack of dumbbells often scores "dumbbell" well under 0.3 — so an
+  //    honest photo shouldn't be punished for a low score. The hard anti-cheat
+  //    (single-use liveness code, GPS, image-hash dedup, trust) is server-side.
+  //    Verify if: the model's TOP guess is an expected thing, OR any single
+  //    match ≥0.14, OR several weak matches sum to ≥0.18.
+  const expected = matches(spec.expected, 0.05)
+  const topIsExpected =
+    spec.expected.some((f) => top.className.toLowerCase().includes(f)) && top.probability >= 0.08
+  const lead = expected.find((p) => p.probability >= 0.14)
+  const combined = expected.reduce((s, p) => s + p.probability, 0)
+  if (lead || topIsExpected || combined >= 0.18) {
+    const hit = lead ?? expected[0] ?? top
     return {
-      verdict: 'pending',
-      topLabel: screen.className,
-      topProb: screen.probability,
+      verdict: 'verified',
+      topLabel: hit.className,
+      topProb: hit.probability,
       expectedLabel: spec.label,
-      reason: 'Looks like a photo of a screen — sent for human review.',
+      reason: `Detected “${hit.className.split(',')[0]}” — consistent with ${spec.label}.`,
     }
   }
 
-  // 2) clear contradiction (toilet/bed/bathroom…) → reject. Raised to 0.32 so an
-  //    incidental object in the background doesn't wrongly reject a real photo.
-  const bad = first(spec.forbidden, 0.32)
+  // 2) a STRONG, clear contradiction (toilet/bed/bathroom…) → reject. High bar
+  //    (0.45) so an incidental background object never rejects a genuine photo.
+  const bad = first(spec.forbidden, 0.45)
   if (bad) {
     return {
       verdict: 'reject',
@@ -150,24 +161,19 @@ export function evaluate(category: ActivityCategory, preds: Prediction[]): Activ
     }
   }
 
-  // 3) verify only on STRONG evidence: one confident match (≥0.30) OR several
-  //    weaker matches whose probabilities sum to ≥0.40. A lone 0.12 hit (which
-  //    used to auto-pass) now falls through to human review instead.
-  const expected = matches(spec.expected, 0.08)
-  const strong = expected.find((p) => p.probability >= 0.3)
-  const combined = expected.reduce((s, p) => s + p.probability, 0)
-  if (strong || combined >= 0.4) {
-    const lead = strong ?? expected[0]
+  // 3) obvious photo-of-a-screen (and nothing expected matched) → human review
+  const screen = first(SCREEN_LABELS, 0.5)
+  if (screen) {
     return {
-      verdict: 'verified',
-      topLabel: lead.className,
-      topProb: lead.probability,
+      verdict: 'pending',
+      topLabel: screen.className,
+      topProb: screen.probability,
       expectedLabel: spec.label,
-      reason: `Detected “${lead.className.split(',')[0]}” — consistent with ${spec.label}.`,
+      reason: 'Looks like a photo of a screen — sent for human review.',
     }
   }
 
-  // 4) anything else is uncertain → human review (never a silent auto-pass)
+  // 4) genuinely couldn't tell → human review (the safe fallback, not a reject)
   return {
     verdict: 'pending',
     topLabel: top.className,
