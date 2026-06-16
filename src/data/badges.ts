@@ -1,31 +1,30 @@
 import type { Badge } from './types'
 
-// Badges & Achievements — earned via levelling traits and completing
-// quest milestones. Higher tiers unlock bigger real-world rewards.
-// Progress starts at 0 for every player; it fills as you actually earn it.
+// Badges & Achievements. Every requirement maps to a METRIC that is computed
+// live from game state (see data/badgeEngine.ts) — so progress actually fills
+// and badges award themselves. Criteria are all things the game can verify;
+// nothing relies on unprovable real-world claims.
+//
+// Metric keys:
+//   bestStreak            — highest streak ever reached
+//   lifetimeQuests        — total verified quests completed
+//   completedMains        — main quests completed
+//   playerLevel           — overall character level
+//   traitLevel:<id>       — level of a specific trait
+//   attrTraitLevel:<attr> — highest trait level within an attribute
+//   rank1:<board>         — reached rank 1 on a leaderboard (legendary|quests|stat)
+//   onboarded             — finished onboarding
 export const BADGES: Badge[] = [
   {
-    id: 'entrepreneur',
-    name: 'Entrepreneur',
-    desc: 'Build something of your own and make it real.',
-    icon: '💼',
-    reward: 'HIGH',
+    id: 'first-steps',
+    name: 'First Steps',
+    desc: 'Every legend started here.',
+    icon: '🌱',
+    reward: 'LOW',
     requirements: [
-      { label: 'Own more than 1 business', done: 0, total: 2 },
-      { label: 'Earn over $100k revenue in your business', done: 0, total: 1 },
-      { label: 'Reach level 10 Diligence', done: 0, total: 1 },
-    ],
-  },
-  {
-    id: 'overachiever',
-    name: 'Overachiever',
-    desc: 'Dominate the ladders. Prove you belong at the top.',
-    icon: '🏆',
-    reward: 'HIGH',
-    requirements: [
-      { label: 'Reach rank 1 on the Legendary leaderboard', done: 0, total: 1 },
-      { label: 'Reach rank 1 on the Quests leaderboard', done: 0, total: 1 },
-      { label: 'Reach rank 1 on the Stat leaderboard', done: 0, total: 2 },
+      { label: 'Complete onboarding', total: 1, metric: 'onboarded' },
+      { label: 'Reach character level 2', total: 2, metric: 'playerLevel' },
+      { label: 'Complete 5 verified quests', total: 5, metric: 'lifetimeQuests' },
     ],
   },
   {
@@ -35,9 +34,21 @@ export const BADGES: Badge[] = [
     icon: '⚙️',
     reward: 'MID',
     requirements: [
-      { label: 'Maintain a 30-day streak', done: 0, total: 30 },
-      { label: 'Reach level 10 Self-Discipline', done: 0, total: 10 },
-      { label: 'Complete 50 daily quests', done: 0, total: 50 },
+      { label: 'Reach a 30-day streak', total: 30, metric: 'bestStreak' },
+      { label: 'Reach level 10 Self-Discipline', total: 10, metric: 'traitLevel:self-discipline' },
+      { label: 'Complete 50 verified quests', total: 50, metric: 'lifetimeQuests' },
+    ],
+  },
+  {
+    id: 'entrepreneur',
+    name: 'Entrepreneur',
+    desc: 'Build relentless drive — the engine behind anything you’ll create.',
+    icon: '💼',
+    reward: 'HIGH',
+    requirements: [
+      { label: 'Reach level 10 Diligence', total: 10, metric: 'traitLevel:diligence' },
+      { label: 'Reach level 8 Initiative', total: 8, metric: 'traitLevel:initiative' },
+      { label: 'Complete 3 main quests', total: 3, metric: 'completedMains' },
     ],
   },
   {
@@ -47,43 +58,31 @@ export const BADGES: Badge[] = [
     icon: '📚',
     reward: 'MID',
     requirements: [
-      { label: 'Finish 5 main-quest books', done: 0, total: 5 },
-      { label: 'Reach level 10 Focus', done: 0, total: 10 },
+      { label: 'Complete 5 main quests', total: 5, metric: 'completedMains' },
+      { label: 'Reach level 10 Focus', total: 10, metric: 'traitLevel:focus' },
     ],
   },
   {
     id: 'titan',
     name: 'Titan',
-    desc: 'Build a body that turns heads and carries the mission.',
+    desc: 'Build raw strength that carries the mission.',
     icon: '🦾',
     reward: 'MID',
     requirements: [
-      { label: 'Complete the 8-week Physique quest', done: 0, total: 1 },
-      { label: '100 logged training sessions', done: 0, total: 100 },
+      { label: 'Reach level 10 Physique', total: 10, metric: 'traitLevel:physique' },
+      { label: 'Reach level 8 Vitality', total: 8, metric: 'traitLevel:vitality' },
     ],
   },
   {
-    id: 'first-steps',
-    name: 'First Steps',
-    desc: 'Every legend started here.',
-    icon: '🌱',
-    reward: 'LOW',
+    id: 'athlete',
+    name: 'Athlete',
+    desc: 'Forge elite conditioning and an engine that doesn’t quit.',
+    icon: '🏃',
+    reward: 'HIGH',
     requirements: [
-      { label: 'Complete onboarding', done: 1, total: 1 },
-      { label: 'Pick your first 3 traits', done: 1, total: 1 },
-      { label: 'Complete your first daily quest', done: 0, total: 1 },
-    ],
-  },
-  {
-    id: 'connector',
-    name: 'Connector',
-    desc: 'Build a network and a magnetic presence.',
-    icon: '🤝',
-    reward: 'MID',
-    requirements: [
-      { label: 'Reach level 8 Networking', done: 0, total: 8 },
-      { label: 'Reach level 8 Communication', done: 0, total: 8 },
-      { label: 'Post 20 times in the Guild', done: 0, total: 20 },
+      { label: 'Reach level 10 Endurance', total: 10, metric: 'traitLevel:endurance' },
+      { label: 'Reach level 8 Mobility', total: 8, metric: 'traitLevel:mobility' },
+      { label: 'Reach a 60-day streak', total: 60, metric: 'bestStreak' },
     ],
   },
   {
@@ -93,21 +92,21 @@ export const BADGES: Badge[] = [
     icon: '🧘',
     reward: 'MID',
     requirements: [
-      { label: 'Reach level 10 Mindfulness', done: 0, total: 10 },
-      { label: 'Reach level 10 Stoic Equanimity', done: 0, total: 10 },
-      { label: '300 minutes of verified meditation', done: 0, total: 300 },
+      { label: 'Reach level 10 Mindfulness', total: 10, metric: 'traitLevel:mindfulness' },
+      { label: 'Reach level 10 Stoic Equanimity', total: 10, metric: 'traitLevel:stoicism' },
+      { label: 'Reach level 8 Gratitude', total: 8, metric: 'traitLevel:gratitude' },
     ],
   },
   {
-    id: 'athlete',
-    name: 'Athlete',
-    desc: 'Forge an elite, capable body.',
-    icon: '🏃',
-    reward: 'HIGH',
+    id: 'connector',
+    name: 'Connector',
+    desc: 'Build a network and a magnetic presence.',
+    icon: '🤝',
+    reward: 'MID',
     requirements: [
-      { label: 'Reach level 10 Physique', done: 0, total: 10 },
-      { label: 'Complete a verified 5K', done: 0, total: 1 },
-      { label: '90-day training streak', done: 0, total: 90 },
+      { label: 'Reach level 8 Networking', total: 8, metric: 'traitLevel:networking' },
+      { label: 'Reach level 8 Communication', total: 8, metric: 'traitLevel:communication' },
+      { label: 'Reach level 6 Confidence', total: 6, metric: 'traitLevel:confidence' },
     ],
   },
   {
@@ -117,11 +116,23 @@ export const BADGES: Badge[] = [
     icon: '🌌',
     reward: 'HIGH',
     requirements: [
-      { label: 'Reach level 5 in a Mind trait', done: 0, total: 5 },
-      { label: 'Reach level 5 in a Will trait', done: 0, total: 5 },
-      { label: 'Reach level 5 in a Heart trait', done: 0, total: 5 },
-      { label: 'Reach level 5 in a Charisma trait', done: 0, total: 5 },
-      { label: 'Reach level 5 in a Body trait', done: 0, total: 5 },
+      { label: 'Reach level 5 in a Mind trait', total: 5, metric: 'attrTraitLevel:mind' },
+      { label: 'Reach level 5 in a Will trait', total: 5, metric: 'attrTraitLevel:will' },
+      { label: 'Reach level 5 in a Heart trait', total: 5, metric: 'attrTraitLevel:heart' },
+      { label: 'Reach level 5 in a Charisma trait', total: 5, metric: 'attrTraitLevel:charisma' },
+      { label: 'Reach level 5 in a Body trait', total: 5, metric: 'attrTraitLevel:body' },
+    ],
+  },
+  {
+    id: 'overachiever',
+    name: 'Overachiever',
+    desc: 'Dominate the ladders. Prove you belong at the top.',
+    icon: '🏆',
+    reward: 'HIGH',
+    requirements: [
+      { label: 'Reach rank 1 on the Legendary leaderboard', total: 1, metric: 'rank1:legendary' },
+      { label: 'Reach rank 1 on the Quests leaderboard', total: 1, metric: 'rank1:quests' },
+      { label: 'Reach rank 1 on the Stat leaderboard', total: 1, metric: 'rank1:stat' },
     ],
   },
 ]

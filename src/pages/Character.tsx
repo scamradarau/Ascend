@@ -11,6 +11,7 @@ import { isCloud } from '../lib/supabase'
 import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
+import { BADGES } from '../data/badges'
 import { rankForLevel, nextRank } from '../data/ranks'
 import { levelFromTotalExp } from '../data/leveling'
 import { playQuestResult, playSfx } from '../lib/sfx'
@@ -36,6 +37,7 @@ export default function Character() {
   const totalExp = useGame((s) => s.totalExp)
   const completeDailyTask = useGame((s) => s.completeDailyTask)
   const streak = useGame((s) => s.streak)
+  const earnedBadges = useGame((s) => s.earnedBadges)
   const streakFreezes = useGame((s) => s.streakFreezes)
   const buyStreakFreeze = useGame((s) => s.buyStreakFreeze)
   const serverVerify = isCloud
@@ -176,6 +178,33 @@ export default function Character() {
           </button>
         </div>
       </div>
+
+      {/* earned badges — your trophy shelf */}
+      {earnedBadges.length > 0 && (
+        <div className="panel mb-5 p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="font-pixel text-xs text-cosmos-gold">🏅 BADGES EARNED</span>
+            <button
+              onClick={() => navigate('/app/inventory')}
+              className="text-[10px] uppercase tracking-wider text-[var(--muted)] transition hover:text-white"
+            >
+              View all →
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {BADGES.filter((b) => earnedBadges.includes(b.id)).map((b) => (
+              <div
+                key={b.id}
+                title={b.desc}
+                className="flex items-center gap-2 rounded-lg border border-cosmos-gold/40 bg-cosmos-gold/5 px-3 py-1.5"
+              >
+                <span className="text-lg">{b.icon}</span>
+                <span className="text-sm font-semibold text-white">{b.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* first-run guide — visible until the first EXP lands, then gone forever */}
       {totalExp === 0 && (

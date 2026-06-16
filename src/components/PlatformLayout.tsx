@@ -10,6 +10,7 @@ import { PixelTitle } from './ui'
 import ThemeBackground from './ThemeBackground'
 import Companion from './Companion'
 import StreakWatcher from './StreakWatcher'
+import BadgeWatcher from './BadgeWatcher'
 
 // Grouped nav — the daily loop first, everything else clustered so the
 // drawer reads in seconds. Alerts & Messages live as header icons (badges
@@ -283,6 +284,9 @@ export default function PlatformLayout() {
 
       {/* streak freeze + milestone celebrations */}
       <StreakWatcher />
+
+      {/* live badge progress + auto-award */}
+      <BadgeWatcher />
 
       <footer className="relative z-10 border-t border-[var(--edge)] py-6 text-center text-xs text-[var(--muted)]">
         ASCEND — Treating self improvement as game progression. ·{' '}

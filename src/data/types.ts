@@ -86,8 +86,10 @@ export interface Badge {
   desc: string
   icon: string
   reward: 'LOW' | 'MID' | 'HIGH'
-  // sub-requirements with progress fraction [done, total]
-  requirements: { label: string; done: number; total: number }[]
+  // each requirement maps to a live, computed metric (see data/badgeEngine.ts).
+  // `total` is the target value; current progress is derived from game state,
+  // never hand-set — so badges actually fill and award themselves.
+  requirements: { label: string; total: number; metric: string }[]
 }
 
 export interface LeaderboardEntry {

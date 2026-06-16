@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useGame, type Submission } from '../store/useGame'
 import { BADGES } from '../data/badges'
+import { badgeProgress } from '../data/badgeEngine'
 import { VERIFICATION_METHODS } from '../data/verification'
 import { ExpBar, PixelTitle, Pill, Modal } from '../components/ui'
 
@@ -47,6 +48,19 @@ export default function Inventory() {
   const submissions = useGame((s) => s.submissions)
   const [view, setView] = useState<Submission | null>(null)
 
+  // live badge snapshot (computed from real stats, not hand-set values)
+  const snap = {
+    streak: useGame((s) => s.streak),
+    bestStreak: useGame((s) => s.bestStreak),
+    lifetimeQuests: useGame((s) => s.lifetimeQuests),
+    completedQuests: useGame((s) => s.completedQuests),
+    totalExp: useGame((s) => s.totalExp),
+    activeTraits: useGame((s) => s.activeTraits),
+    archivedTraits: useGame((s) => s.archivedTraits),
+    peakBoards: useGame((s) => s.peakBoards),
+    onboarded: useGame((s) => s.onboarded),
+  }
+
   return (
     <div>
       <div className="mb-6">
@@ -79,10 +93,9 @@ export default function Inventory() {
       {tab === 'Badges' && (
         <div className="grid gap-4 md:grid-cols-2">
           {BADGES.map((b) => {
-            const total = b.requirements.reduce((s, r) => s + r.total, 0)
-            const done = b.requirements.reduce((s, r) => s + Math.min(r.done, r.total), 0)
-            const pct = Math.round((done / total) * 100)
-            const complete = pct >= 100
+            const prog = badgeProgress(b, snap)
+            const pct = prog.pct
+            const complete = prog.earned
             return (
               <div
                 key={b.id}
@@ -110,22 +123,19 @@ export default function Inventory() {
                 </div>
 
                 <ul className="mt-4 space-y-1.5">
-                  {b.requirements.map((r) => {
-                    const met = r.done >= r.total
-                    return (
-                      <li key={r.label} className="flex items-center gap-2 text-sm">
-                        <span className={met ? 'text-exp' : 'text-[var(--muted)]'}>
-                          {met ? '✓' : '○'}
-                        </span>
-                        <span className={met ? 'text-slate-200' : 'text-[var(--muted)]'}>
-                          {r.label}
-                        </span>
-                        <span className="ml-auto font-pixel text-[10px] text-[var(--muted)]">
-                          {Math.min(r.done, r.total)}/{r.total}
-                        </span>
-                      </li>
-                    )
-                  })}
+                  {prog.reqs.map((r) => (
+                    <li key={r.label} className="flex items-center gap-2 text-sm">
+                      <span className={r.met ? 'text-exp' : 'text-[var(--muted)]'}>
+                        {r.met ? '✓' : '○'}
+                      </span>
+                      <span className={r.met ? 'text-slate-200' : 'text-[var(--muted)]'}>
+                        {r.label}
+                      </span>
+                      <span className="ml-auto font-pixel text-[10px] text-[var(--muted)]">
+                        {r.done}/{r.total}
+                      </span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             )

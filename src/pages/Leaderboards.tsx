@@ -84,6 +84,18 @@ export default function Leaderboards() {
       .map((r, i) => ({ ...r, pos: i + 1, isMe: r.id === authUser?.id }))
   }, [players, board, authUser])
 
+  // record a rank-1 finish on ANY board (sticky → feeds the Overachiever badge)
+  const recordPeakBoard = useGame((s) => s.recordPeakBoard)
+  useEffect(() => {
+    if (!authUser || players.length === 0) return
+    ;(['legendary', 'quests', 'stat'] as Board[]).forEach((bd) => {
+      const metric = (r: PlayerRow) =>
+        bd === 'quests' ? r.quests : bd === 'stat' ? r.statLevel : r.level
+      const top = [...players].sort((a, b) => metric(b) - metric(a))[0]
+      if (top && top.id === authUser.id && metric(top) > 0) recordPeakBoard(bd)
+    })
+  }, [players, authUser, recordPeakBoard])
+
   const info = REWARD_INFO[board]
   const empty = ranked.length === 0
   // a board with only a handful of climbers reads as exclusive, not dead —

@@ -34,7 +34,10 @@ async function reconcileEarned(userId: string) {
       // streak is client-owned (so Streak Freeze works) — do NOT sync it down
       questsThisMonth:
         typeof prog.quests_this_month === 'number' ? prog.quests_this_month : s.questsThisMonth,
-      earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : s.earnedBadges,
+      // union (never drop) — locally-awarded badges must not be wiped by a sync
+      earnedBadges: Array.from(
+        new Set([...s.earnedBadges, ...(Array.isArray(prog.earned_badges) ? prog.earned_badges : [])]),
+      ),
       activeTraits:
         prog.trait_exp && Object.keys(prog.trait_exp).length
           ? s.activeTraits.map((t) =>
@@ -180,6 +183,12 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
 
   // streak is client-owned — advance it once per day on a verified daily
   if (registerStreak) useGame.getState().registerCloudCheckIn()
+  // a verified quest counts toward lifetime totals (pending will count on
+  // approval, in social.refresh — so it isn't double-counted here)
+  if (status === 'verified') {
+    useGame.getState().recordVerifiedQuest()
+    useGame.getState().syncBadges()
+  }
 
   // refresh social so the quest's review state (pending/verified) + alerts update
   void useSocial.getState().refresh()

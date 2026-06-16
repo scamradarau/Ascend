@@ -9,6 +9,7 @@ import { DEFAULT_AVATAR, type AvatarConfig, type CosmeticSlot } from '../data/co
 import { challengeById, periodKeyFor, monthKey } from '../data/challenges'
 import { todayKey, weekKey } from '../lib/time'
 import { setSfxMuted, playSfx } from '../lib/sfx'
+import { earnedBadgeIds } from '../data/badgeEngine'
 
 // ----------------------------------------------------------------
 // Persistent game state
@@ -93,6 +94,10 @@ export interface GameState {
   celebrateStreak: number | null // a milestone pending its celebration modal
   submissions: Submission[]
   earnedBadges: string[]
+  // badge tracking — fed to data/badgeEngine.ts to compute live progress
+  bestStreak: number // highest streak ever reached
+  lifetimeQuests: number // total verified quests completed (lifetime)
+  peakBoards: string[] // leaderboard ids where you've hit rank 1 (sticky)
 
   // cosmetics
   avatar: AvatarConfig
@@ -118,6 +123,9 @@ export interface GameState {
   mainCommitment: Record<string, string>
 
   // ---- actions ----
+  recordVerifiedQuest: () => void // bump lifetimeQuests (a verified quest landed)
+  recordPeakBoard: (board: string) => void // you hit rank 1 on a leaderboard
+  syncBadges: () => void // award any badge whose requirements are now all met
   setTheme: (t: 'cosmos' | 'rune' | 'olympus') => void
   setMainVariant: (traitId: string, v: 'book' | 'practical') => void
   setCommitment: (traitId: string, text: string) => void
@@ -243,6 +251,9 @@ export const useGame = create<GameState>()(
       celebrateStreak: null,
       submissions: [],
       earnedBadges: [],
+      bestStreak: 0,
+      lifetimeQuests: 0,
+      peakBoards: [],
       avatar: { ...DEFAULT_AVATAR },
       purchasedCosmetics: [],
       classId: null,
@@ -321,7 +332,27 @@ export const useGame = create<GameState>()(
         if (s.lastActiveDate === today) return // already counted today
         const yesterday = todayKey(new Date(Date.now() - 86400000))
         const streak = s.lastActiveDate === yesterday ? s.streak + 1 : 1
-        set({ streak, lastActiveDate: today })
+        set({ streak, lastActiveDate: today, bestStreak: Math.max(s.bestStreak, streak) })
+      },
+
+      recordVerifiedQuest: () => set((s) => ({ lifetimeQuests: s.lifetimeQuests + 1 })),
+      recordPeakBoard: (board) =>
+        set((s) => (s.peakBoards.includes(board) ? s : { peakBoards: [...s.peakBoards, board] })),
+      syncBadges: () => {
+        const s = get()
+        const earned = earnedBadgeIds({
+          streak: s.streak,
+          bestStreak: s.bestStreak,
+          lifetimeQuests: s.lifetimeQuests,
+          completedQuests: s.completedQuests,
+          totalExp: s.totalExp,
+          activeTraits: s.activeTraits,
+          archivedTraits: s.archivedTraits,
+          peakBoards: s.peakBoards,
+          onboarded: s.onboarded,
+        })
+        const newly = earned.filter((id) => !s.earnedBadges.includes(id))
+        if (newly.length) set({ earnedBadges: [...s.earnedBadges, ...newly] })
       },
 
       markStreakMilestone: (m) => {
@@ -460,6 +491,8 @@ export const useGame = create<GameState>()(
           questsThisMonth: baseQ + (result.status !== 'flagged' ? 1 : 0),
           questMonth: mk,
           streak,
+          bestStreak: Math.max(state.bestStreak, streak),
+          lifetimeQuests: state.lifetimeQuests + (result.status === 'verified' ? 1 : 0),
           lastActiveDate: today,
           activeTraits: state.activeTraits.map((t) =>
             t.id === traitId ? { ...t, exp: t.exp + expGain } : t,

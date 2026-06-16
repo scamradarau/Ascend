@@ -124,6 +124,8 @@ export const useSocial = create<SocialState>((set, get) => ({
         // (client-owned) streak. Idempotent per Sydney day, so doing other
         // quests too won't double-count.
         useGame.getState().registerCloudCheckIn()
+        useGame.getState().recordVerifiedQuest()
+        useGame.getState().syncBadges()
       } else if (rejected) {
         playSfx('flagged')
       }
@@ -157,7 +159,12 @@ export const useSocial = create<SocialState>((set, get) => ({
           // streak is client-owned (Streak Freeze) — never synced down from server
           questsThisMonth:
             typeof prog.quests_this_month === 'number' ? prog.quests_this_month : g.questsThisMonth,
-          earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : g.earnedBadges,
+          earnedBadges: Array.from(
+            new Set([
+              ...g.earnedBadges,
+              ...(Array.isArray(prog.earned_badges) ? prog.earned_badges : []),
+            ]),
+          ),
           activeTraits:
             prog.trait_exp && Object.keys(prog.trait_exp).length
               ? g.activeTraits.map((t) =>
