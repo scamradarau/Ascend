@@ -70,7 +70,7 @@ export default function Landing() {
 
         <div className="relative z-10 mx-auto max-w-4xl">
           <div className="mb-6 flex items-center justify-center gap-3">
-            <span className="chip border-white/40 text-white/80">Self-improvement, gamified</span>
+            <span className="chip border-white/40 text-white/80">Real life. Real quests. Real proof.</span>
           </div>
           <h1 className="mb-6">
             <PixelTitle className="block bg-gradient-to-br from-cosmos-cyan via-cosmos-violet to-cosmos-magenta bg-clip-text text-5xl text-transparent drop-shadow-[0_3px_16px_rgba(56,225,255,0.4)] sm:text-7xl md:text-8xl">
