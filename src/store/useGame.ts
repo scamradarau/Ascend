@@ -83,6 +83,7 @@ export interface GameState {
   completedQuests: CompletedQuest[]
   questsThisMonth: number
   questMonth: string // month-key the counter belongs to; resets when it changes
+  dailyQuestTarget: number // daily quest goal, sized by the onboarding time answer
   streak: number
   lastActiveDate: string | null
   // streak freeze — protects your streak across a missed day (loss-aversion
@@ -243,6 +244,7 @@ export const useGame = create<GameState>()(
       completedQuests: [],
       questsThisMonth: 0,
       questMonth: '',
+      dailyQuestTarget: 2,
       streak: 0,
       lastActiveDate: null,
       streakFreezes: 1, // everyone starts with one freeze in their pocket
@@ -392,6 +394,7 @@ export const useGame = create<GameState>()(
             answers,
           },
           totalExp: result.startingExp,
+          dailyQuestTarget: result.dailyQuestTarget,
           seasonXp: 0,
           aether: 0,
           trust: STARTING_TRUST,
@@ -664,6 +667,7 @@ export const useGame = create<GameState>()(
           theme: 'cosmos',
           profile: null,
           totalExp: 0,
+          dailyQuestTarget: 2,
           seasonXp: 0,
           aether: 0,
           trust: STARTING_TRUST,

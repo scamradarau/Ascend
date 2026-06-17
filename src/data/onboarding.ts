@@ -134,6 +134,8 @@ export interface OnboardingResult {
   startingExp: number
   rationale: string[]
   suggestedTraitIds: string[]
+  // how many daily quests we suggest you aim for, sized to your time answer
+  dailyQuestTarget: number
 }
 
 // Everyone starts at Level 1. The questionnaire no longer sets your level —
@@ -165,6 +167,19 @@ export function computeOnboarding(a: OnboardingAnswers): OnboardingResult {
   // obstacles signal where the most work is needed (slightly stronger)
   a.obstacles.forEach((oid) => {
     OBSTACLE_OPTIONS.find((o) => o.id === oid)?.attrs.forEach((at) => (attrScore[at] += 5))
+  })
+  // motivation nudges WHICH traits we lead with (a light bias — your goals
+  // still dominate). Rewards → visible, trackable wins; Mastery → depth of
+  // mind; Competition → measurable, leaderboard-climbing discipline; Purpose
+  // → values and inner strength.
+  const MOTIVATION_BIAS: Record<OnboardingAnswers['motivation'], Partial<Record<AttributeId, number>>> = {
+    rewards: { body: 2, will: 1 },
+    mastery: { mind: 2, will: 1 },
+    competition: { will: 2, body: 1 },
+    purpose: { heart: 2, mind: 1 },
+  }
+  Object.entries(MOTIVATION_BIAS[a.motivation]).forEach(([at, bonus]) => {
+    attrScore[at as AttributeId] += bonus ?? 0
   })
 
   // difficulty gate based on chosen ambition tier (everyone starts at Lv1,
@@ -218,13 +233,28 @@ export function computeOnboarding(a: OnboardingAnswers): OnboardingResult {
     const obsName = OBSTACLE_OPTIONS.find((o) => o.id === a.obstacles[0])?.label.toLowerCase()
     if (obsName) rationale.push(`Your daily tasks are tuned to help you beat ${obsName}.`)
   }
+  // motivation note — speak to what actually drives them
+  const motivationNote: Record<OnboardingAnswers['motivation'], string> = {
+    rewards: 'You’re here for the rewards — every verified quest earns Aether and pushes you toward unlocks.',
+    mastery: 'You want real mastery, so we leaned your path toward depth over box-ticking.',
+    competition: 'You came to compete — these are traits that climb the leaderboard fastest.',
+    purpose: 'You’re driven by purpose — we weighted your path toward the values you want to live by.',
+  }
+  rationale.push(motivationNote[a.motivation])
+
+  // daily quest target — sized to the time you said you can commit. This is a
+  // goal (how many of your dailies to aim for), not a cap.
+  const TARGET: Record<OnboardingAnswers['dailyTime'], number> = { '15': 1, '30': 2, '60': 3, '90': 4 }
+  const dailyQuestTarget = TARGET[a.dailyTime]
   const timeNote: Record<OnboardingAnswers['dailyTime'], string> = {
     '15': 'We kept it light — quick wins you can do in ~15 minutes.',
     '30': 'A balanced ~30-minute daily load to build momentum.',
     '60': 'A solid ~1-hour daily routine to accelerate.',
     '90': 'An intense 90-minute+ regimen — you came to ascend fast.',
   }
-  rationale.push(timeNote[a.dailyTime])
+  rationale.push(
+    `${timeNote[a.dailyTime]} Your daily target: ${dailyQuestTarget} quest${dailyQuestTarget > 1 ? 's' : ''} a day — enough to move without burning out.`,
+  )
 
-  return { startingLevel, startingExp, rationale, suggestedTraitIds: picked.slice(0, 3) }
+  return { startingLevel, startingExp, rationale, suggestedTraitIds: picked.slice(0, 3), dailyQuestTarget }
 }

@@ -86,6 +86,10 @@ export default function Quests() {
     [activeTraits, dailyLog],
   )
 
+  // daily goal — sized by your onboarding time answer, capped at what's available
+  const dailyQuestTarget = useGame((s) => s.dailyQuestTarget)
+  const dailyGoal = Math.max(1, Math.min(dailyQuestTarget || 2, dailyTotal || 1))
+
   const submit = (result: VerificationResult) => {
     if (!pending) return
     const task = pending.task
@@ -217,8 +221,11 @@ export default function Quests() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Pill tone={dailyDone >= dailyGoal ? 'gold' : 'exp'}>
+            🎯 {dailyDone}/{dailyGoal} daily target{dailyDone >= dailyGoal ? ' ✓' : ''}
+          </Pill>
           <Pill tone="exp">
-            {dailyDone}/{dailyTotal} dailies today
+            {dailyDone}/{dailyTotal} done today
           </Pill>
           <Pill tone="violet">
             <ResetCountdown scope="daily" prefix="Dailies reset in" />
