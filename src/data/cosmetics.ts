@@ -21,6 +21,7 @@ export interface UnlockRule {
   badge?: string
   streak?: number
   buy?: number // Aether cost
+  plus?: boolean // Ascend Plus members only
   default?: boolean
 }
 
@@ -62,6 +63,7 @@ export const AURAS: Cosmetic[] = [
   { id: 'radiant', name: 'Radiant', rarity: 'legendary', unlock: { level: 45 }, desc: 'You glow like a small sun.' },
   { id: 'phoenix', name: 'Phoenix Flame', rarity: 'mythic', unlock: { streak: 30 }, desc: 'Living fire of relentless consistency.' },
   { id: 'prismatic', name: 'Prismatic', rarity: 'mythic', unlock: { level: 60 }, desc: 'Every colour at once.' },
+  { id: 'aether', name: 'Aether', rarity: 'mythic', unlock: { plus: true }, desc: 'A shifting cosmic halo — Ascend Plus exclusive.' },
 ]
 
 // ---- FRAMES (rank ring around the avatar portrait) ----
@@ -78,6 +80,7 @@ export const FRAMES: Cosmetic[] = [
   { id: 'royal', name: 'Royal Frame', rarity: 'legendary', unlock: { badge: 'overachiever' }, desc: 'Crown of the ladder-topper.' },
   { id: 'prism', name: 'Prism Frame', rarity: 'mythic', unlock: { buy: 3000 }, desc: 'Refracts every colour.' },
   { id: 'celestial', name: 'Celestial Frame', rarity: 'mythic', unlock: { level: 70 }, desc: 'Ringed in living starlight.' },
+  { id: 'founder', name: 'Founders Frame', rarity: 'mythic', unlock: { plus: true }, desc: 'A gold-and-violet ring worn by Ascend Plus founders.' },
 ]
 
 // ---- SKINS (avatar body energy colour) ----
@@ -109,10 +112,11 @@ export type CosmeticSlot = keyof typeof COSMETIC_GROUPS
 // Is a cosmetic unlocked given the player's state?
 export function isUnlocked(
   c: Cosmetic,
-  ctx: { level: number; streak: number; badges: string[]; purchased: string[]; owner?: boolean },
+  ctx: { level: number; streak: number; badges: string[]; purchased: string[]; plus?: boolean; owner?: boolean },
 ): boolean {
   if (ctx.owner) return true // owner test account: everything unlocked
   if (c.unlock.default) return true
+  if (c.unlock.plus) return Boolean(ctx.plus)
   if (c.unlock.buy !== undefined) return ctx.purchased.includes(c.id)
   if (c.unlock.level !== undefined) return ctx.level >= c.unlock.level
   if (c.unlock.streak !== undefined) return ctx.streak >= c.unlock.streak
@@ -122,6 +126,7 @@ export function isUnlocked(
 
 export function unlockLabel(c: Cosmetic): string {
   if (c.unlock.default) return 'Default'
+  if (c.unlock.plus) return 'Ascend Plus'
   if (c.unlock.level !== undefined) return `Reach Lv ${c.unlock.level}`
   if (c.unlock.streak !== undefined) return `${c.unlock.streak}-day streak`
   if (c.unlock.badge !== undefined) return `Earn the ${c.unlock.badge} badge`

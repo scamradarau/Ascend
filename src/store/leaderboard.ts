@@ -30,6 +30,7 @@ export interface PlayerRow {
   avatar: AvatarConfig
   traits: TraitStat[]
   badges: string[]
+  plus?: boolean
   memberSince?: string
 }
 
@@ -62,6 +63,7 @@ function rowFromSave(accId: string, username: string, createdAt?: string): Playe
       avatar: { ...DEFAULT_AVATAR, ...(state.avatar || {}) },
       traits,
       badges: state.earnedBadges || [],
+      plus: Boolean(state.plus),
       memberSince: createdAt,
     }
   } catch {
@@ -106,6 +108,7 @@ function cloudToRow(p: CloudProfile): PlayerRow {
     avatar: { ...DEFAULT_AVATAR, ...((p.avatar as object) || {}) },
     traits,
     badges: p.earned_badges || [],
+    plus: Boolean(p.plus),
     memberSince: p.updated_at,
   }
 }

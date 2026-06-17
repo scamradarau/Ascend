@@ -42,6 +42,7 @@ const NAV_SECTIONS: { heading: string; items: { to: string; label: string; icon:
   {
     heading: 'REWARDS',
     items: [
+      { to: '/app/plus', label: 'Ascend Plus', icon: '✦' },
       { to: '/app/shop', label: 'Shop', icon: '🛒' },
       { to: '/app/inventory', label: 'Inventory', icon: '🎒' },
     ],

@@ -30,6 +30,7 @@ export default function Leaderboards() {
   const activeTraits = useGame((s) => s.activeTraits)
   const questsThisMonth = useGame((s) => s.questsThisMonth)
   const trust = useGame((s) => s.trust)
+  const plus = useGame((s) => s.plus)
   const avatar = useGame((s) => s.avatar)
   const earnedBadges = useGame((s) => s.earnedBadges)
   const streak = useGame((s) => s.streak)
@@ -67,6 +68,7 @@ export default function Leaderboards() {
         avatar,
         traits,
         badges: earnedBadges,
+        plus,
       }
       const idx = rows.findIndex((r) => r.id === authUser.id)
       if (idx >= 0) rows[idx] = me
@@ -231,6 +233,11 @@ export default function Leaderboards() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 font-display font-bold text-white">
                         {e.handle}
+                        {e.plus && (
+                          <span className="text-cosmos-gold" title="Ascend Plus member">
+                            ✦
+                          </span>
+                        )}
                         {e.isMe && <Pill tone="exp">You</Pill>}
                       </div>
                       <div className="text-[10px] uppercase tracking-wide text-[var(--muted)]">

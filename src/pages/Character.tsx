@@ -23,6 +23,7 @@ const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100]
 import BodyFigure from '../components/BodyFigure'
 import { VerificationModal } from '../components/VerificationModal'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
+import { maxActiveTraits } from '../data/plus'
 
 interface PendingTask {
   traitId: string
@@ -33,6 +34,7 @@ export default function Character() {
   const navigate = useNavigate()
   const profile = useGame((s) => s.profile)
   const activeTraits = useGame((s) => s.activeTraits)
+  const plus = useGame((s) => s.plus)
   const dailyLog = useGame((s) => s.dailyLog)
   const totalExp = useGame((s) => s.totalExp)
   const completeDailyTask = useGame((s) => s.completeDailyTask)
@@ -286,13 +288,13 @@ export default function Character() {
                   </button>
                 )
               })}
-              {activeTraits.length < 3 && (
+              {activeTraits.length < maxActiveTraits(plus) && (
                 <button
                   onClick={() => navigate('/app/traits')}
                   className="w-full rounded-lg border border-dashed border-white/15 p-3 text-xs uppercase tracking-wider text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
                 >
-                  + Add trait ({3 - activeTraits.length} slot
-                  {3 - activeTraits.length > 1 ? 's' : ''} open)
+                  + Add trait ({maxActiveTraits(plus) - activeTraits.length} slot
+                  {maxActiveTraits(plus) - activeTraits.length > 1 ? 's' : ''} open)
                 </button>
               )}
             </div>

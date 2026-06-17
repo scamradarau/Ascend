@@ -32,6 +32,7 @@ export const AURA_COLORS: Record<string, string> = {
   radiant: '#fde047',
   phoenix: '#ff4d1c',
   prismatic: '#e879f9',
+  aether: '#a855f7',
 }
 
 export const FRAME_COLORS: Record<string, string> = {
@@ -47,6 +48,7 @@ export const FRAME_COLORS: Record<string, string> = {
   royal: '#facc15',
   prism: 'url(#prismFrame)',
   celestial: '#67e8f9',
+  founder: '#fbbf24',
 }
 
 export default function Avatar({

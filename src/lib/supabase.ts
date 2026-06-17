@@ -47,23 +47,44 @@ export interface CloudProfile {
   earned_badges: string[]
   traits: { id: string; level: number }[]
   trait_exp?: Record<string, number>
+  plus?: boolean // Ascend Plus membership (service-role / Stripe-webhook owned)
   updated_at?: string
 }
 
 // Server-owned earned progress (Step 1 reads this back as the source of truth).
 export type EarnedProgress = Pick<
   CloudProfile,
-  'total_exp' | 'trust' | 'streak' | 'quests_this_month' | 'earned_badges' | 'trait_exp'
+  'total_exp' | 'trust' | 'streak' | 'quests_this_month' | 'earned_badges' | 'trait_exp' | 'plus'
 >
 
 export async function fetchEarnedProgress(userId: string): Promise<EarnedProgress | null> {
   if (!supabase) return null
   const { data } = await supabase
     .from('profiles')
-    .select('total_exp,trust,streak,quests_this_month,earned_badges,trait_exp')
+    .select('total_exp,trust,streak,quests_this_month,earned_badges,trait_exp,plus')
     .eq('id', userId)
     .maybeSingle()
   return (data as EarnedProgress) ?? null
+}
+
+// ---- Ascend Plus checkout ----
+// Asks the `create-checkout` Edge Function for a Stripe Checkout URL for the
+// chosen plan. Returns { url } to redirect to, or { error } (e.g. when Stripe
+// keys aren't configured yet — the Plus page shows a waitlist state then).
+export async function startPlusCheckout(
+  plan: 'monthly' | 'annual' | 'lifetime',
+): Promise<{ url?: string; error?: string }> {
+  if (!supabase) return { error: 'Cloud not configured' }
+  try {
+    const { data, error } = await supabase.functions.invoke('create-checkout', { body: { plan } })
+    if (error) return { error: error.message }
+    const d = data as { url?: string; error?: string }
+    if (d?.error) return { error: d.error }
+    if (!d?.url) return { error: 'No checkout URL returned.' }
+    return { url: d.url }
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Checkout failed' }
+  }
 }
 
 // ---- auth ----

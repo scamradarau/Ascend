@@ -15,6 +15,7 @@ import {
   type VerificationMethodId,
 } from '../data/verification'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
+import { maxActiveTraits } from '../data/plus'
 
 // Generic mastery milestones shown on every trait.
 const MASTERY = [
@@ -32,6 +33,7 @@ export default function TraitDetail() {
   const t = id ? traitById(id) : undefined
 
   const activeTraits = useGame((s) => s.activeTraits)
+  const plus = useGame((s) => s.plus)
   const totalExp = useGame((s) => s.totalExp)
   const dailyLog = useGame((s) => s.dailyLog)
   const addTrait = useGame((s) => s.addTrait)
@@ -56,7 +58,7 @@ export default function TraitDetail() {
   const active = activeTraits.find((x) => x.id === t.id)
   const isActive = !!active
   const tl = active ? traitLevel(active.exp) : { level: 0, pct: 0, intoLevel: 0, needed: 0 }
-  const slotsFull = activeTraits.length >= 3
+  const slotsFull = activeTraits.length >= maxActiveTraits(plus)
   const mqProgress = active ? Math.round(active.mainQuestProgress * 100) : 0
   const mqDone = active?.mainQuestDone
 

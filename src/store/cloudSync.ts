@@ -60,6 +60,7 @@ export async function hydrateFromCloud(userId: string): Promise<boolean> {
       questsThisMonth:
         typeof prog.quests_this_month === 'number' ? prog.quests_this_month : s.questsThisMonth,
       earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : s.earnedBadges,
+      plus: typeof prog.plus === 'boolean' ? prog.plus : s.plus,
       activeTraits:
         prog.trait_exp && Object.keys(prog.trait_exp).length
           ? s.activeTraits.map((t) =>

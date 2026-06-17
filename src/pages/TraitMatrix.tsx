@@ -5,6 +5,7 @@ import { ATTRIBUTES, attributeById } from '../data/attributes'
 import { TRAITS, traitById } from '../data/traits'
 import type { AttributeId } from '../data/types'
 import { PixelTitle, Pill, Modal } from '../components/ui'
+import { maxActiveTraits } from '../data/plus'
 
 // ================================================================
 // MAIN QUESTS — decluttered: first you choose a Path (5 cards), then
@@ -16,9 +17,11 @@ export default function TraitMatrix() {
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const activeTraits = useGame((s) => s.activeTraits)
+  const plus = useGame((s) => s.plus)
   const dropTrait = useGame((s) => s.dropTrait)
   const activeIds = new Set(activeTraits.map((t) => t.id))
-  const slotsLeft = 3 - activeTraits.length
+  const traitCap = maxActiveTraits(plus)
+  const slotsLeft = traitCap - activeTraits.length
   const [confirmDrop, setConfirmDrop] = useState<string | null>(null)
   const dropping = confirmDrop ? traitById(confirmDrop) : null
 
@@ -36,7 +39,7 @@ export default function TraitMatrix() {
           <p className="mt-1 max-w-2xl text-sm text-[var(--muted)]">
             {attr
               ? attr.blurb
-              : 'Five great paths, each with quests to master. You can only walk 3 quests at a time — focus beats scatter.'}
+              : `Five great paths, each with quests to master. You can walk ${traitCap} quests at a time — focus beats scatter.`}
           </p>
         </div>
         <Pill tone={slotsLeft > 0 ? 'exp' : 'gold'}>

@@ -38,6 +38,7 @@ export default function Settings() {
   const streak = useGame((s) => s.streak)
   const earnedBadges = useGame((s) => s.earnedBadges)
   const purchased = useGame((s) => s.purchasedCosmetics)
+  const plus = useGame((s) => s.plus)
   const ownerMode = useGame((s) => s.ownerMode)
   const toggleOwnerMode = useGame((s) => s.toggleOwnerMode)
   const reduceMotion = useGame((s) => s.reduceMotion)
@@ -86,7 +87,7 @@ export default function Settings() {
 
   // Owner test account unlocks every cosmetic + class for testing.
   const isOwner = ownerMode && isOwnerEmail(authUser?.email)
-  const ctx = { level, streak, badges: earnedBadges, purchased, owner: isOwner }
+  const ctx = { level, streak, badges: earnedBadges, purchased, plus, owner: isOwner }
   const cls = resolveClass(level, classId, isOwner)
   const next = nextClass(level)
 

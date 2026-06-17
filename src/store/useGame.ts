@@ -11,6 +11,7 @@ import { todayKey, weekKey } from '../lib/time'
 import { setSfxMuted, playSfx } from '../lib/sfx'
 import { earnedBadgeIds } from '../data/badgeEngine'
 import { BADGES } from '../data/badges'
+import { maxActiveTraits, freezeCap } from '../data/plus'
 
 // ----------------------------------------------------------------
 // Persistent game state
@@ -72,6 +73,7 @@ export interface GameState {
   seasonXp: number
   aether: number
   trust: number // integrity score 0..100
+  plus: boolean // Ascend Plus membership (server-owned; synced from profiles.plus)
   activeTraits: ActiveTrait[]
   // progress of dropped traits, preserved so re-adding doesn't reset their level
   archivedTraits: Record<string, { exp: number; mainQuestProgress: number; mainQuestDone: boolean }>
@@ -254,6 +256,7 @@ export const useGame = create<GameState>()(
       celebrateStreak: null,
       submissions: [],
       earnedBadges: [],
+      plus: false,
       bestStreak: 0,
       lifetimeQuests: 0,
       peakBoards: [],
@@ -298,7 +301,7 @@ export const useGame = create<GameState>()(
         const wk = weekKey()
         if (s.freezeWeek !== wk) {
           updates.freezeWeek = wk
-          updates.streakFreezes = Math.min(FREEZE_CAP, s.streakFreezes + 1)
+          updates.streakFreezes = Math.min(freezeCap(s.plus), s.streakFreezes + 1)
         }
         // 2. bridge missed days with freezes, or let the streak lapse
         const today = todayStr()
@@ -322,7 +325,7 @@ export const useGame = create<GameState>()(
 
       buyStreakFreeze: () => {
         const s = get()
-        if (s.streakFreezes >= FREEZE_CAP || s.aether < FREEZE_COST) return false
+        if (s.streakFreezes >= freezeCap(s.plus) || s.aether < FREEZE_COST) return false
         set({ aether: s.aether - FREEZE_COST, streakFreezes: s.streakFreezes + 1 })
         return true
       },
@@ -422,7 +425,7 @@ export const useGame = create<GameState>()(
 
       addTrait: (traitId) => {
         const { activeTraits, archivedTraits } = get()
-        if (activeTraits.length >= 3) return false
+        if (activeTraits.length >= maxActiveTraits(get().plus)) return false
         if (activeTraits.some((t) => t.id === traitId)) return false
         // anti-farm: at most TRAIT_ADD_CAP additions per Sydney day
         const today = todayStr()
