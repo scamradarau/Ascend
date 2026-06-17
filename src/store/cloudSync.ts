@@ -60,7 +60,12 @@ export async function hydrateFromCloud(userId: string): Promise<boolean> {
       questsThisMonth:
         typeof prog.quests_this_month === 'number' ? prog.quests_this_month : s.questsThisMonth,
       earnedBadges: Array.isArray(prog.earned_badges) ? prog.earned_badges : s.earnedBadges,
-      plus: typeof prog.plus === 'boolean' ? prog.plus : s.plus,
+      // owner account always has Plus; otherwise mirror the server flag
+      plus: isOwnerEmail(useAuth.getState().user?.email)
+        ? true
+        : typeof prog.plus === 'boolean'
+          ? prog.plus
+          : s.plus,
       activeTraits:
         prog.trait_exp && Object.keys(prog.trait_exp).length
           ? s.activeTraits.map((t) =>
@@ -69,6 +74,8 @@ export async function hydrateFromCloud(userId: string): Promise<boolean> {
           : s.activeTraits,
     }))
   }
+  // belt-and-braces: owner is always Plus even when there's no server row yet
+  if (isOwnerEmail(useAuth.getState().user?.email)) useGame.setState({ plus: true })
   return true
 }
 

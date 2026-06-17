@@ -4,6 +4,7 @@ import { useGame } from './store/useGame'
 import { useAuth } from './store/auth'
 import { useSocial } from './store/social'
 import { startCloudSync } from './store/cloudSync'
+import { isOwnerEmail } from './lib/supabase'
 import Landing from './pages/Landing'
 import Auth from './pages/Auth'
 import Disclaimers from './pages/Disclaimers'
@@ -49,6 +50,7 @@ export default function App() {
   const reduceMotion = useGame((s) => s.reduceMotion)
   const init = useAuth((s) => s.init)
   const ready = useAuth((s) => s.ready)
+  const user = useAuth((s) => s.user)
   const { pathname } = useLocation()
 
   // restore session on boot + start cloud mirroring (no-op in local mode)
@@ -69,6 +71,12 @@ export default function App() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [pathname])
+
+  // the owner account always has Ascend Plus (permanent), regardless of any
+  // server flag or sync timing
+  useEffect(() => {
+    if (user && isOwnerEmail(user.email)) useGame.setState({ plus: true })
+  }, [user])
 
   if (!ready) {
     return (

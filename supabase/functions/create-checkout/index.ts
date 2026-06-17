@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
   const price = Deno.env.get(priceEnv[plan])
   if (!price) return json({ ok: false, error: `Plan "${plan}" isn’t configured yet.` }, 200)
 
-  const site = (Deno.env.get('SITE_URL') ?? req.headers.get('origin') ?? 'https://playascend.netlify.app').replace(/\/$/, '')
+  const site = (Deno.env.get('SITE_URL') ?? req.headers.get('origin') ?? 'https://playascend.com.au').replace(/\/$/, '')
   const mode = plan === 'lifetime' ? 'payment' : 'subscription'
 
   // Stripe wants application/x-www-form-urlencoded

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 // Shareable invite — points friends at the brochure (which links into the app).
-export const BROCHURE_URL = 'https://playascend.netlify.app/brochure.html'
+export const BROCHURE_URL = 'https://playascend.com.au/brochure.html'
 const SHARE_TEXT = "I'm testing ASCEND — self-improvement as a game. Come level up with me:"
 
 export default function InviteButton({ className }: { className?: string }) {

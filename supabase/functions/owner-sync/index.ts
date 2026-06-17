@@ -44,6 +44,8 @@ Deno.serve(async (req) => {
   if (b.trait_exp && typeof b.trait_exp === 'object') upd.trait_exp = b.trait_exp
   if (Array.isArray(b.traits)) upd.traits = b.traits
   if (Array.isArray(b.earned_badges)) upd.earned_badges = b.earned_badges
+  // the owner account always has Ascend Plus (so the ✦ shows to everyone)
+  upd.plus = true
 
   const admin = createClient(url, service)
   const { error } = await admin.from('profiles').update(upd).eq('id', user.id)
