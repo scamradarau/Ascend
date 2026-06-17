@@ -87,12 +87,19 @@ export default function Leaderboards() {
   // record a rank-1 finish on ANY board (sticky → feeds the Overachiever badge)
   const recordPeakBoard = useGame((s) => s.recordPeakBoard)
   useEffect(() => {
-    if (!authUser || players.length === 0) return
+    // need at least 2 players — you can't "dominate" a ladder you're alone on
+    // (otherwise a brand-new account is rank 1 by default and Overachiever
+    // would award trivially).
+    if (!authUser || players.length < 2) return
     ;(['legendary', 'quests', 'stat'] as Board[]).forEach((bd) => {
       const metric = (r: PlayerRow) =>
         bd === 'quests' ? r.quests : bd === 'stat' ? r.statLevel : r.level
-      const top = [...players].sort((a, b) => metric(b) - metric(a))[0]
-      if (top && top.id === authUser.id && metric(top) > 0) recordPeakBoard(bd)
+      const sorted = [...players].sort((a, b) => metric(b) - metric(a))
+      const top = sorted[0]
+      const runnerUp = sorted[1]
+      // must be #1, with a positive score, and actually ahead of someone else
+      if (top && top.id === authUser.id && metric(top) > 0 && metric(top) > metric(runnerUp))
+        recordPeakBoard(bd)
     })
   }, [players, authUser, recordPeakBoard])
 
