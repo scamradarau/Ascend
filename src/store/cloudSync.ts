@@ -4,10 +4,12 @@ import { levelFromTotalExp } from '../data/leveling'
 import { traitById } from '../data/traits'
 import {
   isCloud,
+  isOwnerEmail,
   saveCloudSave,
   loadCloudSave,
   updateCloudCosmetic,
   fetchEarnedProgress,
+  pushOwnerEarned,
   type CloudProfile,
 } from '../lib/supabase'
 
@@ -89,6 +91,21 @@ function pushNow() {
     age: typeof s.profile?.age === 'number' ? s.profile.age : null,
     avatar: s.avatar,
   })
+
+  // OWNER MODE: also push the (normally server-owned) earned columns, so owner
+  // edits — set level, force-complete a quest — reflect on the server and the
+  // leaderboard, not just locally.
+  if (s.ownerMode && isOwnerEmail(user.email)) {
+    void pushOwnerEarned({
+      total_exp: s.totalExp,
+      trust: s.trust,
+      streak: s.streak,
+      quests_this_month: s.questsThisMonth,
+      trait_exp: Object.fromEntries(s.activeTraits.map((t) => [t.id, t.exp || 0])),
+      traits: s.activeTraits.map((t) => ({ id: t.id, level: levelFromTotalExp(t.exp || 0).level })),
+      earned_badges: s.earnedBadges,
+    })
+  }
 }
 
 // Start a debounced subscriber that mirrors every change to the cloud.

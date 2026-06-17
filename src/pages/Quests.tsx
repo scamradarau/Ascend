@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame, isTaskDoneToday, traitLevel } from '../store/useGame'
 import { useSocial } from '../store/social'
-import { isCloud } from '../lib/supabase'
+import { useAuth } from '../store/auth'
+import { isCloud, isOwnerEmail } from '../lib/supabase'
 import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
@@ -47,6 +48,26 @@ export default function Quests() {
   const flash = (m: string) => {
     setToast(m)
     setTimeout(() => setToast(null), 2200)
+  }
+
+  // owner-only: force-complete any quest for testing (reflects on the server
+  // too, via cloudSync's owner push). Bypasses the camera/verification.
+  const authUser = useAuth((s) => s.user)
+  const isOwner = useGame((s) => s.ownerMode) && isOwnerEmail(authUser?.email)
+  const ownerResult: VerificationResult = {
+    method: 'check-in',
+    status: 'verified',
+    note: 'Owner force-complete',
+    trustDelta: 0,
+    meta: { capturedAt: new Date().toISOString() },
+  }
+  const ownerCompleteDaily = (traitId: string, task: DailyTask) => {
+    completeDailyTask(traitId, task.id, { exp: task.exp, label: task.label }, ownerResult)
+    flash(`⚡ Owner: completed “${task.label}”`)
+  }
+  const ownerCompleteChallenge = (c: Challenge) => {
+    for (let i = 0; i < c.target; i++) logChallenge(c.id, ownerResult)
+    flash(`⚡ Owner: completed “${c.title}”`)
   }
 
   const dailyTotal = useMemo(
@@ -276,34 +297,44 @@ export default function Quests() {
                   const done = isTaskDoneToday(dailyLog, at.id, task.id) || sub === 'verified'
                   const underReview = !done && sub === 'pending'
                   return (
-                    <button
-                      key={task.id}
-                      disabled={done || underReview}
-                      onClick={() => setPending({ traitId: at.id, task })}
-                      className={`flex items-center gap-2.5 rounded-lg border p-2.5 text-left text-sm transition ${
-                        done
-                          ? 'border-exp/30 bg-exp/5 text-exp'
-                          : underReview
-                            ? 'border-amber-400/40 bg-amber-400/5 text-amber-300'
-                            : 'border-white/8 bg-white/[0.02] text-white hover:border-[var(--edge-strong)]'
-                      }`}
-                    >
-                      <span
-                        className={`flex h-4 w-4 items-center justify-center rounded border text-[10px] ${
+                    <div key={task.id} className="relative">
+                      <button
+                        disabled={done || underReview}
+                        onClick={() => setPending({ traitId: at.id, task })}
+                        className={`flex w-full items-center gap-2.5 rounded-lg border p-2.5 text-left text-sm transition ${
                           done
-                            ? 'border-exp bg-exp text-black'
+                            ? 'border-exp/30 bg-exp/5 text-exp'
                             : underReview
-                              ? 'border-amber-400 text-amber-300'
-                              : 'border-white/30'
+                              ? 'border-amber-400/40 bg-amber-400/5 text-amber-300'
+                              : 'border-white/8 bg-white/[0.02] text-white hover:border-[var(--edge-strong)]'
                         }`}
                       >
-                        {done ? '✓' : underReview ? '⏳' : ''}
-                      </span>
-                      <span className="flex-1">{task.label}</span>
-                      <span className="text-[10px] text-[var(--muted)]">
-                        {underReview ? 'Under review' : `+${task.exp}`}
-                      </span>
-                    </button>
+                        <span
+                          className={`flex h-4 w-4 items-center justify-center rounded border text-[10px] ${
+                            done
+                              ? 'border-exp bg-exp text-black'
+                              : underReview
+                                ? 'border-amber-400 text-amber-300'
+                                : 'border-white/30'
+                          }`}
+                        >
+                          {done ? '✓' : underReview ? '⏳' : ''}
+                        </span>
+                        <span className="flex-1">{task.label}</span>
+                        <span className="text-[10px] text-[var(--muted)]">
+                          {underReview ? 'Under review' : `+${task.exp}`}
+                        </span>
+                      </button>
+                      {isOwner && !done && (
+                        <button
+                          onClick={() => ownerCompleteDaily(at.id, task)}
+                          title="Owner: force-complete"
+                          className="absolute right-1 top-1 rounded border border-cosmos-gold/50 bg-black/60 px-1 text-[10px] text-cosmos-gold"
+                        >
+                          ⚡
+                        </button>
+                      )}
+                    </div>
                   )
                 })}
               </div>
@@ -379,6 +410,15 @@ export default function Quests() {
                             ? '⏳ Under review'
                             : 'Log progress'}
                     </button>
+                    {isOwner && !st.done && (
+                      <button
+                        onClick={() => ownerCompleteChallenge(c)}
+                        title="Owner: force-complete"
+                        className="ml-2 rounded border border-cosmos-gold/50 bg-black/40 px-1.5 text-[11px] text-cosmos-gold"
+                      >
+                        ⚡
+                      </button>
+                    )}
                   </div>
                 </div>
               )

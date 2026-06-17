@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useGame } from '../store/useGame'
 import { useSocial } from '../store/social'
-import { isCloud } from '../lib/supabase'
+import { isCloud, isOwnerEmail } from '../lib/supabase'
+import { useAuth } from '../store/auth'
 import { serverSubmitQuest, resetQuestProgress } from '../store/serverVerify'
 import { traitById } from '../data/traits'
 import { practicalQuestFor, practicalQuestId } from '../data/practicalQuests'
@@ -53,6 +54,8 @@ export default function MainQuestCard({
   if (!t) return null
 
   const serverVerify = isCloud
+  const authUser = useAuth((s) => s.user)
+  const isOwner = useGame((s) => s.ownerMode) && isOwnerEmail(authUser?.email)
   const variant = mainVariant[traitId] ?? 'book'
   const mq = variant === 'practical' ? practicalQuestFor(t) : t.mainQuest
   const questId = variant === 'practical' ? practicalQuestId(traitId) : `main:${traitId}`
@@ -170,6 +173,25 @@ export default function MainQuestCard({
             title={!readyToCheckIn ? 'Lock in your commitment first' : undefined}
           >
             {mqDone ? '✓ Complete' : underReview ? '⏳ Under review' : 'Check in'}
+          </button>
+        )}
+        {isOwner && isActive && !mqDone && (
+          <button
+            onClick={() => {
+              const r: VerificationResult = {
+                method: 'check-in',
+                status: 'verified',
+                note: 'Owner force-complete',
+                trustDelta: 0,
+                meta: { capturedAt: new Date().toISOString() },
+              }
+              for (let i = 0; i < steps; i++) advanceMainQuest(traitId, { label: mq.title, steps }, r)
+              onFlash?.(`⚡ Owner: completed “${mq.title}”`)
+            }}
+            title="Owner: force-complete"
+            className="ml-2 rounded border border-cosmos-gold/50 bg-black/40 px-1.5 text-[11px] text-cosmos-gold"
+          >
+            ⚡
           </button>
         )}
       </div>

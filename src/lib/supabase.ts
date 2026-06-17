@@ -126,6 +126,27 @@ export async function updateCloudCosmetic(id: string, c: CosmeticProfile) {
   await supabase.from('profiles').update({ ...c, updated_at: new Date().toISOString() }).eq('id', id)
 }
 
+// Owner-only: push earned columns to the server (via the owner-sync Edge
+// Function) so owner-mode edits become server-authoritative. No-op for anyone
+// who isn't the configured owner (the function enforces it too).
+export interface OwnerEarned {
+  total_exp: number
+  trust: number
+  streak: number
+  quests_this_month: number
+  trait_exp: Record<string, number>
+  traits: { id: string; level: number }[]
+  earned_badges: string[]
+}
+export async function pushOwnerEarned(payload: OwnerEarned) {
+  if (!supabase) return
+  try {
+    await supabase.functions.invoke('owner-sync', { body: payload })
+  } catch {
+    /* best-effort — local state still updates */
+  }
+}
+
 export async function fetchLeaderboard(): Promise<CloudProfile[]> {
   if (!supabase) return []
   const { data } = await supabase.from('profiles').select('*').limit(500)
