@@ -23,6 +23,7 @@ export default function PlayerProfile() {
   const addFriend = useGame((s) => s.addFriend)
   const removeFriend = useGame((s) => s.removeFriend)
   const myBadges = useGame((s) => s.earnedBadges)
+  const myPlus = useGame((s) => s.plus)
 
   const [cloudP, setCloudP] = useState<PlayerRow | null | undefined>(isCloud ? undefined : null)
   const [reported, setReported] = useState(false)
@@ -54,6 +55,8 @@ export default function PlayerProfile() {
   // not have synced to the cloud row yet — merge so they show immediately.
   const badgeIds = isSelf ? Array.from(new Set([...p.badges, ...myBadges])) : p.badges
   const earned = BADGES.filter((b) => badgeIds.includes(b.id))
+  // your own profile reflects local Plus immediately, before the cloud row syncs
+  const isPlus = isSelf ? Boolean(p.plus || myPlus) : Boolean(p.plus)
 
   return (
     <div>
@@ -73,11 +76,19 @@ export default function PlayerProfile() {
           <div className="mt-2 text-[11px] uppercase tracking-widest text-[var(--accent)]">
             {cls.name}
           </div>
-          <h1 className="mt-2 font-display text-2xl font-bold text-white">{p.handle}</h1>
+          <h1 className="mt-2 flex items-center justify-center gap-1.5 font-display text-2xl font-bold text-white">
+            {p.handle}
+            {isPlus && (
+              <span className="text-cosmos-gold" title="Ascend Plus member">
+                ✦
+              </span>
+            )}
+          </h1>
           <div className="mt-1 font-pixel text-sm text-[var(--accent)] glow-text">
             {rank.title} · Lv {p.level}
           </div>
           <div className="mt-3 flex flex-wrap justify-center gap-2">
+            {isPlus && <Pill tone="gold">✦ Ascend Plus</Pill>}
             <Pill>{p.region}</Pill>
             <Pill tone="exp">🔥 {p.streak}d streak</Pill>
             {/* integrity tiers: 70–100 green · 40–69 yellow · 0–39 red */}
