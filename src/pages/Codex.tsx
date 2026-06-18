@@ -138,7 +138,7 @@ const SECTIONS: Section[] = [
   },
   {
     id: 'traits',
-    title: 'Main Quests & the Rule of 3',
+    title: 'Main Quests & staying focused',
     icon: '🧠',
     body: (
       <>
@@ -149,9 +149,10 @@ const SECTIONS: Section[] = [
           on the <strong>World Map</strong>.
         </P>
         <Callout tone="gold">
-          You can only build <strong>3 traits at a time.</strong> Focus beats scatter. Once you start
-          a trait’s <strong>main quest</strong>, you’re committed until it’s finished — no
-          flip-flopping. This is by design: it builds trust in the process.
+          You build up to <strong>3 traits at a time</strong> — <strong>Ascend Plus</strong> raises
+          that to <strong>5</strong>. Either way, focus beats scatter. Once you start a trait’s{' '}
+          <strong>main quest</strong>, you’re committed until it’s finished — no flip-flopping. This
+          is by design: it builds trust in the process.
         </Callout>
         <P>Each trait page is a mini-library: what it is, why it helps, how to level it, daily tasks, a main-quest book, and hot tips.</P>
       </>
@@ -345,7 +346,7 @@ const SECTIONS: Section[] = [
       <>
         <div className="space-y-3">
           {[
-            ['Why only 3 traits at once?', 'Focus. Spreading thin is why most self-improvement fails. Three keeps you consistent and lets you actually finish.'],
+            ['Why is there a trait limit?', 'Focus. Spreading thin is why most self-improvement fails. Free players run 3 traits at once; Ascend Plus unlocks 5. A tight set keeps you consistent and lets you actually finish.'],
             ['Can I change my traits?', 'Yes — until you start a main quest. Once committed, finish it. You can swap freely before that.'],
             ['Why can’t I upload a photo from my gallery?', 'Because that’s the #1 way people cheat. Live capture only keeps the leaderboards and rewards meaningful.'],
             ['Is the life-expectations page literal?', 'No — it’s motivational and for entertainment. Anything more or less, request a rank change.'],

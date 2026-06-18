@@ -140,7 +140,7 @@ export interface OnboardingResult {
 
 // Everyone starts at Level 1. The questionnaire no longer sets your level —
 // the ladder is climbed purely through verified in-game progress. Instead it
-// tailors WHICH 3 traits/quests we recommend you start with.
+// tailors WHICH starter traits/quests we recommend you start with.
 export function computeOnboarding(a: OnboardingAnswers): OnboardingResult {
   const rationale: string[] = []
 

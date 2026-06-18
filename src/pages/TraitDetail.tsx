@@ -16,6 +16,7 @@ import {
 } from '../data/verification'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
 import { maxActiveTraits } from '../data/plus'
+import PlusUpsell from '../components/PlusUpsell'
 
 // Generic mastery milestones shown on every trait.
 const MASTERY = [
@@ -157,7 +158,7 @@ export default function TraitDetail() {
               <>
                 <p className="text-xs text-[var(--muted)]">
                   {slotsFull
-                    ? 'All 3 trait slots are full. Finish or drop one to add this.'
+                    ? `All ${maxActiveTraits(plus)} trait slots are full. Finish or drop one to add this.`
                     : capReached
                       ? `You’ve hit today’s limit of ${TRAIT_ADD_CAP} new traits. Come back tomorrow — this stops quest-farming.`
                       : `Add this trait to your stats and start levelling it. (${changesLeft} trait change${changesLeft === 1 ? '' : 's'} left today.)`}
@@ -169,6 +170,9 @@ export default function TraitDetail() {
                 >
                   ✦ Accept trait
                 </button>
+                {slotsFull && (
+                  <PlusUpsell className="mt-3" message="Slots full? Ascend Plus runs 5 traits at once — no need to drop one." />
+                )}
               </>
             )}
           </div>

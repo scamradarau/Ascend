@@ -6,6 +6,7 @@ import { TRAITS, traitById } from '../data/traits'
 import type { AttributeId } from '../data/types'
 import { PixelTitle, Pill, Modal } from '../components/ui'
 import { maxActiveTraits } from '../data/plus'
+import PlusUpsell from '../components/PlusUpsell'
 
 // ================================================================
 // MAIN QUESTS — decluttered: first you choose a Path (5 cards), then
@@ -98,6 +99,9 @@ export default function TraitMatrix() {
           </div>
         </div>
       )}
+
+      {/* hit the cap? offer more slots (non-Plus only) */}
+      {slotsLeft <= 0 && <PlusUpsell className="mb-6" />}
 
       {/* drop confirmation */}
       {dropping && (
