@@ -11,7 +11,7 @@ import { todayKey, weekKey } from '../lib/time'
 import { setSfxMuted, playSfx } from '../lib/sfx'
 import { earnedBadgeIds } from '../data/badgeEngine'
 import { BADGES } from '../data/badges'
-import { maxActiveTraits, freezeCap } from '../data/plus'
+import { maxActiveTraits, freezeCap, PLUS_MONTHLY_AETHER } from '../data/plus'
 
 // ----------------------------------------------------------------
 // Persistent game state
@@ -74,6 +74,7 @@ export interface GameState {
   aether: number
   trust: number // integrity score 0..100
   plus: boolean // Ascend Plus membership (server-owned; synced from profiles.plus)
+  plusAetherMonth: string | null // last month the Plus Aether stipend was granted
   activeTraits: ActiveTrait[]
   // progress of dropped traits, preserved so re-adding doesn't reset their level
   archivedTraits: Record<string, { exp: number; mainQuestProgress: number; mainQuestDone: boolean }>
@@ -256,6 +257,7 @@ export const useGame = create<GameState>()(
       submissions: [],
       earnedBadges: [],
       plus: false,
+      plusAetherMonth: null,
       bestStreak: 0,
       lifetimeQuests: 0,
       peakBoards: [],
@@ -301,6 +303,15 @@ export const useGame = create<GameState>()(
         if (s.freezeWeek !== wk) {
           updates.freezeWeek = wk
           updates.streakFreezes = Math.min(freezeCap(s.plus), s.streakFreezes + 1)
+        }
+        // 1b. Ascend Plus monthly Aether stipend (cosmetic currency only)
+        if (s.plus) {
+          const mk = monthKey()
+          if (s.plusAetherMonth !== mk) {
+            updates.plusAetherMonth = mk
+            updates.aether = (updates.aether ?? s.aether) + PLUS_MONTHLY_AETHER
+            updates.freezeNotice = `✦ Ascend Plus — +${PLUS_MONTHLY_AETHER} Aether monthly bonus!`
+          }
         }
         // 2. bridge missed days with freezes, or let the streak lapse
         const today = todayStr()
@@ -413,6 +424,7 @@ export const useGame = create<GameState>()(
           bestStreak: 0,
           lifetimeQuests: 0,
           peakBoards: [],
+          plusAetherMonth: null,
           avatar: { ...DEFAULT_AVATAR },
           purchasedCosmetics: [],
           classId: null,
@@ -686,6 +698,7 @@ export const useGame = create<GameState>()(
           bestStreak: 0,
           lifetimeQuests: 0,
           peakBoards: [],
+          plusAetherMonth: null,
           avatar: { ...DEFAULT_AVATAR },
           purchasedCosmetics: [],
           ownerMode: false,

@@ -84,7 +84,11 @@ Deno.serve(async (req) => {
   form.set('metadata[user_id]', user.id)
   form.set('metadata[plan]', plan)
   // carry the user id onto the subscription too, so renewal/cancel events map back
-  if (mode === 'subscription') form.set('subscription_data[metadata][user_id]', user.id)
+  if (mode === 'subscription') {
+    form.set('subscription_data[metadata][user_id]', user.id)
+    // 7-day free trial — the card is collected now, first charge is in 7 days.
+    form.set('subscription_data[trial_period_days]', '7')
+  }
   if (mode === 'payment') form.set('payment_intent_data[metadata][user_id]', user.id)
 
   const resp = await fetch('https://api.stripe.com/v1/checkout/sessions', {

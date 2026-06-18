@@ -26,6 +26,8 @@ export default function Plus() {
     const prog = await fetchEarnedProgress(user.id)
     if (prog && typeof prog.plus === 'boolean') {
       useGame.setState({ plus: prog.plus })
+      // newly-active member: grant the first monthly Aether stipend right away
+      if (prog.plus) useGame.getState().tickStreak()
       return prog.plus
     }
     return undefined
@@ -139,11 +141,16 @@ export default function Plus() {
               disabled={busy !== null}
               className="btn btn-primary mt-3 text-sm"
             >
-              {busy === p.id ? 'Opening…' : p.id === 'lifetime' ? 'Become a Founder' : 'Choose'}
+              {busy === p.id ? 'Opening…' : p.id === 'lifetime' ? 'Become a Founder' : 'Start free trial'}
             </button>
           </div>
         ))}
       </div>
+
+      <p className="mt-3 text-center text-xs text-cosmos-cyan">
+        ✦ Subscriptions start with a <strong>7-day free trial</strong> — you won’t be charged until day 8,
+        and you can cancel anytime before then.
+      </p>
 
       {/* benefits */}
       <h3 className="mt-8 stat-label text-xs">What you get</h3>

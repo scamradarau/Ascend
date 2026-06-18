@@ -156,54 +156,43 @@ export default function Avatar({
         </filter>
       </defs>
 
-      {/* Aether (Ascend Plus) — a violet→gold dual-tone field with twin halos
-          and alternating gold/violet motes; matches the Founders frame */}
+      {/* Aether (Ascend Plus) — a living violet→gold halo: a pulsing field,
+          twin counter-rotating dashed rings and layered sparkle-stars. The
+          deliberate partner to the Founders frame. */}
       {isAetherAura && (
         <g>
-          <circle
-            cx="100"
-            cy="100"
-            r="99"
-            fill={`url(#plusAura-${uid})`}
-            className={animated ? 'animate-pulseGlow' : ''}
-          />
-          <circle
-            cx="100"
-            cy="100"
-            r="96"
-            fill="none"
-            stroke="#fbbf24"
-            strokeWidth="3"
-            opacity="0.55"
-            filter={`url(#glow-${uid})`}
-            className={animated ? 'animate-pulseGlow' : ''}
-          />
-          <circle
-            cx="100"
-            cy="100"
-            r="92"
-            fill="none"
-            stroke="#c084fc"
-            strokeWidth="2"
-            opacity="0.5"
-            filter={`url(#glow-${uid})`}
-          />
-          {[...Array(20)].map((_, i) => {
-            const a = (i / 20) * Math.PI * 2
+          <circle cx="100" cy="100" r="99" fill={`url(#plusAura-${uid})`} className={animated ? 'animate-pulseGlow' : ''} />
+          {/* gold ring — rotates clockwise */}
+          <g>
+            {animated && (
+              <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="18s" repeatCount="indefinite" />
+            )}
+            <circle cx="100" cy="100" r="96" fill="none" stroke="#fbbf24" strokeWidth="2.5" strokeDasharray="2 9" opacity="0.9" filter={`url(#glow-${uid})`} />
+          </g>
+          {/* violet ring — rotates the other way */}
+          <g>
+            {animated && (
+              <animateTransform attributeName="transform" type="rotate" from="360 100 100" to="0 100 100" dur="26s" repeatCount="indefinite" />
+            )}
+            <circle cx="100" cy="100" r="91" fill="none" stroke="#c084fc" strokeWidth="2" strokeDasharray="1 7" opacity="0.85" filter={`url(#glow-${uid})`} />
+          </g>
+          {/* sparkle-stars + motes */}
+          {[...Array(22)].map((_, i) => {
+            const a = (i / 22) * Math.PI * 2
             const gold = i % 2 === 0
-            const dist = i % 3 === 0 ? 90 : 96
+            const dist = i % 3 === 0 ? 89 : 96
+            const x = 100 + Math.cos(a) * dist
+            const y = 100 + Math.sin(a) * dist
+            const fill = gold ? '#ffd76a' : '#d8a0ff'
+            if (i % 4 === 0) {
+              const r = 3.6
+              const d = `M0 ${-r} L ${r * 0.3} ${-r * 0.3} L ${r} 0 L ${r * 0.3} ${r * 0.3} L 0 ${r} L ${-r * 0.3} ${r * 0.3} L ${-r} 0 L ${-r * 0.3} ${-r * 0.3} Z`
+              return (
+                <path key={i} transform={`translate(${x} ${y})`} d={d} fill={fill} filter={`url(#glow-${uid})`} className={animated ? 'animate-twinkle' : ''} style={{ animationDelay: `${i * 0.1}s` }} />
+              )
+            }
             return (
-              <circle
-                key={i}
-                cx={100 + Math.cos(a) * dist}
-                cy={100 + Math.sin(a) * dist}
-                r={i % 4 === 0 ? 3.2 : 1.8}
-                fill={gold ? '#ffd76a' : '#c879ff'}
-                opacity={0.9}
-                filter={`url(#glow-${uid})`}
-                className={animated ? 'animate-twinkle' : ''}
-                style={{ animationDelay: `${i * 0.12}s` }}
-              />
+              <circle key={i} cx={x} cy={y} r={1.7} fill={fill} opacity={0.9} filter={`url(#glow-${uid})`} className={animated ? 'animate-twinkle' : ''} style={{ animationDelay: `${i * 0.1}s` }} />
             )
           })}
         </g>
@@ -252,36 +241,50 @@ export default function Avatar({
           the deliberate partner to the Aether aura */}
       {isFounderFrame ? (
         <g>
-          <circle cx="100" cy="100" r="94" fill="none" stroke="#fbbf24" strokeWidth="1" opacity="0.45" />
-          <circle cx="100" cy="100" r="90" fill="none" stroke={`url(#plusRing-${uid})`} strokeWidth="4.5" />
+          {/* hairline rails */}
+          <circle cx="100" cy="100" r="95" fill="none" stroke="#fbbf24" strokeWidth="1" opacity="0.4" />
+          {/* base violet→gold gradient ring */}
+          <circle cx="100" cy="100" r="90" fill="none" stroke={`url(#plusRing-${uid})`} strokeWidth="5" />
+          {/* rotating gold shimmer that travels around the ring */}
+          <g>
+            {animated && (
+              <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="22s" repeatCount="indefinite" />
+            )}
+            <circle cx="100" cy="100" r="90" fill="none" stroke="#ffe9a8" strokeWidth="5" strokeDasharray="3 16" opacity="0.7" filter={`url(#glow-${uid})`} />
+          </g>
           <circle cx="100" cy="100" r="84" fill="none" stroke="#a855f7" strokeWidth="1" opacity="0.5" />
+          {/* fine bi-colour ticks */}
           {[...Array(36)].map((_, i) => {
             const a = (i / 36) * Math.PI * 2
             return (
               <line
                 key={i}
-                x1={100 + Math.cos(a) * 88}
-                y1={100 + Math.sin(a) * 88}
-                x2={100 + Math.cos(a) * 92}
-                y2={100 + Math.sin(a) * 92}
+                x1={100 + Math.cos(a) * 86}
+                y1={100 + Math.sin(a) * 86}
+                x2={100 + Math.cos(a) * 89}
+                y2={100 + Math.sin(a) * 89}
                 stroke={i % 3 === 0 ? '#fbbf24' : '#c084fc'}
-                strokeWidth="1.3"
-                opacity="0.6"
+                strokeWidth="1.2"
+                opacity="0.55"
               />
             )
           })}
-          {[0, 90, 180, 270].map((deg, i) => {
+          {/* faceted gems — large at cardinals, small on the diagonals */}
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
             const a = (deg * Math.PI) / 180
+            const big = deg % 90 === 0
+            const sz = big ? 3.6 : 2.2
             return (
               <g key={deg} transform={`translate(${100 + Math.cos(a) * 90} ${100 + Math.sin(a) * 90}) rotate(45)`}>
                 <rect
-                  x="-3.2"
-                  y="-3.2"
-                  width="6.4"
-                  height="6.4"
-                  fill={i % 2 === 0 ? '#ffd76a' : '#c879ff'}
+                  x={-sz}
+                  y={-sz}
+                  width={sz * 2}
+                  height={sz * 2}
+                  fill={big ? '#ffd76a' : '#c879ff'}
                   filter={`url(#glow-${uid})`}
                   className={animated ? 'animate-pulseGlow' : ''}
+                  style={{ animationDelay: `${i * 0.15}s` }}
                 />
               </g>
             )

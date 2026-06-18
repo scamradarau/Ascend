@@ -33,7 +33,7 @@ export const PLUS_PLANS: PlusPlanInfo[] = [
     name: 'Monthly',
     price: 'A$7.99',
     cadence: 'per month',
-    blurb: 'Try Plus, cancel anytime.',
+    blurb: '7-day free trial, then A$7.99/mo. Cancel anytime.',
     mode: 'subscription',
   },
   {
@@ -41,7 +41,7 @@ export const PLUS_PLANS: PlusPlanInfo[] = [
     name: 'Annual',
     price: 'A$49.99',
     cadence: 'per year',
-    blurb: 'About A$4.17/mo — nearly half off.',
+    blurb: '7-day free trial, then ~A$4.17/mo — nearly half off.',
     badge: 'Best value',
     mode: 'subscription',
   },
@@ -72,6 +72,11 @@ export const PLUS_BENEFITS: PlusBenefit[] = [
     icon: '🌿',
     title: '5 active traits',
     detail: 'Pursue five paths at once instead of three — put more of your life in play.',
+  },
+  {
+    icon: '◈',
+    title: 'Monthly Aether bonus',
+    detail: '500 Aether every month, on the house — spend it on cosmetics, streak freezes or rewards.',
   },
   {
     icon: '🧊',
@@ -111,3 +116,8 @@ export const PLUS_FREEZE_CAP = 4
 export function freezeCap(plus: boolean): number {
   return plus ? PLUS_FREEZE_CAP : FREE_FREEZE_CAP
 }
+
+// Plus members get a free Aether stipend each month (cosmetic currency —
+// never progression). Granted client-side in useGame.tickStreak.
+export const PLUS_MONTHLY_AETHER = 500
+export const PLUS_TRIAL_DAYS = 7
