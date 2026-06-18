@@ -44,11 +44,13 @@ Deno.serve(async (req) => {
   if (b.trait_exp && typeof b.trait_exp === 'object') upd.trait_exp = b.trait_exp
   if (Array.isArray(b.traits)) upd.traits = b.traits
   if (Array.isArray(b.earned_badges)) upd.earned_badges = b.earned_badges
-  // the owner account always has Ascend Plus (so the ✦ shows to everyone)
-  upd.plus = true
 
   const admin = createClient(url, service)
   const { error } = await admin.from('profiles').update(upd).eq('id', user.id)
   if (error) return json({ ok: false, error: error.message }, 500)
+  // The owner always has Ascend Plus (so the ✦ shows to everyone). Done as a
+  // SEPARATE, best-effort write so a profiles table that hasn't run
+  // step8_plus.sql yet (no `plus` column) can't break the core owner sync above.
+  await admin.from('profiles').update({ plus: true }).eq('id', user.id)
   return json({ ok: true })
 })

@@ -61,10 +61,16 @@ export async function fetchEarnedProgress(userId: string): Promise<EarnedProgres
   if (!supabase) return null
   const { data } = await supabase
     .from('profiles')
-    .select('total_exp,trust,streak,quests_this_month,earned_badges,trait_exp,plus')
+    .select('total_exp,trust,streak,quests_this_month,earned_badges,trait_exp')
     .eq('id', userId)
     .maybeSingle()
-  return (data as EarnedProgress) ?? null
+  if (!data) return null
+  // `plus` is a newer column — read it SEPARATELY so a profiles table that
+  // hasn't run step8_plus.sql yet can't break core progress hydration.
+  let plus: boolean | undefined
+  const { data: pd } = await supabase.from('profiles').select('plus').eq('id', userId).maybeSingle()
+  if (pd && typeof (pd as { plus?: boolean }).plus === 'boolean') plus = (pd as { plus: boolean }).plus
+  return { ...(data as EarnedProgress), plus }
 }
 
 // ---- Ascend Plus checkout ----
