@@ -698,6 +698,7 @@ export const useGame = create<GameState>()(
           bestStreak: 0,
           lifetimeQuests: 0,
           peakBoards: [],
+          plus: false, // entitlement is re-established from the server / owner-check on load — never carried across accounts
           plusAetherMonth: null,
           avatar: { ...DEFAULT_AVATAR },
           purchasedCosmetics: [],

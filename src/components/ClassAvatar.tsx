@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import type { AvatarConfig } from '../data/cosmetics'
 import { resolveClass } from '../data/classes'
-import Avatar, { AURA_COLORS, FRAME_COLORS } from './Avatar'
+import Avatar, { AURA_COLORS } from './Avatar'
+import CosmeticRings from './CosmeticRings'
 
 // ================================================================
 // ClassAvatar — renders the player's rank CLASS portrait inside the
@@ -37,21 +38,21 @@ export default function ClassAvatar({
   if (failed) return <Avatar config={config} size={size} animated={animated} />
 
   const aura = config.aura !== 'none' ? AURA_COLORS[config.aura] : null
-  const frame =
-    config.frame === 'prism' ? '#c9a3ff' : FRAME_COLORS[config.frame] ?? '#3a4a78'
-  const ring = Math.max(2, Math.round(size * 0.02))
+  // the portrait sits at ~80% so the animated frame hugs the rim and the
+  // aura blooms in the ring of space around it
+  const inset = Math.round(size * 0.1)
 
   return (
     <div style={{ width: size, height: size, maxWidth: '100%', position: 'relative', borderRadius: '50%' }}>
-      {/* aura glow behind the portrait */}
+      {/* soft aura bloom behind the portrait */}
       {aura && (
         <div
           className={animated ? 'animate-pulseGlow' : ''}
           style={{
             position: 'absolute',
-            inset: -Math.round(size * 0.04),
+            inset: Math.round(size * 0.06),
             borderRadius: '50%',
-            boxShadow: `0 0 ${Math.round(size * 0.16)}px ${aura}, 0 0 ${Math.round(size * 0.06)}px ${aura}`,
+            boxShadow: `0 0 ${Math.round(size * 0.14)}px ${aura}, 0 0 ${Math.round(size * 0.05)}px ${aura}`,
             pointerEvents: 'none',
           }}
         />
@@ -61,10 +62,11 @@ export default function ClassAvatar({
       <div
         style={{
           position: 'absolute',
-          inset: 0,
+          inset,
           borderRadius: '50%',
           overflow: 'hidden',
           background: 'radial-gradient(circle at 50% 32%, #1b2440, #05070f 78%)',
+          boxShadow: 'inset 0 0 14px rgba(0,0,0,0.65)',
         }}
       >
         <img
@@ -76,17 +78,8 @@ export default function ClassAvatar({
         />
       </div>
 
-      {/* frame ring */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: '50%',
-          border: `${ring}px solid ${frame}`,
-          boxShadow: `0 0 10px ${frame}55, inset 0 0 14px rgba(0,0,0,0.65)`,
-          pointerEvents: 'none',
-        }}
-      />
+      {/* animated aura + frame overlay */}
+      <CosmeticRings config={config} animated={animated} />
     </div>
   )
 }

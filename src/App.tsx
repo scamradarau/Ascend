@@ -4,7 +4,7 @@ import { useGame } from './store/useGame'
 import { useAuth } from './store/auth'
 import { useSocial } from './store/social'
 import { startCloudSync } from './store/cloudSync'
-import { isOwnerEmail } from './lib/supabase'
+import { isCloud, isOwnerEmail, fetchEarnedProgress } from './lib/supabase'
 import Landing from './pages/Landing'
 import Auth from './pages/Auth'
 import Disclaimers from './pages/Disclaimers'
@@ -73,10 +73,23 @@ export default function App() {
     window.scrollTo(0, 0)
   }, [pathname])
 
-  // the owner account always has Ascend Plus (permanent), regardless of any
-  // server flag or sync timing
+  // Resolve Ascend Plus authoritatively whenever the signed-in user changes.
+  // Owner = always Plus. Everyone else = whatever the server says — this is the
+  // source of truth and self-heals any stale local `plus` flag (so Plus can
+  // never leak from one account to the next).
   useEffect(() => {
-    if (user && isOwnerEmail(user.email)) useGame.setState({ plus: true })
+    if (!user) return
+    if (isOwnerEmail(user.email)) {
+      useGame.setState({ plus: true })
+      return
+    }
+    if (isCloud) {
+      fetchEarnedProgress(user.id)
+        .then((p) => {
+          if (p) useGame.setState({ plus: !!p.plus })
+        })
+        .catch(() => {})
+    }
   }, [user])
 
   if (!ready) {
