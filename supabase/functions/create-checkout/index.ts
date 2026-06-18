@@ -34,6 +34,17 @@ Deno.serve(async (req) => {
 
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
   if (!stripeKey) {
+    // Diagnostic (names only — never values): shows which Stripe/Site secrets
+    // this function can actually see, so a typo or missing secret is obvious
+    // in the Edge Function logs.
+    try {
+      const seen = Object.keys(Deno.env.toObject()).filter(
+        (k) => k.startsWith('STRIPE') || k === 'SITE_URL',
+      )
+      console.log('create-checkout: STRIPE_SECRET_KEY not found. Secrets visible to this function:', seen)
+    } catch (_e) {
+      console.log('create-checkout: STRIPE_SECRET_KEY not found (could not enumerate env).')
+    }
     // Drop-in state: payments aren't switched on yet.
     return json({ ok: false, error: 'Payments are not open yet. Join the founders list and we’ll let you know.' }, 200)
   }
