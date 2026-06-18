@@ -22,6 +22,7 @@ import Feedback from './pages/Feedback'
 import Settings from './pages/Settings'
 import Shop from './pages/Shop'
 import Plus from './pages/Plus'
+import Stats from './pages/Stats'
 import Admin from './pages/Admin'
 import Codex from './pages/Codex'
 import Friends from './pages/Friends'
@@ -131,6 +132,7 @@ export default function App() {
         <Route path="leaderboards" element={<Leaderboards />} />
         <Route path="shop" element={<Shop />} />
         <Route path="plus" element={<Plus />} />
+        <Route path="stats" element={<Stats />} />
         <Route path="admin" element={<Admin />} />
         <Route path="guide" element={<Codex />} />
         {/* Lumi replaced the standalone Stoic page; redirect any old links */}

@@ -193,6 +193,38 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    id: 'freezes',
+    title: 'Streak Freezes',
+    icon: '🧊',
+    body: (
+      <>
+        <P>
+          A <strong>Streak Freeze</strong> protects your streak across a missed day. Miss a day with a
+          freeze banked and it’s spent automatically to bridge the gap — your chain stays alive instead
+          of resetting to zero. It’s insurance for real life: a sick day, travel, a flat-out week.
+        </P>
+        <P>How you accumulate them:</P>
+        <List
+          items={[
+            'You start with one freeze in your pocket.',
+            'You earn one free freeze every week — it banks automatically (no action needed).',
+            'You can also buy extra freezes with Aether (◈250 each) from the Character page.',
+            'They’re spent automatically, oldest first, the moment a missed day would have broken your streak.',
+          ]}
+        />
+        <Callout tone="gold">
+          You can bank up to <strong>2 freezes</strong> on a free account — <strong>Ascend Plus</strong>{' '}
+          raises the cap to <strong>4</strong>, so you can cover a longer break (a holiday, exam week)
+          without losing months of momentum.
+        </Callout>
+        <P>
+          Smart play: top up <em>before</em> a busy stretch, not during it. A freeze can only save a
+          streak if it’s already in the bank when the day slips.
+        </P>
+      </>
+    ),
+  },
+  {
     id: 'verification',
     title: 'Quest Verification',
     icon: '🛡️',

@@ -23,7 +23,7 @@ const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100]
 import BodyFigure from '../components/BodyFigure'
 import { VerificationModal } from '../components/VerificationModal'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
-import { maxActiveTraits } from '../data/plus'
+import { maxActiveTraits, freezeCap } from '../data/plus'
 
 interface PendingTask {
   traitId: string
@@ -78,8 +78,9 @@ export default function Character() {
   ).length
 
   const onBuyFreeze = () => {
-    if (streakFreezes >= 2) {
-      setToast('🧊 You’re already stocked up — max 2 freezes.')
+    const cap = freezeCap(plus)
+    if (streakFreezes >= cap) {
+      setToast(`🧊 You’re already stocked up — max ${cap} freezes${plus ? '' : ' (4 with Ascend Plus)'}.`)
     } else if (buyStreakFreeze()) {
       playSfx('aether')
       setToast('🧊 Streak Freeze purchased — your chain is protected.')
@@ -173,9 +174,12 @@ export default function Character() {
             title="Streak Freeze protects your streak across one missed day. You get one free each week; buy more with Aether."
             className="rounded-lg border border-cosmos-cyan/30 bg-cosmos-cyan/5 px-3 py-2 text-center transition hover:border-cosmos-cyan/60"
           >
-            <div className="font-pixel text-sm text-cosmos-cyan">🧊 {streakFreezes}</div>
+            <div className="font-pixel text-sm text-cosmos-cyan">
+              🧊 {streakFreezes}
+              <span className="text-[var(--muted)]">/{freezeCap(plus)}</span>
+            </div>
             <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">
-              {streakFreezes >= 2 ? 'freezes' : `buy · ◈250`}
+              {streakFreezes >= freezeCap(plus) ? 'freezes' : `buy · ◈250`}
             </div>
           </button>
         </div>

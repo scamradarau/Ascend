@@ -29,6 +29,7 @@ const NAV_SECTIONS: { heading: string; items: { to: string; label: string; icon:
     heading: 'PROGRESS',
     items: [
       { to: '/app/leaderboards', label: 'Leaderboard', icon: '🏆' },
+      { to: '/app/stats', label: 'Advanced Stats', icon: '📊' },
       { to: '/app/journal', label: 'Journal', icon: '📓' },
     ],
   },

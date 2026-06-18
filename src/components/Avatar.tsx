@@ -65,6 +65,9 @@ export default function Avatar({
   const aura = AURA_COLORS[config.aura] ?? 'transparent'
   const frame = FRAME_COLORS[config.frame] ?? FRAME_COLORS.basic
   const hasAura = config.aura !== 'none'
+  // Ascend Plus exclusives get bespoke, matched treatments
+  const isAetherAura = config.aura === 'aether'
+  const isFounderFrame = config.frame === 'founder'
 
   return (
     <svg
@@ -85,6 +88,20 @@ export default function Avatar({
           <stop offset="70%" stopColor={aura} stopOpacity="0.12" />
           <stop offset="100%" stopColor={aura} stopOpacity="0" />
         </radialGradient>
+        {/* Ascend Plus set — the Aether aura + Founders frame share this
+            violet↔gold identity so they read as one premium pairing */}
+        <radialGradient id={`plusAura-${uid}`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#c084fc" stopOpacity="0.6" />
+          <stop offset="45%" stopColor="#a855f7" stopOpacity="0.22" />
+          <stop offset="72%" stopColor="#fbbf24" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={`plusRing-${uid}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#fde08a" />
+          <stop offset="35%" stopColor="#fbbf24" />
+          <stop offset="65%" stopColor="#d8a0ff" />
+          <stop offset="100%" stopColor="#a855f7" />
+        </linearGradient>
         <linearGradient id="prismFrame" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#22d3ee" />
           <stop offset="50%" stopColor="#a855f7" />
@@ -139,9 +156,62 @@ export default function Avatar({
         </filter>
       </defs>
 
+      {/* Aether (Ascend Plus) — a violet→gold dual-tone field with twin halos
+          and alternating gold/violet motes; matches the Founders frame */}
+      {isAetherAura && (
+        <g>
+          <circle
+            cx="100"
+            cy="100"
+            r="99"
+            fill={`url(#plusAura-${uid})`}
+            className={animated ? 'animate-pulseGlow' : ''}
+          />
+          <circle
+            cx="100"
+            cy="100"
+            r="96"
+            fill="none"
+            stroke="#fbbf24"
+            strokeWidth="3"
+            opacity="0.55"
+            filter={`url(#glow-${uid})`}
+            className={animated ? 'animate-pulseGlow' : ''}
+          />
+          <circle
+            cx="100"
+            cy="100"
+            r="92"
+            fill="none"
+            stroke="#c084fc"
+            strokeWidth="2"
+            opacity="0.5"
+            filter={`url(#glow-${uid})`}
+          />
+          {[...Array(20)].map((_, i) => {
+            const a = (i / 20) * Math.PI * 2
+            const gold = i % 2 === 0
+            const dist = i % 3 === 0 ? 90 : 96
+            return (
+              <circle
+                key={i}
+                cx={100 + Math.cos(a) * dist}
+                cy={100 + Math.sin(a) * dist}
+                r={i % 4 === 0 ? 3.2 : 1.8}
+                fill={gold ? '#ffd76a' : '#c879ff'}
+                opacity={0.9}
+                filter={`url(#glow-${uid})`}
+                className={animated ? 'animate-twinkle' : ''}
+                style={{ animationDelay: `${i * 0.12}s` }}
+              />
+            )
+          })}
+        </g>
+      )}
+
       {/* aura — a glowing halo ring + orbiting motes that bloom OUTSIDE the
           bust (which is otherwise opaque and would hide a centred glow) */}
-      {hasAura && (
+      {hasAura && !isAetherAura && (
         <g>
           {/* soft outer field */}
           <circle cx="100" cy="100" r="99" fill={`url(#aura-${uid})`} className={animated ? 'animate-pulseGlow' : ''} />
@@ -177,38 +247,82 @@ export default function Avatar({
         </g>
       )}
 
-      {/* frame ring */}
-      <circle
-        cx="100"
-        cy="100"
-        r="90"
-        fill="none"
-        stroke={frame}
-        strokeWidth={config.frame === 'basic' ? 2 : 4}
-        opacity={0.85}
-      />
-      {config.frame !== 'basic' && (
-        <circle cx="100" cy="100" r="84" fill="none" stroke={frame} strokeWidth="1" opacity={0.4} />
+      {/* Founders frame (Ascend Plus) — a violet→gold gradient ring with gold
+          + violet rails, fine bi-colour ticks and four cardinal gem accents;
+          the deliberate partner to the Aether aura */}
+      {isFounderFrame ? (
+        <g>
+          <circle cx="100" cy="100" r="94" fill="none" stroke="#fbbf24" strokeWidth="1" opacity="0.45" />
+          <circle cx="100" cy="100" r="90" fill="none" stroke={`url(#plusRing-${uid})`} strokeWidth="4.5" />
+          <circle cx="100" cy="100" r="84" fill="none" stroke="#a855f7" strokeWidth="1" opacity="0.5" />
+          {[...Array(36)].map((_, i) => {
+            const a = (i / 36) * Math.PI * 2
+            return (
+              <line
+                key={i}
+                x1={100 + Math.cos(a) * 88}
+                y1={100 + Math.sin(a) * 88}
+                x2={100 + Math.cos(a) * 92}
+                y2={100 + Math.sin(a) * 92}
+                stroke={i % 3 === 0 ? '#fbbf24' : '#c084fc'}
+                strokeWidth="1.3"
+                opacity="0.6"
+              />
+            )
+          })}
+          {[0, 90, 180, 270].map((deg, i) => {
+            const a = (deg * Math.PI) / 180
+            return (
+              <g key={deg} transform={`translate(${100 + Math.cos(a) * 90} ${100 + Math.sin(a) * 90}) rotate(45)`}>
+                <rect
+                  x="-3.2"
+                  y="-3.2"
+                  width="6.4"
+                  height="6.4"
+                  fill={i % 2 === 0 ? '#ffd76a' : '#c879ff'}
+                  filter={`url(#glow-${uid})`}
+                  className={animated ? 'animate-pulseGlow' : ''}
+                />
+              </g>
+            )
+          })}
+        </g>
+      ) : (
+        <>
+          {/* frame ring */}
+          <circle
+            cx="100"
+            cy="100"
+            r="90"
+            fill="none"
+            stroke={frame}
+            strokeWidth={config.frame === 'basic' ? 2 : 4}
+            opacity={0.85}
+          />
+          {config.frame !== 'basic' && (
+            <circle cx="100" cy="100" r="84" fill="none" stroke={frame} strokeWidth="1" opacity={0.4} />
+          )}
+          {/* frame ticks for fancier frames */}
+          {['cyan', 'gold', 'prism', 'neon', 'obsidian', 'royal', 'celestial', 'silver'].includes(
+            config.frame,
+          ) &&
+            [...Array(24)].map((_, i) => {
+              const a = (i / 24) * Math.PI * 2
+              return (
+                <line
+                  key={i}
+                  x1={100 + Math.cos(a) * 88}
+                  y1={100 + Math.sin(a) * 88}
+                  x2={100 + Math.cos(a) * 92}
+                  y2={100 + Math.sin(a) * 92}
+                  stroke={frame}
+                  strokeWidth="1.5"
+                  opacity="0.6"
+                />
+              )
+            })}
+        </>
       )}
-      {/* frame ticks for fancier frames */}
-      {['cyan', 'gold', 'prism', 'neon', 'obsidian', 'royal', 'celestial', 'silver'].includes(
-        config.frame,
-      ) &&
-        [...Array(24)].map((_, i) => {
-          const a = (i / 24) * Math.PI * 2
-          return (
-            <line
-              key={i}
-              x1={100 + Math.cos(a) * 88}
-              y1={100 + Math.sin(a) * 88}
-              x2={100 + Math.cos(a) * 92}
-              y2={100 + Math.sin(a) * 92}
-              stroke={frame}
-              strokeWidth="1.5"
-              opacity="0.6"
-            />
-          )
-        })}
 
       {/* clip the bust inside the ring */}
       <clipPath id={`clip-${uid}`}>

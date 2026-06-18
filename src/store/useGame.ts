@@ -176,7 +176,6 @@ const todayStr = () => todayKey()
 
 // streak-freeze + milestone tuning
 export const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100, 180, 365]
-const FREEZE_CAP = 2 // most freezes you can bank
 export const TRAIT_ADD_CAP = 2 // most traits you can add per Sydney day (anti-farm)
 // minimum Integrity (trust) score to redeem real rewards — makes cheating for
 // rewards self-defeating, since flagged submissions drop Integrity below this.
