@@ -33,6 +33,7 @@ import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import Journal from './pages/Journal'
 import WorldMap from './pages/WorldMap'
+import NotFound from './pages/NotFound'
 
 function RequireAuth({ children }: { children: JSX.Element }) {
   const user = useAuth((s) => s.user)
@@ -94,8 +95,14 @@ export default function App() {
 
   if (!ready) {
     return (
-      <div className="cosmos-bg flex min-h-screen items-center justify-center">
-        <span className="font-pixel text-sm text-cosmos-cyan glow-text">ASCEND…</span>
+      <div className="cosmos-bg relative flex min-h-screen flex-col items-center justify-center gap-3 overflow-hidden">
+        <div className="starfield absolute inset-0 opacity-30" />
+        <span className="relative z-10 font-pixel text-base text-white [text-shadow:0_2px_24px_rgba(34,211,238,0.35)] animate-pulse">
+          ASCEND
+        </span>
+        <span className="relative z-10 text-[10px] uppercase tracking-[0.3em] text-cosmos-cyan/80">
+          Entering the realm…
+        </span>
       </div>
     )
   }
@@ -161,7 +168,7 @@ export default function App() {
         <Route path="settings" element={<Settings />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

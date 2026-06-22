@@ -50,7 +50,7 @@ export default function Landing() {
     ? onboarded
       ? '▶ Enter the platform'
       : '▶ Continue onboarding'
-    : '▶ Let’s get started'
+    : '▶ Begin your ascent'
 
   return (
     <div className="relative min-h-screen bg-[#070a18] text-white">
@@ -73,7 +73,7 @@ export default function Landing() {
             <span className="chip border-white/40 text-white/80">Real life. Real quests. Real proof.</span>
           </div>
           <h1 className="mb-6">
-            <PixelTitle className="block bg-gradient-to-br from-cosmos-cyan via-cosmos-violet to-cosmos-magenta bg-clip-text text-5xl text-transparent drop-shadow-[0_3px_16px_rgba(56,225,255,0.4)] sm:text-7xl md:text-8xl">
+            <PixelTitle className="block text-5xl text-white [text-shadow:0_2px_28px_rgba(34,211,238,0.28)] sm:text-7xl md:text-8xl">
               ASCEND
             </PixelTitle>
           </h1>
@@ -95,7 +95,7 @@ export default function Landing() {
               </Link>
             )}
             <a href="/brochure.html" target="_blank" rel="noopener" className="btn btn-ghost text-base text-white">
-              Learn more
+              See how it works
             </a>
           </div>
         </div>
@@ -124,13 +124,23 @@ export default function Landing() {
           </p>
 
           <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f) => (
-              <div key={f.title} className="panel hud-corner p-5">
-                <div className="mb-3 text-3xl">{f.icon}</div>
-                <h3 className="font-display text-lg font-bold text-white">{f.title}</h3>
-                <p className="mt-1.5 text-sm text-slate-400">{f.body}</p>
-              </div>
-            ))}
+            {FEATURES.map((f) => {
+              const isLumi = f.title.includes('Lumi')
+              return (
+                <div
+                  key={f.title}
+                  className={
+                    isLumi
+                      ? 'hud-corner rounded-2xl border border-cosmos-cyan/40 bg-gradient-to-br from-cosmos-cyan/10 to-transparent p-5 sm:col-span-2 lg:col-span-1'
+                      : 'panel hud-corner p-5'
+                  }
+                >
+                  <div className={`mb-3 text-3xl ${isLumi ? 'text-cosmos-cyan' : ''}`}>{f.icon}</div>
+                  <h3 className="font-display text-lg font-bold text-white">{f.title}</h3>
+                  <p className="mt-1.5 text-sm text-slate-400">{f.body}</p>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -139,7 +149,7 @@ export default function Landing() {
       <section className="relative z-10 overflow-hidden bg-[#070a18]/45 px-6 py-24">
         <div className="relative z-10 mx-auto grid max-w-5xl items-center gap-12 lg:grid-cols-2">
           <div>
-            <PixelTitle className="text-sm text-cosmos-violet">WHY “ASCEND”?</PixelTitle>
+            <PixelTitle className="text-sm text-cosmos-cyan">WHY “ASCEND”?</PixelTitle>
             <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
               You already know you’re meant for more.
             </h2>
