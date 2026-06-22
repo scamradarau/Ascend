@@ -5,6 +5,7 @@ import { useAuth } from '../store/auth'
 import { getAllPlayers, getAllPlayersCloud, type PlayerRow, type TraitStat } from '../store/leaderboard'
 import { isCloud } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
+import Icon from '../components/Icon'
 import { levelFromTotalExp } from '../data/leveling'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
@@ -235,7 +236,7 @@ export default function Leaderboards() {
                         {e.handle}
                         {e.plus && (
                           <span className="text-cosmos-gold" title="Ascend Plus member">
-                            ✦
+                            <Icon name="plus" />
                           </span>
                         )}
                         {e.isMe && <Pill tone="exp">You</Pill>}
@@ -252,12 +253,12 @@ export default function Leaderboards() {
                                 : 'text-cosmos-magenta'
                           }
                         >
-                          🛡 {e.trust}
+                          <Icon name="integrity" /> {e.trust}
                         </span>
                         {e.streak > 0 && (
                           <span className="text-amber-300" title={`${e.streak}-day streak`}>
                             {' '}
-                            · 🔥 {e.streak}
+                            · <Icon name="streak" /> {e.streak}
                           </span>
                         )}
                       </div>
