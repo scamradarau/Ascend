@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware'
-import type { OnboardingAnswers } from '../data/onboarding'
-import { computeOnboarding } from '../data/onboarding'
+import type { OnboardingAnswers, Playstyle } from '../data/onboarding'
+import { computeOnboarding, playstyleTarget } from '../data/onboarding'
 import { traitById } from '../data/traits'
 import { levelFromTotalExp, totalExpToReach } from '../data/leveling'
 import type { VerificationResult, VerificationMethodId } from '../data/verification'
@@ -86,7 +86,8 @@ export interface GameState {
   completedQuests: CompletedQuest[]
   questsThisMonth: number
   questMonth: string // month-key the counter belongs to; resets when it changes
-  dailyQuestTarget: number // daily quest goal, sized by the onboarding time answer
+  dailyQuestTarget: number // daily quest goal, set by playstyle
+  playstyle: Playstyle // casual floor ↔ hardcore ceiling; drives pace + how much system shows
   streak: number
   lastActiveDate: string | null
   // streak freeze — protects your streak across a missed day (loss-aversion
@@ -146,6 +147,7 @@ export interface GameState {
   clearFreezeNotice: () => void
   acceptTerms: () => void
   completeOnboarding: (answers: OnboardingAnswers) => void
+  setPlaystyle: (p: Playstyle) => void
   addTrait: (traitId: string) => boolean
   dropTrait: (traitId: string) => void
   completeDailyTask: (
@@ -247,6 +249,7 @@ export const useGame = create<GameState>()(
       questsThisMonth: 0,
       questMonth: '',
       dailyQuestTarget: 2,
+      playstyle: 'standard',
       streak: 0,
       lastActiveDate: null,
       streakFreezes: 1, // everyone starts with one freeze in their pocket
@@ -388,6 +391,8 @@ export const useGame = create<GameState>()(
 
       acceptTerms: () => set({ acceptedTerms: true }),
 
+      setPlaystyle: (p) => set({ playstyle: p, dailyQuestTarget: playstyleTarget(p) }),
+
       completeOnboarding: (answers) => {
         const result = computeOnboarding(answers)
         const active: ActiveTrait[] = result.suggestedTraitIds.map((id) => ({
@@ -408,6 +413,7 @@ export const useGame = create<GameState>()(
           },
           totalExp: result.startingExp,
           dailyQuestTarget: result.dailyQuestTarget,
+          playstyle: result.playstyle,
           seasonXp: 0,
           aether: 0,
           trust: STARTING_TRUST,
@@ -682,6 +688,7 @@ export const useGame = create<GameState>()(
           profile: null,
           totalExp: 0,
           dailyQuestTarget: 2,
+          playstyle: 'standard',
           seasonXp: 0,
           aether: 0,
           trust: STARTING_TRUST,

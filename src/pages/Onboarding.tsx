@@ -10,6 +10,7 @@ import {
   OBSTACLE_OPTIONS,
   DAILY_TIME_OPTIONS,
   MOTIVATION_OPTIONS,
+  PLAYSTYLE_OPTIONS,
   computeOnboarding,
   type OnboardingAnswers,
 } from '../data/onboarding'
@@ -477,6 +478,25 @@ export default function Onboarding() {
                     />
                   ))}
                 </div>
+              </div>
+
+              <div>
+                <div className="mb-2 text-sm font-semibold text-slate-200">How do you want to play?</div>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  {PLAYSTYLE_OPTIONS.map((o) => (
+                    <Choice
+                      key={o.id}
+                      active={a.playstyle === o.id}
+                      onClick={() => set({ playstyle: o.id })}
+                      title={`${o.icon} ${o.label}`}
+                      desc={o.desc}
+                    />
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] text-slate-500">
+                  Sets your daily target ({result.dailyQuestTarget}/day) and how much of the system shows.
+                  You can change this anytime in Settings.
+                </p>
               </div>
 
             </div>

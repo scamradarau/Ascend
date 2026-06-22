@@ -27,6 +27,8 @@ export interface OnboardingAnswers {
   // commitment & motivation
   dailyTime: '15' | '30' | '60' | '90'
   motivation: 'rewards' | 'mastery' | 'competition' | 'purpose'
+  // how you want to play — sets your pace and how much of the system shows
+  playstyle: 'casual' | 'standard' | 'hardcore'
   // lifestyle signals (each contributes to starting level)
   sleep: string // poor | ok | great
   exercise: string // none | sometimes | regular
@@ -55,6 +57,7 @@ export const DEFAULT_ANSWERS: OnboardingAnswers = {
   obstacles: [],
   dailyTime: '30',
   motivation: 'mastery',
+  playstyle: 'standard',
   sleep: 'ok',
   exercise: 'sometimes',
   reading: 'sometimes',
@@ -109,6 +112,26 @@ export const DAILY_TIME_OPTIONS: { id: OnboardingAnswers['dailyTime']; label: st
   { id: '90', label: '90 min+' },
 ]
 
+export type Playstyle = OnboardingAnswers['playstyle']
+
+// Playstyle sets your daily pace AND how much of the system surfaces — the
+// casual floor vs the hardcore ceiling. Changeable any time in Settings.
+export const PLAYSTYLE_OPTIONS: {
+  id: Playstyle
+  label: string
+  icon: string
+  desc: string
+  target: number
+}[] = [
+  { id: 'casual', label: 'Casual', icon: '🌱', desc: 'Gentle pace. One quest a day is a win — no guilt, no grind.', target: 1 },
+  { id: 'standard', label: 'Standard', icon: '⚔️', desc: 'A balanced daily rhythm with room to push when you want.', target: 2 },
+  { id: 'hardcore', label: 'Hardcore', icon: '🔥', desc: 'Max grind. Leaderboards, deep stats and the full system, on from day one.', target: 4 },
+]
+
+export function playstyleTarget(p: Playstyle): number {
+  return PLAYSTYLE_OPTIONS.find((o) => o.id === p)?.target ?? 2
+}
+
 export const MOTIVATION_OPTIONS: { id: OnboardingAnswers['motivation']; label: string; desc: string }[] = [
   { id: 'rewards', label: 'Rewards', desc: 'Points, items & real prizes' },
   { id: 'mastery', label: 'Mastery', desc: 'Becoming genuinely great' },
@@ -134,8 +157,9 @@ export interface OnboardingResult {
   startingExp: number
   rationale: string[]
   suggestedTraitIds: string[]
-  // how many daily quests we suggest you aim for, sized to your time answer
+  // how many daily quests we suggest you aim for, sized to your playstyle
   dailyQuestTarget: number
+  playstyle: Playstyle
 }
 
 // Everyone starts at Level 1. The questionnaire no longer sets your level —
@@ -242,19 +266,22 @@ export function computeOnboarding(a: OnboardingAnswers): OnboardingResult {
   }
   rationale.push(motivationNote[a.motivation])
 
-  // daily quest target — sized to the time you said you can commit. This is a
-  // goal (how many of your dailies to aim for), not a cap.
-  const TARGET: Record<OnboardingAnswers['dailyTime'], number> = { '15': 1, '30': 2, '60': 3, '90': 4 }
-  const dailyQuestTarget = TARGET[a.dailyTime]
-  const timeNote: Record<OnboardingAnswers['dailyTime'], string> = {
-    '15': 'We kept it light — quick wins you can do in ~15 minutes.',
-    '30': 'A balanced ~30-minute daily load to build momentum.',
-    '60': 'A solid ~1-hour daily routine to accelerate.',
-    '90': 'An intense 90-minute+ regimen — you came to ascend fast.',
+  // daily quest target — set by your chosen playstyle (the casual floor vs the
+  // hardcore ceiling). A goal to aim for, not a cap.
+  const dailyQuestTarget = playstyleTarget(a.playstyle)
+  const playstyleNote: Record<Playstyle, string> = {
+    casual: `Casual pace — one quest a day is a win. We’ll keep the pressure low and the system simple while you build the habit.`,
+    standard: `Standard pace — a steady ${dailyQuestTarget} quests a day to build real momentum without burning out.`,
+    hardcore: `Hardcore — ${dailyQuestTarget} quests a day, with leaderboards, deep stats and the full progression system unlocked from the start. Grind deep.`,
   }
-  rationale.push(
-    `${timeNote[a.dailyTime]} Your daily target: ${dailyQuestTarget} quest${dailyQuestTarget > 1 ? 's' : ''} a day — enough to move without burning out.`,
-  )
+  rationale.push(playstyleNote[a.playstyle])
 
-  return { startingLevel, startingExp, rationale, suggestedTraitIds: picked.slice(0, 3), dailyQuestTarget }
+  return {
+    startingLevel,
+    startingExp,
+    rationale,
+    suggestedTraitIds: picked.slice(0, 3),
+    dailyQuestTarget,
+    playstyle: a.playstyle,
+  }
 }

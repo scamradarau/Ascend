@@ -89,6 +89,17 @@ export function getPlayer(id: string): PlayerRow | null {
 // ---------------------------------------------------------------
 // Cloud variants — read from Supabase `profiles` (cross-device)
 // ---------------------------------------------------------------
+// A streak is client-owned and only decays when that player opens the app, so
+// the server value goes stale for people who stop logging in. Treat a streak as
+// broken if their profile hasn't been touched in > 2 days (a live daily streak
+// requires near-daily check-ins, which push an update).
+const STREAK_STALE_MS = 2 * 86400000
+function liveStreak(streak: number, updatedAt?: string): number {
+  if (!streak) return 0
+  if (!updatedAt) return streak
+  return Date.now() - new Date(updatedAt).getTime() > STREAK_STALE_MS ? 0 : streak
+}
+
 function cloudToRow(p: CloudProfile): PlayerRow {
   const traits: TraitStat[] = (p.traits || []).map((t) => {
     const def = traitById(t.id)
@@ -104,7 +115,7 @@ function cloudToRow(p: CloudProfile): PlayerRow {
     trust: p.trust ?? 100,
     region: p.region || '—',
     age: p.age ?? '',
-    streak: p.streak || 0,
+    streak: liveStreak(p.streak || 0, p.updated_at),
     avatar: { ...DEFAULT_AVATAR, ...((p.avatar as object) || {}) },
     traits,
     badges: p.earned_badges || [],

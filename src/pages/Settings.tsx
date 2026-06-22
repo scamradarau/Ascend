@@ -16,6 +16,7 @@ import { CLASSES, resolveClass, isClassUnlocked, nextClass } from '../data/class
 import ClassAvatar from '../components/ClassAvatar'
 import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
 import { PixelTitle, Pill } from '../components/ui'
+import { PLAYSTYLE_OPTIONS } from '../data/onboarding'
 
 // Helmet & skin are now driven by your CLASS (which evolves with rank), so the
 // only equippable cosmetics here are auras and frames.
@@ -45,6 +46,8 @@ export default function Settings() {
   const toggleReduceMotion = useGame((s) => s.toggleReduceMotion)
   const soundEnabled = useGame((s) => s.soundEnabled)
   const toggleSound = useGame((s) => s.toggleSound)
+  const playstyle = useGame((s) => s.playstyle)
+  const setPlaystyle = useGame((s) => s.setPlaystyle)
   const authUser = useAuth((s) => s.user)
   const logout = useAuth((s) => s.logout)
   const { level } = usePlayerLevel()
@@ -292,6 +295,40 @@ export default function Settings() {
           <a href={BROCHURE_URL} target="_blank" rel="noopener" className="btn btn-ghost text-xs">
             👀 Preview what they’ll see →
           </a>
+        </div>
+      </div>
+
+      {/* ---------------- PLAYSTYLE ---------------- */}
+      <div className="panel mt-5 p-6">
+        <span className="font-pixel text-xs text-[var(--accent)]">PLAYSTYLE</span>
+        <p className="mt-2 text-xs text-[var(--muted)]">
+          Sets your daily quest target and how hard the game leans. Casual is a gentle floor; Hardcore
+          turns the full grind on. Change it whenever your life does.
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          {PLAYSTYLE_OPTIONS.map((o) => (
+            <button
+              key={o.id}
+              onClick={() => setPlaystyle(o.id)}
+              className={`rounded-xl border p-4 text-left transition ${
+                playstyle === o.id ? 'border-[var(--accent)] shadow-glow' : 'border-white/10 hover:border-white/25'
+              }`}
+            >
+              <div className="text-2xl">{o.icon}</div>
+              <div className="mt-2 font-display font-bold uppercase tracking-wide text-white">
+                {o.label}
+              </div>
+              <div className="text-xs text-[var(--muted)]">{o.desc}</div>
+              <div className="mt-2 text-[10px] uppercase tracking-widest text-[var(--accent)]">
+                {o.target} quest{o.target > 1 ? 's' : ''}/day
+              </div>
+              {playstyle === o.id && (
+                <div className="mt-1">
+                  <Pill tone="exp">Active</Pill>
+                </div>
+              )}
+            </button>
+          ))}
         </div>
       </div>
 
