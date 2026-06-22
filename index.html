@@ -19,6 +19,21 @@
       href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Cinzel:wght@600;800&display=swap"
       rel="stylesheet"
     />
+    <!-- Apply the saved theme to <html> BEFORE first paint, so rune/olympus
+         players don't see a flash of the default cosmos backdrop on load. -->
+    <script>
+      (function () {
+        try {
+          var sid = localStorage.getItem('ascend-session')
+          if (!sid) return
+          var raw = localStorage.getItem('ascend-save-' + sid)
+          if (!raw) return
+          var s = JSON.parse(raw)
+          var theme = s && s.state && s.state.theme
+          if (theme) document.documentElement.setAttribute('data-theme', theme)
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

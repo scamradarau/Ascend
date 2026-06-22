@@ -95,7 +95,7 @@ export default function App() {
 
   if (!ready) {
     return (
-      <div className="cosmos-bg relative flex min-h-screen flex-col items-center justify-center gap-3 overflow-hidden">
+      <div className="relative flex min-h-screen flex-col items-center justify-center gap-3 overflow-hidden bg-[var(--bg)]">
         <div className="starfield absolute inset-0 opacity-30" />
         <span className="relative z-10 font-pixel text-base text-white [text-shadow:0_2px_24px_rgba(34,211,238,0.35)] animate-pulse">
           ASCEND

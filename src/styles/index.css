@@ -19,7 +19,9 @@ body,
 body {
   margin: 0;
   font-family: 'Rajdhani', system-ui, sans-serif;
-  background: #070a18;
+  /* follow the active theme's base colour so there's no cosmos flash on boot
+     for rune/olympus players (the theme is set on <html> before paint) */
+  background: var(--bg, #070a18);
   color: #e8ecff;
   overflow-x: hidden;
 }
