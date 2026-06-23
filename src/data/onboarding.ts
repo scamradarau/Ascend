@@ -81,28 +81,28 @@ export const ATTRIBUTE_GOAL_OPTIONS: { id: AttributeId; label: string; desc: str
 
 // Specific outcomes → which attributes they pull toward.
 export const OUTCOME_OPTIONS: { id: string; label: string; icon: string; attrs: AttributeId[] }[] = [
-  { id: 'fit', label: 'Get fit & strong', icon: '💪', attrs: ['body'] },
-  { id: 'money', label: 'Make more money', icon: '💰', attrs: ['will', 'mind'] },
-  { id: 'business', label: 'Build a business', icon: '🚀', attrs: ['will', 'charisma'] },
-  { id: 'confident', label: 'Be more confident', icon: '🦁', attrs: ['charisma', 'heart'] },
-  { id: 'skill', label: 'Master a skill', icon: '🎯', attrs: ['mind'] },
-  { id: 'relationships', label: 'Better relationships', icon: '❤️', attrs: ['charisma', 'heart'] },
-  { id: 'clarity', label: 'Mental clarity & calm', icon: '🧘', attrs: ['heart', 'mind'] },
-  { id: 'energy', label: 'More energy & better sleep', icon: '⚡', attrs: ['body'] },
-  { id: 'focus', label: 'Beat distraction', icon: '🎧', attrs: ['mind', 'will'] },
-  { id: 'purpose', label: 'Find direction & purpose', icon: '🧭', attrs: ['heart'] },
+  { id: 'fit', label: 'Get fit & strong', icon: 'body', attrs: ['body'] },
+  { id: 'money', label: 'Make more money', icon: 'money', attrs: ['will', 'mind'] },
+  { id: 'business', label: 'Build a business', icon: 'business', attrs: ['will', 'charisma'] },
+  { id: 'confident', label: 'Be more confident', icon: 'confidence', attrs: ['charisma', 'heart'] },
+  { id: 'skill', label: 'Master a skill', icon: 'skill', attrs: ['mind'] },
+  { id: 'relationships', label: 'Better relationships', icon: 'heart', attrs: ['charisma', 'heart'] },
+  { id: 'clarity', label: 'Mental clarity & calm', icon: 'calm', attrs: ['heart', 'mind'] },
+  { id: 'energy', label: 'More energy & better sleep', icon: 'energy', attrs: ['body'] },
+  { id: 'focus', label: 'Beat distraction', icon: 'focus', attrs: ['mind', 'will'] },
+  { id: 'purpose', label: 'Find direction & purpose', icon: 'purpose', attrs: ['heart'] },
 ]
 
 // Obstacles → which attributes need the most work.
 export const OBSTACLE_OPTIONS: { id: string; label: string; icon: string; attrs: AttributeId[] }[] = [
-  { id: 'procrastination', label: 'Procrastination', icon: '🐸', attrs: ['will'] },
-  { id: 'phone', label: 'Phone / screen addiction', icon: '📱', attrs: ['mind'] },
-  { id: 'inconsistency', label: 'Can’t stay consistent', icon: '🔁', attrs: ['will'] },
-  { id: 'lowconfidence', label: 'Low confidence', icon: '😟', attrs: ['charisma', 'heart'] },
-  { id: 'overwhelm', label: 'Overwhelm / no plan', icon: '🌪️', attrs: ['mind'] },
-  { id: 'health', label: 'Poor health / low energy', icon: '🥱', attrs: ['body'] },
-  { id: 'negativity', label: 'Negative self-talk', icon: '🌧️', attrs: ['heart'] },
-  { id: 'lonely', label: 'Isolation / few connections', icon: '🫥', attrs: ['charisma'] },
+  { id: 'procrastination', label: 'Procrastination', icon: 'procrastination', attrs: ['will'] },
+  { id: 'phone', label: 'Phone / screen addiction', icon: 'phone', attrs: ['mind'] },
+  { id: 'inconsistency', label: 'Can’t stay consistent', icon: 'inconsistency', attrs: ['will'] },
+  { id: 'lowconfidence', label: 'Low confidence', icon: 'lowconfidence', attrs: ['charisma', 'heart'] },
+  { id: 'overwhelm', label: 'Overwhelm / no plan', icon: 'overwhelm', attrs: ['mind'] },
+  { id: 'health', label: 'Poor health / low energy', icon: 'poorhealth', attrs: ['body'] },
+  { id: 'negativity', label: 'Negative self-talk', icon: 'negativity', attrs: ['heart'] },
+  { id: 'lonely', label: 'Isolation / few connections', icon: 'isolation', attrs: ['charisma'] },
 ]
 
 export const DAILY_TIME_OPTIONS: { id: OnboardingAnswers['dailyTime']; label: string }[] = [

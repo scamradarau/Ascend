@@ -6,18 +6,24 @@ import type { CSSProperties } from 'react'
 // Drop-in: <Icon name="streak" /> sits anywhere an emoji used to.
 // ================================================================
 export type IconName =
-  | 'streak'
-  | 'integrity'
-  | 'aether'
-  | 'plus'
-  | 'freeze'
-  | 'level'
-  | 'quest'
-  | 'mind'
-  | 'will'
-  | 'heart'
-  | 'charisma'
-  | 'body'
+  // core stats + paths
+  | 'streak' | 'integrity' | 'aether' | 'plus' | 'freeze' | 'level' | 'quest'
+  | 'mind' | 'will' | 'heart' | 'charisma' | 'body'
+  // navigation
+  | 'character' | 'world' | 'leaderboard' | 'stats' | 'journal' | 'guild'
+  | 'friends' | 'shop' | 'inventory' | 'codex' | 'settings' | 'owner'
+  | 'bell' | 'messages'
+  // quests + proof
+  | 'mainquest' | 'book' | 'camera' | 'location' | 'reflection' | 'timer' | 'proof'
+  // onboarding goals
+  | 'money' | 'business' | 'confidence' | 'skill' | 'calm' | 'energy' | 'focus' | 'purpose'
+  // onboarding obstacles
+  | 'procrastination' | 'phone' | 'inconsistency' | 'lowconfidence' | 'overwhelm'
+  | 'poorhealth' | 'negativity' | 'isolation'
+  // rewards + status + lore
+  | 'crown' | 'gift' | 'shoutout' | 'discount'
+  | 'success' | 'locked' | 'share' | 'idea' | 'install' | 'handshake' | 'search' | 'report'
+  | 'boss'
 
 // the 5 attribute/Path ids map straight onto the path icons
 export const ATTR_ICON: Record<string, IconName> = {

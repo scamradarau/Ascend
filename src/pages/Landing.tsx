@@ -2,40 +2,41 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { useAuth } from '../store/auth'
 import { PixelTitle } from '../components/ui'
+import Icon, { type IconName } from '../components/Icon'
 
-const FEATURES = [
+const FEATURES: { icon: IconName; title: string; body: string }[] = [
   {
-    icon: '📊',
+    icon: 'stats',
     title: 'Stats & Traits',
     body: 'Self-discipline, confidence, focus - real traits as RPG stats. Complete tasks to level them up.',
   },
   {
-    icon: '🎚️',
+    icon: 'level',
     title: 'Levels',
     body: 'Your level sets the expectation for where you’re meant to be - income, physique, life experience.',
   },
   {
-    icon: '🏆',
+    icon: 'leaderboard',
     title: 'Leaderboards',
     body: 'Overall level, consistency and trait ladders - every rank on the board was earned with verified work.',
   },
   {
-    icon: '🗺️',
+    icon: 'world',
     title: 'The World Map',
     body: 'Five Paths, rendered as regions of a realm. They only light up where you’ve actually done the work.',
   },
   {
-    icon: '👹',
+    icon: 'boss',
     title: 'Boss Fights',
     body: 'Weekly and monthly challenges are bosses - every verified log is a strike, and the bounty lands on the kill.',
   },
   {
-    icon: '✦',
+    icon: 'plus',
     title: 'Lumi, your guide',
     body: 'A little companion who floats with you on every screen. Stuck on discipline, fear or focus? Tap her and ask - she answers, anytime.',
   },
   {
-    icon: '🔁',
+    icon: 'proof',
     title: 'Accountability',
     body: 'Live photos, focus timers, reading checks. Clear proof verifies instantly; the rest goes to human review.',
   },
@@ -135,7 +136,7 @@ export default function Landing() {
                       : 'panel hud-corner p-5'
                   }
                 >
-                  <div className={`mb-3 text-3xl ${isLumi ? 'text-cosmos-cyan' : ''}`}>{f.icon}</div>
+                  <div className="mb-3"><Icon name={f.icon} size={34} /></div>
                   <h3 className="font-display text-lg font-bold text-white">{f.title}</h3>
                   <p className="mt-1.5 text-sm text-slate-400">{f.body}</p>
                 </div>

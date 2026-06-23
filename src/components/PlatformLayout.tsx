@@ -7,7 +7,7 @@ import { resolveClass } from '../data/classes'
 import { useSocial, selectPendingCount, selectUnreadCount, unreadAlertCount } from '../store/social'
 import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
-import Icon from './Icon'
+import Icon, { type IconName } from './Icon'
 import ThemeBackground from './ThemeBackground'
 import Companion from './Companion'
 import StreakWatcher from './StreakWatcher'
@@ -16,42 +16,42 @@ import BadgeWatcher from './BadgeWatcher'
 // Grouped nav - the daily loop first, everything else clustered so the
 // drawer reads in seconds. Alerts & Messages live as header icons (badges
 // belong in sight, not in a drawer); Feedback lives inside Settings.
-const NAV_SECTIONS: { heading: string; items: { to: string; label: string; icon: string }[] }[] = [
+const NAV_SECTIONS: { heading: string; items: { to: string; label: string; icon: IconName }[] }[] = [
   {
     heading: 'PLAY',
     items: [
-      { to: '/app/character', label: 'Character', icon: '🧬' },
-      { to: '/app/quests', label: 'Quests', icon: '📜' },
-      { to: '/app/world', label: 'World Map', icon: '🗺️' },
-      { to: '/app/traits', label: 'Main Quests', icon: '🧠' },
+      { to: '/app/character', label: 'Character', icon: 'character' },
+      { to: '/app/quests', label: 'Quests', icon: 'quest' },
+      { to: '/app/world', label: 'World Map', icon: 'world' },
+      { to: '/app/traits', label: 'Main Quests', icon: 'mainquest' },
     ],
   },
   {
     heading: 'PROGRESS',
     items: [
-      { to: '/app/leaderboards', label: 'Leaderboard', icon: '🏆' },
-      { to: '/app/stats', label: 'Advanced Stats', icon: '📊' },
-      { to: '/app/journal', label: 'Journal', icon: '📓' },
+      { to: '/app/leaderboards', label: 'Leaderboard', icon: 'leaderboard' },
+      { to: '/app/stats', label: 'Advanced Stats', icon: 'stats' },
+      { to: '/app/journal', label: 'Journal', icon: 'journal' },
     ],
   },
   {
     heading: 'SOCIAL',
     items: [
-      { to: '/app/guild', label: 'Guild', icon: '🛡️' },
-      { to: '/app/friends', label: 'Friends', icon: '👥' },
+      { to: '/app/guild', label: 'Guild', icon: 'guild' },
+      { to: '/app/friends', label: 'Friends', icon: 'friends' },
     ],
   },
   {
     heading: 'REWARDS',
     items: [
-      { to: '/app/plus', label: 'Ascend Plus', icon: '✦' },
-      { to: '/app/shop', label: 'Shop', icon: '🛒' },
-      { to: '/app/inventory', label: 'Inventory', icon: '🎒' },
+      { to: '/app/plus', label: 'Ascend Plus', icon: 'plus' },
+      { to: '/app/shop', label: 'Shop', icon: 'shop' },
+      { to: '/app/inventory', label: 'Inventory', icon: 'inventory' },
     ],
   },
   {
     heading: 'GUIDANCE',
-    items: [{ to: '/app/guide', label: 'Codex', icon: '📖' }],
+    items: [{ to: '/app/guide', label: 'Codex', icon: 'codex' }],
   },
 ]
 
@@ -81,8 +81,8 @@ export default function PlatformLayout() {
     {
       heading: 'SYSTEM',
       items: [
-        ...(showOwner ? [{ to: '/app/admin', label: 'Owner', icon: '🛠️' }] : []),
-        { to: '/app/settings', label: 'Settings', icon: '⚙️' },
+        ...(showOwner ? [{ to: '/app/admin', label: 'Owner', icon: 'owner' as IconName }] : []),
+        { to: '/app/settings', label: 'Settings', icon: 'settings' as IconName },
       ],
     },
   ]
@@ -132,7 +132,7 @@ export default function PlatformLayout() {
             aria-label="Alerts"
             className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-sm transition hover:border-[var(--accent)]/60"
           >
-            🔔
+            <Icon name="bell" size={18} />
             {alertBadge > 0 && (
               <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
                 {alertBadge > 9 ? '9+' : alertBadge}
@@ -145,7 +145,7 @@ export default function PlatformLayout() {
             aria-label="Messages"
             className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-sm transition hover:border-[var(--accent)]/60"
           >
-            ✉️
+            <Icon name="messages" size={18} />
             {unreadMsgs > 0 && (
               <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
                 {unreadMsgs > 9 ? '9+' : unreadMsgs}
@@ -266,9 +266,8 @@ export default function PlatformLayout() {
                           }`
                         }
                       >
-                        <span aria-hidden className="text-lg leading-none">
-                          {n.icon}
-                        </span>
+                        <Icon name={n.icon} size={20} />
+
                         <span className="flex-1">{n.label}</span>
                       </NavLink>
                     ))}

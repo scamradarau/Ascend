@@ -22,6 +22,7 @@ import { rankForLevel } from '../data/ranks'
 import type { AttributeId } from '../data/types'
 import { PixelTitle, ExpBar } from '../components/ui'
 import ThemeBackground from '../components/ThemeBackground'
+import Icon, { type IconName } from '../components/Icon'
 import { flushCloud } from '../store/cloudSync'
 
 const STEPS = ['Identity', 'Self-Assessment', 'Goals', 'Obstacles', 'Lifestyle', 'Commitment', 'Your Build']
@@ -335,7 +336,7 @@ export default function Onboarding() {
                           : 'border-white/10 text-slate-300 hover:border-white/25'
                       }`}
                     >
-                      <span className="text-base">{o.icon}</span> {o.label}
+                      <Icon name={o.icon as IconName} size={18} /> {o.label}
                     </button>
                   ))}
                 </div>
@@ -367,7 +368,7 @@ export default function Onboarding() {
                         : 'border-white/10 text-slate-300 hover:border-white/25'
                     }`}
                   >
-                    <span className="text-base">{o.icon}</span> {o.label}
+                    <Icon name={o.icon as IconName} size={18} /> {o.label}
                   </button>
                 ))}
               </div>
