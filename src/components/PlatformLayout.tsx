@@ -132,7 +132,7 @@ export default function PlatformLayout() {
             aria-label="Alerts"
             className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-sm transition hover:border-[var(--accent)]/60"
           >
-            <Icon name="bell" size={18} />
+            <Icon name="bell" size={20} />
             {alertBadge > 0 && (
               <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
                 {alertBadge > 9 ? '9+' : alertBadge}
@@ -145,7 +145,7 @@ export default function PlatformLayout() {
             aria-label="Messages"
             className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-sm transition hover:border-[var(--accent)]/60"
           >
-            <Icon name="messages" size={18} />
+            <Icon name="messages" size={20} />
             {unreadMsgs > 0 && (
               <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cosmos-magenta px-1 text-[9px] font-bold text-white">
                 {unreadMsgs > 9 ? '9+' : unreadMsgs}
@@ -266,7 +266,7 @@ export default function PlatformLayout() {
                           }`
                         }
                       >
-                        <Icon name={n.icon} size={20} />
+                        <Icon name={n.icon} size={24} />
 
                         <span className="flex-1">{n.label}</span>
                       </NavLink>
