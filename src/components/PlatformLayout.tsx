@@ -7,6 +7,7 @@ import { resolveClass } from '../data/classes'
 import { useSocial, selectPendingCount, selectUnreadCount, unreadAlertCount } from '../store/social'
 import { isOwnerEmail } from '../lib/supabase'
 import { PixelTitle } from './ui'
+import Icon from './Icon'
 import ThemeBackground from './ThemeBackground'
 import Companion from './Companion'
 import StreakWatcher from './StreakWatcher'
@@ -158,7 +159,7 @@ export default function PlatformLayout() {
             className="hidden shrink-0 items-center gap-1 rounded-lg border border-cosmos-gold/40 bg-cosmos-gold/5 px-2.5 py-1.5 font-pixel text-[10px] text-cosmos-gold sm:flex"
             title="Aether — spend in the Shop"
           >
-            ◈ {aether}
+            <Icon name="aether" /> {aether}
           </button>
           <div
             className="hidden shrink-0 items-center gap-1 rounded-lg border border-[var(--edge)] bg-black/30 px-2.5 py-1.5 text-[10px] lg:flex"
@@ -215,10 +216,12 @@ export default function PlatformLayout() {
         </div>
         {streak > 0 && (
           <div className="flex items-center justify-center gap-3 border-t border-[var(--edge)] bg-black/20 px-4 py-1 text-[11px] font-semibold uppercase tracking-widest text-exp">
-            <span>🔥 {streak}-day streak — keep the chain alive</span>
+            <span className="inline-flex items-center gap-1.5">
+              <Icon name="streak" /> {streak}-day streak — keep the chain alive
+            </span>
             {freezes > 0 && (
-              <span className="text-cosmos-cyan" title={`${freezes} Streak Freeze${freezes > 1 ? 's' : ''} — protects your streak across a missed day`}>
-                🧊 {freezes}
+              <span className="inline-flex items-center gap-1 text-cosmos-cyan" title={`${freezes} Streak Freeze${freezes > 1 ? 's' : ''} — protects your streak across a missed day`}>
+                <Icon name="freeze" /> {freezes}
               </span>
             )}
           </div>
