@@ -8,12 +8,12 @@ const CONSENTS = [
   {
     id: 'entertainment',
     label:
-      'I understand the expectations set in this game are for entertainment and motivation — not to be taken as literal life advice.',
+      'I understand the expectations set in this game are for entertainment and motivation - not to be taken as literal life advice.',
   },
   {
     id: 'photos',
     label:
-      'I consent to taking real-time photos as proof of completing quests (gym, meals, activities). Photos come from the live camera only — never from my gallery.',
+      'I consent to taking real-time photos as proof of completing quests (gym, meals, activities). Photos come from the live camera only - never from my gallery.',
   },
   {
     id: 'terms',
@@ -98,7 +98,7 @@ export default function Disclaimers() {
         <div className="mt-6 rounded-xl border border-white/10 bg-black/30 p-4 text-xs leading-relaxed text-slate-500">
           <strong className="text-slate-400">How verification works:</strong> quests are proven with
           live photos, focus timers, reading checks and written reflections. Clear proof verifies
-          instantly; anything uncertain goes to human review. Everyone starts at Level 1 — every
+          instantly; anything uncertain goes to human review. Everyone starts at Level 1 - every
           level after that is earned, never bought.
         </div>
 
@@ -107,7 +107,7 @@ export default function Disclaimers() {
             {CONSENTS.filter((c) => checked[c.id]).length}/{CONSENTS.length} accepted
           </span>
           <button onClick={proceed} disabled={!all} className="btn btn-primary">
-            I agree — continue →
+            I agree - continue →
           </button>
         </div>
       </div>

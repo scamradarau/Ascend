@@ -84,7 +84,7 @@ export default function Onboarding() {
     return true
   }, [step, a])
 
-  // handles must be UNIQUE — check the cloud profile registry before leaving step 0
+  // handles must be UNIQUE - check the cloud profile registry before leaving step 0
   const tryNext = async () => {
     if (!canNext || checkingHandle) return
     if (step === 0 && isCloud && supabase) {
@@ -109,7 +109,7 @@ export default function Onboarding() {
   const finish = () => {
     completeOnboarding(a)
     flushCloud()
-    // land directly on the quest board — first action within seconds
+    // land directly on the quest board - first action within seconds
     navigate('/app/quests')
   }
 
@@ -165,7 +165,7 @@ export default function Onboarding() {
                 <PixelTitle className="text-xs text-cosmos-cyan">CREATE YOUR CHARACTER</PixelTitle>
                 <h2 className="mt-2 font-display text-2xl font-bold text-white">Who is logging in?</h2>
                 <p className="mt-1 text-sm text-slate-400">
-                  This shapes the quests we recommend. Everyone starts at Level 1 — every level after
+                  This shapes the quests we recommend. Everyone starts at Level 1 - every level after
                   that is earned.
                 </p>
               </div>
@@ -185,7 +185,7 @@ export default function Onboarding() {
                 {handleErr && <p className="mt-1.5 text-xs text-cosmos-magenta">{handleErr}</p>}
                 {!handleErr && handleTaken && (
                   <p className="mt-1.5 text-xs text-cosmos-magenta">
-                    That handle is already taken — every Ascender needs a unique name.
+                    That handle is already taken - every Ascender needs a unique name.
                   </p>
                 )}
               </div>
@@ -264,7 +264,7 @@ export default function Onboarding() {
                   Where are you right now?
                 </h2>
                 <p className="mt-1 text-sm text-slate-400">
-                  Be honest — this is the baseline we build from. 1 = weak, 5 = strong.
+                  Be honest - this is the baseline we build from. 1 = weak, 5 = strong.
                 </p>
               </div>
 
@@ -304,7 +304,7 @@ export default function Onboarding() {
                   What do you most want to build?
                 </h2>
                 <p className="mt-1 text-sm text-slate-400">
-                  Pick the areas that matter most — then the specific outcomes you’re chasing.
+                  Pick the areas that matter most - then the specific outcomes you’re chasing.
                 </p>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -382,7 +382,7 @@ export default function Onboarding() {
                   <PixelTitle className="text-xs text-cosmos-cyan">LIFESTYLE SCAN</PixelTitle>
                   <h2 className="mt-2 font-display text-2xl font-bold text-white">Your current habits</h2>
                   <p className="mt-1 text-sm text-slate-400">
-                    Optional — these fine-tune your suggested quests. No judgment, just a baseline.
+                    Optional - these fine-tune your suggested quests. No judgment, just a baseline.
                   </p>
                 </div>
                 <button
@@ -390,7 +390,7 @@ export default function Onboarding() {
                   onClick={() => setStep((s) => s + 1)}
                   className="btn btn-ghost shrink-0 text-[11px]"
                 >
-                  Skip — use defaults →
+                  Skip - use defaults →
                 </button>
               </div>
 
@@ -439,7 +439,7 @@ export default function Onboarding() {
                   How are you playing?
                 </h2>
                 <p className="mt-1 text-sm text-slate-400">
-                  Your time, your motivation, your stakes — we’ll size your routine to match.
+                  Your time, your motivation, your stakes - we’ll size your routine to match.
                 </p>
               </div>
 
@@ -545,7 +545,7 @@ export default function Onboarding() {
                   Your first 3 main quests
                 </div>
                 <p className="mb-3 text-xs text-slate-400">
-                  Picked from your answers — your goals, your obstacles, your time. They’re a
+                  Picked from your answers - your goals, your obstacles, your time. They’re a
                   starting point, not a contract.
                 </p>
                 <div className="space-y-3">
@@ -573,30 +573,30 @@ export default function Onboarding() {
                   <span>
                     <strong className="text-white">Not feeling one of these?</strong> Swap any of
                     them on the <span className="text-cosmos-cyan">Main Quests</span> page before
-                    you start it — you just can’t build more than 3 at once.
+                    you start it - you just can’t build more than 3 at once.
                   </span>
                 </div>
 
-                {/* meet Lumi — the always-there guide */}
+                {/* meet Lumi - the always-there guide */}
                 <div className="mt-5 flex items-start gap-3 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/5 p-4">
                   <span className="mt-0.5 text-2xl">✦</span>
                   <p className="text-sm text-slate-200">
                     <strong className="text-white">And you won’t climb alone.</strong> Meet{' '}
-                    <span className="text-[var(--accent)]">Lumi</span> — your guide. See that glowing
-                    star at the bottom-right of every screen? That’s her. Stuck on anything —
-                    discipline, fear, motivation, a setback — tap her and ask. She’s always there.
+                    <span className="text-[var(--accent)]">Lumi</span> - your guide. See that glowing
+                    star at the bottom-right of every screen? That’s her. Stuck on anything -
+                    discipline, fear, motivation, a setback - tap her and ask. She’s always there.
                   </p>
                 </div>
 
-                {/* identity framing — the psychology that makes this stick */}
+                {/* identity framing - the psychology that makes this stick */}
                 <div className="mt-3 rounded-xl border border-cosmos-cyan/30 bg-cosmos-cyan/5 p-4 text-center">
                   <p className="text-sm italic text-slate-200">
                     Every verified quest is a vote for the person you’re becoming. Cast the first one
-                    today — it takes two minutes.
+                    today - it takes two minutes.
                   </p>
                 </div>
 
-                {/* install nudge — most retention happens on the installed app */}
+                {/* install nudge - most retention happens on the installed app */}
                 <div className="mt-3 flex items-start gap-2 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-slate-300">
                   <span className="mt-0.5 text-base">📲</span>
                   <span>

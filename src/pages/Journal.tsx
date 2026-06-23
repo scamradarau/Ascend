@@ -61,7 +61,7 @@ export default function Journal() {
         <PixelTitle className="text-xs text-[var(--accent)]">JOURNAL</PixelTitle>
         <h1 className="mt-2 font-display text-2xl font-bold text-white">Your chronicle</h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
-          Every quest you’ve finished and every check‑in you’ve logged — your story of becoming.
+          Every quest you’ve finished and every check‑in you’ve logged - your story of becoming.
         </p>
       </div>
 

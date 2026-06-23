@@ -1,8 +1,8 @@
 // ================================================================
-// COSMETICS — avatar progression that ties to achievement.
+// COSMETICS - avatar progression that ties to achievement.
 // Helmets upgrade as you rank up (deck: "Basic Knight helmet → Samurai
 // Helmet"). Auras, frames and skins are unlocked by level, badges,
-// streaks or bought with Aether — and you can cycle back any time.
+// streaks or bought with Aether - and you can cycle back any time.
 // ================================================================
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic'
@@ -36,7 +36,7 @@ export interface Cosmetic {
 // ---- HELMETS (10 tiers, level-gated, cosmetic crown of progression) ----
 export const HELMETS: Cosmetic[] = [
   { id: 'none', name: 'Bare', rarity: 'common', unlock: { default: true }, desc: 'No helmet. The raw you.' },
-  { id: 'hood', name: 'Initiate Hood', rarity: 'common', unlock: { level: 3 }, desc: 'A humble cloth hood — the journey begins.' },
+  { id: 'hood', name: 'Initiate Hood', rarity: 'common', unlock: { level: 3 }, desc: 'A humble cloth hood - the journey begins.' },
   { id: 'circlet', name: 'Focus Circlet', rarity: 'uncommon', unlock: { level: 8 }, desc: 'A thin band that sharpens the mind.' },
   { id: 'knight', name: 'Knight Helm', rarity: 'uncommon', unlock: { level: 15 }, desc: 'Steel plate. Disciplined and unshakeable.' },
   { id: 'ranger', name: 'Ranger Visor', rarity: 'rare', unlock: { level: 22 }, desc: 'Swift, precise, always scanning the horizon.' },
@@ -63,7 +63,7 @@ export const AURAS: Cosmetic[] = [
   { id: 'radiant', name: 'Radiant', rarity: 'legendary', unlock: { level: 45 }, desc: 'You glow like a small sun.' },
   { id: 'phoenix', name: 'Phoenix Flame', rarity: 'mythic', unlock: { streak: 30 }, desc: 'Living fire of relentless consistency.' },
   { id: 'prismatic', name: 'Prismatic', rarity: 'mythic', unlock: { level: 60 }, desc: 'Every colour at once.' },
-  { id: 'aether', name: 'Aether', rarity: 'mythic', unlock: { plus: true }, desc: 'A shifting cosmic halo — Ascend Plus exclusive.' },
+  { id: 'aether', name: 'Aether', rarity: 'mythic', unlock: { plus: true }, desc: 'A shifting cosmic halo - Ascend Plus exclusive.' },
 ]
 
 // ---- FRAMES (rank ring around the avatar portrait) ----

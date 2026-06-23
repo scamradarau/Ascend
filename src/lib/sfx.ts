@@ -1,12 +1,12 @@
 // ================================================================
-// SFX — tiny chiptune-style sound engine, synthesised live with the
+// SFX - tiny chiptune-style sound engine, synthesised live with the
 // Web Audio API. No audio files, no network, works offline, and the
 // 8-bit blips fit the pixel/RPG aesthetic perfectly. Every sound is a
-// short reward cue — the dopamine "ding" that makes finishing a quest
+// short reward cue - the dopamine "ding" that makes finishing a quest
 // feel good and keeps players coming back.
 //
 // Muting is read live from the game store (see useGame.soundEnabled).
-// Audio only starts after a user gesture (browser policy) — every call
+// Audio only starts after a user gesture (browser policy) - every call
 // site is a tap/click, so the context resumes cleanly.
 // ================================================================
 
@@ -60,7 +60,7 @@ export function unlockAudio() {
 export function initSfx() {
   if (typeof window === 'undefined') return
   const onGesture = () => unlockAudio()
-  // not { once: true } — iOS can re-suspend; we re-resume on every gesture
+  // not { once: true } - iOS can re-suspend; we re-resume on every gesture
   window.addEventListener('pointerdown', onGesture, { passive: true })
   window.addEventListener('touchend', onGesture, { passive: true })
   window.addEventListener('keydown', onGesture, { passive: true })
@@ -111,7 +111,7 @@ const N: Record<string, number> = {
   C6: 1046.5, D6: 1174.66, E6: 1318.51, G6: 1567.98, C7: 2093.0,
 }
 
-// a single note layered with a soft bell harmonic — fuller, more "rewarding"
+// a single note layered with a soft bell harmonic - fuller, more "rewarding"
 function note(
   ac: AudioContext,
   t0: number,
@@ -133,10 +133,10 @@ function sparkle(ac: AudioContext, t0: number, at: number) {
 export type SfxName =
   | 'tap'        // generic UI tap
   | 'submit'     // sending a quest for verification
-  | 'verified'   // quest passed — reward chime
-  | 'levelUp'    // hit a new level — triumphant arpeggio
+  | 'verified'   // quest passed - reward chime
+  | 'levelUp'    // hit a new level - triumphant arpeggio
   | 'aether'     // currency pickup blip
-  | 'flagged'    // didn't pass — gentle negative
+  | 'flagged'    // didn't pass - gentle negative
   | 'boss'       // landed a strike / slew a challenge boss
   | 'open'       // opening a panel (e.g. Lumi)
 
@@ -149,7 +149,7 @@ const PLAYERS: Record<SfxName, (ac: AudioContext, t: number) => void> = {
   },
 
   submit: (ac, t) => {
-    // affirming "sent" chirp — you did the work and shipped the proof
+    // affirming "sent" chirp - you did the work and shipped the proof
     note(ac, t, N.G4, 0, 0.1, 0.08)
     note(ac, t, N.C5, 0.07, 0.13, 0.09)
     tone(ac, t, { freq: N.E5, dur: 0.14, type: 'sine', gain: 0.05, at: 0.15 })
@@ -163,7 +163,7 @@ const PLAYERS: Record<SfxName, (ac: AudioContext, t: number) => void> = {
   },
 
   levelUp: (ac, t) => {
-    // the grand fanfare — a full ascending run, a held triad, and sparkle
+    // the grand fanfare - a full ascending run, a held triad, and sparkle
     const run = [N.C5, N.E5, N.G5, N.C6, N.E6]
     run.forEach((f, i) => note(ac, t, f, i * 0.085, 0.16, 0.11))
     // triumphant sustained chord stab
@@ -199,7 +199,7 @@ export function playSfx(name: SfxName) {
   try {
     PLAYERS[name](ac, ac.currentTime)
   } catch {
-    /* ignore — audio is best-effort */
+    /* ignore - audio is best-effort */
   }
 }
 

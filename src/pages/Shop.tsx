@@ -8,13 +8,13 @@ import {
 } from '../data/cosmetics'
 import { PixelTitle, Pill, Toast } from '../components/ui'
 
-// Low-cost, sustainable real rewards — mostly free digital perks to start.
+// Low-cost, sustainable real rewards - mostly free digital perks to start.
 const REWARDS = [
   { id: 'shoutout', name: 'Community Shout-out', icon: '📣', cost: 250, tier: 'LOW', reqLevel: 1 },
   { id: 'ebook', name: 'Free Ebook (self-help classic)', icon: '📚', cost: 500, tier: 'LOW', reqLevel: 3 },
-  { id: 'meditation', name: 'Free Meditation App — 1 Month', icon: '🧘', cost: 800, tier: 'LOW', reqLevel: 5 },
-  { id: 'habit', name: 'Free Habit-Tracker Premium — 1 Month', icon: '✅', cost: 1000, tier: 'MID', reqLevel: 8 },
-  { id: 'fitness', name: 'Free Fitness App — 1 Month', icon: '🏃', cost: 1400, tier: 'MID', reqLevel: 12 },
+  { id: 'meditation', name: 'Free Meditation App - 1 Month', icon: '🧘', cost: 800, tier: 'LOW', reqLevel: 5 },
+  { id: 'habit', name: 'Free Habit-Tracker Premium - 1 Month', icon: '✅', cost: 1000, tier: 'MID', reqLevel: 8 },
+  { id: 'fitness', name: 'Free Fitness App - 1 Month', icon: '🏃', cost: 1400, tier: 'MID', reqLevel: 12 },
   { id: 'discount', name: 'Partner Discount Code', icon: '🏷️', cost: 1800, tier: 'MID', reqLevel: 15 },
 ]
 
@@ -65,7 +65,7 @@ export default function Shop() {
           <PixelTitle className="text-xs text-[var(--accent)]">SHOP</PixelTitle>
           <h1 className="mt-2 font-display text-2xl font-bold text-white">Spend your Aether</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">
-            Aether (◈) is earned by verified quests. Spend it on cosmetics now — sponsor-funded
+            Aether (◈) is earned by verified quests. Spend it on cosmetics now - sponsor-funded
             real-world rewards are coming as the community grows.
           </p>
         </div>
@@ -131,11 +131,11 @@ export default function Shop() {
           <div className="mb-4 rounded-xl border border-cosmos-gold/30 bg-cosmos-gold/5 p-4 text-sm text-slate-200">
             <span className="font-semibold text-cosmos-gold">🚧 Real rewards are on the way.</span>{' '}
             We’re lining up sponsor-funded perks for launch. For now, your Aether is for cosmetics
-            and bragging rights — these unlock as the community grows.{' '}
+            and bragging rights - these unlock as the community grows.{' '}
             <span className="text-[var(--muted)]">Nothing here spends your Aether yet.</span>
           </div>
 
-          {/* integrity gate — rewards are only redeemable above the threshold,
+          {/* integrity gate - rewards are only redeemable above the threshold,
               so cheating (which drops Integrity via flags) locks you out. */}
           <div
             className={`mb-4 flex items-start gap-2 rounded-xl border p-4 text-sm ${

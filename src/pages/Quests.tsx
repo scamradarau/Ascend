@@ -86,7 +86,7 @@ export default function Quests() {
     [activeTraits, dailyLog],
   )
 
-  // daily goal — sized by your onboarding time answer, capped at what's available
+  // daily goal - sized by your onboarding time answer, capped at what's available
   const dailyQuestTarget = useGame((s) => s.dailyQuestTarget)
   const dailyGoal = Math.max(1, Math.min(dailyQuestTarget || 2, dailyTotal || 1))
 
@@ -113,9 +113,9 @@ export default function Quests() {
           r.error
             ? `⚠ ${r.error}`
             : r.status === 'flagged'
-              ? '⚠ Flagged — no EXP'
+              ? '⚠ Flagged - no EXP'
               : r.status === 'pending'
-                ? '📸 Sent for review — pass it and you’ll earn the EXP; if it doesn’t pass, no EXP and you can retry.'
+                ? '📸 Sent for review - pass it and you’ll earn the EXP; if it doesn’t pass, no EXP and you can retry.'
                 : `+${r.exp} EXP`,
         )
       })
@@ -127,7 +127,7 @@ export default function Quests() {
     playQuestResult(result.status, leveled)
     flash(
       result.status === 'flagged'
-        ? '⚠ Flagged — no EXP'
+        ? '⚠ Flagged - no EXP'
         : result.status === 'pending'
           ? '⏳ Sent for review'
           : `+${task.exp} EXP`,
@@ -154,12 +154,12 @@ export default function Quests() {
           r.error
             ? `⚠ ${r.error}`
             : r.status === 'flagged'
-              ? '⚠ Flagged — no progress'
+              ? '⚠ Flagged - no progress'
               : r.status === 'pending'
-                ? '📸 Sent for review — approved logs move the bar; the EXP lands when you hit the target.'
+                ? '📸 Sent for review - approved logs move the bar; the EXP lands when you hit the target.'
                 : r.mainDone
                   ? `🏆 Challenge complete! +${r.exp} EXP`
-                  : '✓ Log verified — progress +1. Full EXP lands when you hit the target.',
+                  : '✓ Log verified - progress +1. Full EXP lands when you hit the target.',
         )
       })
       return
@@ -168,7 +168,7 @@ export default function Quests() {
     playQuestResult(result.status, res.completed)
     flash(
       result.status === 'flagged'
-        ? '⚠ Flagged — no progress'
+        ? '⚠ Flagged - no progress'
         : res.completed
           ? `🏆 Challenge complete! +${res.exp} EXP`
           : `Progress logged · ${challengePending.title}`,
@@ -234,16 +234,16 @@ export default function Quests() {
         </div>
       </div>
 
-      {/* first-win on-ramp — gentle, no-camera start for brand-new players */}
+      {/* first-win on-ramp - gentle, no-camera start for brand-new players */}
       {firstWin && (
         <div className="panel hud-corner mb-5 border-cosmos-cyan/40 p-5">
           <span className="font-pixel text-xs text-cosmos-cyan glow-text">⚡ START HERE</span>
           <h3 className="mt-2 font-display text-lg font-bold text-white">
-            Your first win{firstWin.friction < 5 ? ' — no camera needed' : ''}
+            Your first win{firstWin.friction < 5 ? ' - no camera needed' : ''}
           </h3>
           <p className="mt-1 max-w-xl text-sm text-[var(--muted)]">
             {firstWin.friction < 5
-              ? 'Get your first EXP with one simple check-in. Photo-verified quests come later — start here and feel how the loop works.'
+              ? 'Get your first EXP with one simple check-in. Photo-verified quests come later - start here and feel how the loop works.'
               : 'Get your first EXP with one quick verified check-in to start the loop.'}
           </p>
           <button
@@ -292,7 +292,7 @@ export default function Quests() {
                 </div>
               </div>
 
-              {/* main quest — book path or 2-week practical challenge */}
+              {/* main quest - book path or 2-week practical challenge */}
               <div className="mt-4">
                 <MainQuestCard traitId={at.id} onFlash={flash} />
               </div>
@@ -362,7 +362,7 @@ export default function Quests() {
             </Pill>
           </div>
           <p className="mb-3 text-[11px] text-[var(--muted)]">
-            One verified log per day. Each approved log moves the bar — the full EXP + Aether pays
+            One verified log per day. Each approved log moves the bar - the full EXP + Aether pays
             out in one hit when you complete every session before the {scope} reset.
           </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -407,7 +407,7 @@ export default function Quests() {
                       disabled={st.done || loggedToday || reviewPending}
                       onClick={() => setChallengePending(c)}
                       className="btn btn-ghost text-[11px]"
-                      title={loggedToday ? 'One log per day — next at midnight (Sydney)' : undefined}
+                      title={loggedToday ? 'One log per day - next at midnight (Sydney)' : undefined}
                     >
                       {st.done
                         ? '✓ Complete'
@@ -468,7 +468,7 @@ export default function Quests() {
           open={!!challengePending}
           onClose={() => setChallengePending(null)}
           method={challengePending.verify}
-          label={`${challengePending.title} — log one ${challengePending.unit.replace(/s$/, '')}`}
+          label={`${challengePending.title} - log one ${challengePending.unit.replace(/s$/, '')}`}
           book={challengePending.reading ? '' : undefined}
           onResult={submitChallenge}
         />

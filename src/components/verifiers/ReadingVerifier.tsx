@@ -5,12 +5,12 @@ import { assessText } from '../../data/textQuality'
 import BookLinks from '../BookLinks'
 
 // ================================================================
-// ReadingVerifier — proves you actually read, not Googled a summary.
+// ReadingVerifier - proves you actually read, not Googled a summary.
 //
 // Anti-cheat:
 //  • A minimum on-task dwell timer must elapse before "Submit" unlocks
 //    (you can't mark 20 pages read in 5 seconds).
-//  • Paste is blocked in the summary box — you must type it.
+//  • Paste is blocked in the summary box - you must type it.
 //  • Minimum word count + a low-effort/duplicate heuristic.
 //  • A free-text comprehension prompt only a real reader can answer.
 //  • (Production) the summary runs through AI plagiarism + AI-written
@@ -43,7 +43,7 @@ export default function ReadingVerifier({ method, label, minMinutes = 8, book, o
   const [pasteBlocked, setPasteBlocked] = useState(false)
   const [prompt] = useState(() => COMPREHENSION_PROMPTS[Math.floor(Math.random() * COMPREHENSION_PROMPTS.length)])
 
-  // book choice — default to the quest's recommended book if provided
+  // book choice - default to the quest's recommended book if provided
   const [choice, setChoice] = useState<string>(book ?? BOOK_CATALOG[0])
   const [ownTitle, setOwnTitle] = useState('')
   const chosenBook = choice === OWN ? ownTitle.trim() : choice
@@ -65,7 +65,7 @@ export default function ReadingVerifier({ method, label, minMinutes = 8, book, o
   const canSubmit = dwellMet && wordsMet && ansMet && chosenBook.length > 1 && !quality.gibberish
 
   const submit = () => {
-    // on-device AI verdict only — no manual review for written work.
+    // on-device AI verdict only - no manual review for written work.
     const status: VerificationResult['status'] =
       quality.gibberish || quality.spam ? 'flagged' : 'verified'
     onResult({
@@ -110,7 +110,7 @@ export default function ReadingVerifier({ method, label, minMinutes = 8, book, o
         {choice === OWN && (
           <input
             className="input mt-2"
-            placeholder="Title — Author"
+            placeholder="Title - Author"
             value={ownTitle}
             onChange={(e) => setOwnTitle(e.target.value)}
           />
@@ -134,7 +134,7 @@ export default function ReadingVerifier({ method, label, minMinutes = 8, book, o
       </label>
       <textarea
         className="input min-h-[110px] resize-none"
-        placeholder="In your own words — paste is disabled…"
+        placeholder="In your own words - paste is disabled…"
         value={summary}
         onChange={(e) => setSummary(e.target.value)}
         onPaste={(e) => {
@@ -160,7 +160,7 @@ export default function ReadingVerifier({ method, label, minMinutes = 8, book, o
 
       {pasteBlocked && (
         <p className="mt-1 text-[11px] text-cosmos-magenta">
-          Paste is disabled — write it yourself. (AI plagiarism checks run server-side.)
+          Paste is disabled - write it yourself. (AI plagiarism checks run server-side.)
         </p>
       )}
 

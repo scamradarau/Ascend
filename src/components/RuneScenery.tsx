@@ -1,4 +1,4 @@
-// Rune backdrop — a lush mystic-jade vista: misty cliffs, a ruined temple
+// Rune backdrop - a lush mystic-jade vista: misty cliffs, a ruined temple
 // with columns and a broken arch, waterfalls, cherry-blossom & autumn foliage,
 // layered fog and drifting blue spirit-lights. Fixed behind the dark glass UI.
 

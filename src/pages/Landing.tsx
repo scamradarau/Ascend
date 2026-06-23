@@ -7,17 +7,17 @@ const FEATURES = [
   {
     icon: '📊',
     title: 'Stats & Traits',
-    body: 'Self-discipline, confidence, focus — real traits as RPG stats. Complete tasks to level them up.',
+    body: 'Self-discipline, confidence, focus - real traits as RPG stats. Complete tasks to level them up.',
   },
   {
     icon: '🎚️',
     title: 'Levels',
-    body: 'Your level sets the expectation for where you’re meant to be — income, physique, life experience.',
+    body: 'Your level sets the expectation for where you’re meant to be - income, physique, life experience.',
   },
   {
     icon: '🏆',
     title: 'Leaderboards',
-    body: 'Overall level, consistency and trait ladders — every rank on the board was earned with verified work.',
+    body: 'Overall level, consistency and trait ladders - every rank on the board was earned with verified work.',
   },
   {
     icon: '🗺️',
@@ -27,12 +27,12 @@ const FEATURES = [
   {
     icon: '👹',
     title: 'Boss Fights',
-    body: 'Weekly and monthly challenges are bosses — every verified log is a strike, and the bounty lands on the kill.',
+    body: 'Weekly and monthly challenges are bosses - every verified log is a strike, and the bounty lands on the kill.',
   },
   {
     icon: '✦',
     title: 'Lumi, your guide',
-    body: 'A little companion who floats with you on every screen. Stuck on discipline, fear or focus? Tap her and ask — she answers, anytime.',
+    body: 'A little companion who floats with you on every screen. Stuck on discipline, fear or focus? Tap her and ask - she answers, anytime.',
   },
   {
     icon: '🔁',
@@ -56,14 +56,14 @@ export default function Landing() {
     <div className="relative min-h-screen bg-[#070a18] text-white">
       {/* fixed cosmos backdrop for the whole page (portrait crop on phones) */}
       <div className="cosmos-cover-bg fixed inset-0 z-0" />
-      {/* uniform readability scrim — flat, so brightness does NOT shift as you
+      {/* uniform readability scrim - flat, so brightness does NOT shift as you
           scroll over the fixed backdrop (no vignette / "filter" effect) */}
       <div className="fixed inset-0 z-0" style={{ background: 'rgba(4,7,18,0.55)' }} />
       {/* ---------------- HERO (brand-blue title slide) ---------------- */}
       <section className="relative z-10 flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 text-center">
         {/* brand-blue title-slide wash over the SHARED fixed cosmos backdrop
             (fades to transparent so the same backdrop continues into the
-            sections below — no background "change" on scroll) */}
+            sections below - no background "change" on scroll) */}
         <div className="absolute inset-0 bg-gradient-to-b from-brand/45 via-brand-700/25 to-transparent" />
         <div className="grid-overlay absolute inset-0 opacity-15" />
         <div className="starfield absolute inset-0 opacity-40" />
@@ -115,11 +115,11 @@ export default function Landing() {
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-slate-300">
             Ascend turns becoming your best self into a game you can actually win. Choose the traits
             you want to build, get clear daily quests, and watch real EXP, levels and stats track every
-            bit of progress — so growth stops being vague and starts being visible.
+            bit of progress - so growth stops being vague and starts being visible.
           </p>
           <p className="mt-4 max-w-3xl text-lg leading-relaxed text-slate-400">
             Games make getting stronger feel obvious: you see your level, you know the next quest, you
-            put in the time. Real life is the same effort — it just never gave you the screen. Ascend is
+            put in the time. Real life is the same effort - it just never gave you the screen. Ascend is
             that screen. Same you, finally with a map.
           </p>
 
@@ -154,13 +154,13 @@ export default function Landing() {
               You already know you’re meant for more.
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-slate-300">
-              The gap is never desire — you want it badly enough. It’s the blank page: not knowing
+              The gap is never desire - you want it badly enough. It’s the blank page: not knowing
               where to start, no way to see if today actually moved the needle, nothing to keep you
               honest when motivation fades.
             </p>
             <p className="mt-4 text-lg leading-relaxed text-slate-400">
               Ascend closes that gap. Every quest is verified, so the EXP you earn is real progress you
-              proved — not a streak you tapped. Your stats can’t lie to you, which means you finally
+              proved - not a streak you tapped. Your stats can’t lie to you, which means you finally
               can’t lie to yourself.
             </p>
           </div>
@@ -183,7 +183,7 @@ export default function Landing() {
               ))}
             </div>
             <p className="mt-6 text-center text-xs uppercase tracking-widest text-slate-500">
-              A clearer vision of where you are — and where you’re going.
+              A clearer vision of where you are - and where you’re going.
             </p>
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function Landing() {
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300">
             A world-class build, real accountability, and a leaderboard of people actually doing the
-            work — not posting about it. Your Level 1 starts the moment you do. Pick your traits, take
+            work - not posting about it. Your Level 1 starts the moment you do. Pick your traits, take
             your first quest, and ascend.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">

@@ -234,7 +234,7 @@ export default function Guild() {
         <PixelTitle className="text-xs text-[var(--accent)]">THE GUILD</PixelTitle>
         <h1 className="mt-2 font-display text-2xl font-bold text-white">One server. Everyone climbing.</h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
-          A growing community of people doing the real work — together.
+          A growing community of people doing the real work - together.
         </p>
       </div>
 
@@ -244,7 +244,7 @@ export default function Guild() {
           <h2 className="font-display text-xl font-bold text-white">The Guild opens soon</h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-[var(--muted)]">
             We’re onboarding the founding members now. The guild halls unlock once enough
-            ascenders have joined — so when you walk in, it’s already alive. Invite people you
+            ascenders have joined - so when you walk in, it’s already alive. Invite people you
             want climbing beside you.
           </p>
           {owner && (
@@ -303,7 +303,7 @@ export default function Guild() {
                 <span className="mb-2 text-3xl">{CHANNELS.find((c) => c.id === channel)?.icon}</span>
                 No messages in #{CHANNELS.find((c) => c.id === channel)?.name} yet.
                 <br />
-                Be the first to post — share a win or some proof.
+                Be the first to post - share a win or some proof.
               </div>
             ) : (
               messages.map((m) => (

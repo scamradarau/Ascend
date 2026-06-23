@@ -16,7 +16,7 @@ import {
 import { validateHandle } from '../lib/handles'
 import { PixelTitle, Pill, Toast } from '../components/ui'
 
-// Engagement index — empty at launch; wire to real analytics later.
+// Engagement index - empty at launch; wire to real analytics later.
 const WEEKLY: number[] = []
 
 export default function Admin() {
@@ -95,14 +95,14 @@ export default function Admin() {
     const exp = r?.exp_awarded ?? 0
     setReviewMsg(
       decision === 'reject'
-        ? '✗ Rejected — no EXP'
+        ? '✗ Rejected - no EXP'
         : exp > 0
           ? r?.main_done
-            ? `✓ Approved — quest complete! Granted ${exp} EXP`
-            : `✓ Approved — granted ${exp} EXP`
+            ? `✓ Approved - quest complete! Granted ${exp} EXP`
+            : `✓ Approved - granted ${exp} EXP`
           : r?.day_used
-            ? '✓ Approved — extra log for that day (no extra progress)'
-            : '✓ Approved — progress +1 (full EXP pays out on completion)',
+            ? '✓ Approved - extra log for that day (no extra progress)'
+            : '✓ Approved - progress +1 (full EXP pays out on completion)',
     )
     setPendingReview((p) => p.filter((x) => x.id !== id))
     setTimeout(() => setReviewMsg(null), 3000)
@@ -118,18 +118,18 @@ export default function Admin() {
   if (!ownerMode || !isOwnerEmail(authUser?.email))
     return <Navigate to="/app/settings" replace />
 
-  // Fresh-launch KPIs — real where we can read it locally, zero/— otherwise.
+  // Fresh-launch KPIs - real where we can read it locally, zero/- otherwise.
   // These populate for real once backend aggregate queries are wired.
   const flaggedCount = ownQueue.filter((s) => s.status === 'flagged').length
   const verifiedCount = submissions.filter((s) => s.status === 'verified').length
   const KPIS = [
-    { label: 'Total Players', value: '—' },
-    { label: 'Daily Active', value: '—' },
-    { label: 'D7 Retention', value: '—' },
+    { label: 'Total Players', value: '-' },
+    { label: 'Daily Active', value: '-' },
+    { label: 'D7 Retention', value: '-' },
     { label: 'Quests Verified (you)', value: String(verifiedCount) },
-    { label: 'Verification Pass Rate', value: '—' },
+    { label: 'Verification Pass Rate', value: '-' },
     { label: 'Flagged for Review', value: String(flaggedCount) },
-    { label: 'Avg Integrity', value: profile ? `${trust} / 100` : '—' },
+    { label: 'Avg Integrity', value: profile ? `${trust} / 100` : '-' },
     { label: 'MRR', value: '$0' },
   ]
 
@@ -141,7 +141,7 @@ export default function Admin() {
           <PixelTitle className="text-xs text-cosmos-gold">OWNER DASHBOARD</PixelTitle>
           <h1 className="mt-2 font-display text-2xl font-bold text-white">Command center</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">
-            Platform health, the anti-cheat review queue, rewards & revenue. Fresh launch —
+            Platform health, the anti-cheat review queue, rewards & revenue. Fresh launch -
             metrics fill in as players join; the review queue acts on real submissions.
           </p>
         </div>
@@ -235,7 +235,7 @@ export default function Admin() {
                       </span>
                     </div>
                     <div className="truncate text-xs text-[var(--muted)]">
-                      {r.reason}{r.detail ? ` — “${r.detail}”` : ''} · {new Date(r.created_at).toLocaleString()}
+                      {r.reason}{r.detail ? ` - “${r.detail}”` : ''} · {new Date(r.created_at).toLocaleString()}
                     </div>
                   </div>
                   <button
@@ -280,7 +280,7 @@ export default function Admin() {
             <span className="font-pixel text-xs text-[var(--accent)]">ENGAGEMENT (7d)</span>
             {WEEKLY.length === 0 ? (
               <p className="mt-3 py-4 text-center text-sm text-[var(--muted)]">
-                No engagement data yet — fills in once players are active.
+                No engagement data yet - fills in once players are active.
               </p>
             ) : (
               <div className="mt-4 flex h-28 items-end gap-2">
@@ -308,7 +308,7 @@ export default function Admin() {
       <div className="panel mt-5 p-5">
         <span className="font-pixel text-xs text-cosmos-gold">REWARD &amp; SPONSOR POOL</span>
         <p className="mt-3 py-4 text-center text-sm text-[var(--muted)]">
-          No sponsors onboarded yet. Add rewards here as you secure partners — keep them cheap
+          No sponsors onboarded yet. Add rewards here as you secure partners - keep them cheap
           or free (memberships, ebooks) to start.
         </p>
       </div>

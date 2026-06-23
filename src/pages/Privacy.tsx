@@ -5,7 +5,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
   {
     title: '1. What we collect',
     body: [
-      'Account details: your username and a securely hashed password (we never store your password in plain text — it is hashed with PBKDF2-SHA256 and a unique salt).',
+      'Account details: your username and a securely hashed password (we never store your password in plain text - it is hashed with PBKDF2-SHA256 and a unique salt).',
       'Profile & progress: your handle, age range, region, chosen traits, levels, EXP, streaks, badges and avatar.',
       'Accountability evidence: the photos, written summaries, reflections, timers and location data you submit to verify quests.',
     ],
@@ -13,9 +13,9 @@ const SECTIONS: { title: string; body: string[] }[] = [
   {
     title: '2. How we use it',
     body: [
-      'To run the game — track your progression, power the leaderboards, and award EXP, items and rewards.',
-      'To keep the game fair — verify your quest completions and detect fabricated or low-effort submissions.',
-      'To improve Ascend — understand which traits and quests help people most (in aggregate, never to single you out).',
+      'To run the game - track your progression, power the leaderboards, and award EXP, items and rewards.',
+      'To keep the game fair - verify your quest completions and detect fabricated or low-effort submissions.',
+      'To improve Ascend - understand which traits and quests help people most (in aggregate, never to single you out).',
     ],
   },
   {
@@ -38,7 +38,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
     title: '5. Location data',
     body: [
       'Location is captured only at the moment you submit a location-based quest (e.g. a gym check-in), and only to confirm the activity is plausible.',
-      'We store an approximate coordinate with the submission for review — we do not track your location in the background, ever.',
+      'We store an approximate coordinate with the submission for review - we do not track your location in the background, ever.',
     ],
   },
   {
@@ -73,7 +73,7 @@ export default function Privacy() {
             Your progress is yours. Your proof is private.
           </h1>
           <p className="mt-3 text-[var(--muted)]">
-            Ascend runs on trust — yours in us, and ours in your submissions. Here’s exactly what we
+            Ascend runs on trust - yours in us, and ours in your submissions. Here’s exactly what we
             collect, how we use it, and what stays confidential. Last updated: 2026.
           </p>
         </div>

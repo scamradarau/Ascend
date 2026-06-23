@@ -1,5 +1,5 @@
 // ================================================================
-// HANDLE MODERATION — a baseline profanity / slur / impersonation
+// HANDLE MODERATION - a baseline profanity / slur / impersonation
 // filter for player handles. Not exhaustive (no client list ever is),
 // but it stops the obvious offenders at creation time and gives the
 // owner a "rename hammer" that reuses the same check.
@@ -9,7 +9,7 @@
 // "Pu55y_Destroyer", "p-u-s-s-y", "a$$hole", etc.
 // ================================================================
 
-// Blocked substrings (stems). Kept deliberately short — these match as
+// Blocked substrings (stems). Kept deliberately short - these match as
 // substrings of the normalised handle, so "ass" intentionally also blocks
 // longer variants. A few benign words that contain a stem are allowed back
 // via ALLOW below.
@@ -21,8 +21,8 @@ const BLOCKED_STEMS = [
   // acts / vulgarity
   'fuck', 'fuk', 'fvck', 'shit', 'bullshit', 'asshole', 'bitch', 'bastard',
   'whore', 'slut', 'skank', 'wank', 'jerkoff', 'twat', 'bollock',
-  'destroyer', // pairs with sexual stems — common in offensive handles
-  // slurs (racial / homophobic / ableist) — zero tolerance
+  'destroyer', // pairs with sexual stems - common in offensive handles
+  // slurs (racial / homophobic / ableist) - zero tolerance
   'nigger', 'nigga', 'nig9', 'faggot', 'fag', 'retard', 'tranny', 'kike',
   'spic', 'chink', 'gook', 'wetback', 'coon', 'beaner', 'paki', 'dyke',
   // hate / extremism
@@ -62,7 +62,7 @@ export function validateHandle(raw: string): string | null {
   const norm = normalise(trimmed)
   if (ALLOW.has(norm)) return null
   for (const stem of BLOCKED_STEMS) {
-    if (norm.includes(stem)) return 'That handle isn’t allowed — please choose another.'
+    if (norm.includes(stem)) return 'That handle isn’t allowed - please choose another.'
   }
   return null
 }

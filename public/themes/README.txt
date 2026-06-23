@@ -1,4 +1,4 @@
-THEME BACKGROUNDS — drop your wide background images here as WebP:
+THEME BACKGROUNDS - drop your wide background images here as WebP:
 
   cosmos.webp    (default sci-fi / space)
   rune.webp      (mystic jade temple)

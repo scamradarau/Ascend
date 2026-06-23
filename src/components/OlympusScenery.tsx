@@ -1,4 +1,4 @@
-// Olympus backdrop — a "Temple of Time" sky: luminous aurora, a great moon,
+// Olympus backdrop - a "Temple of Time" sky: luminous aurora, a great moon,
 // floating marble temples with columns & pediments, and rolling clouds.
 // Fixed behind the dark "marble glass" UI. Only rendered for the Olympus theme.
 
@@ -30,7 +30,7 @@ function Temple({ x, y, s = 1, op = 1 }: { x: number; y: number; s?: number; op?
 export default function OlympusScenery() {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {/* sky — a richer, golden-hour aegean blue (dimmer than midday so the
+      {/* sky - a richer, golden-hour aegean blue (dimmer than midday so the
           dark glass panels and white text stay readable over it) */}
       <div
         className="absolute inset-0"

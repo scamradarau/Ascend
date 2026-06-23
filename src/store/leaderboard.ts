@@ -6,7 +6,7 @@ import { fetchLeaderboard, fetchProfile, type CloudProfile } from '../lib/supaba
 
 // Aggregate live leaderboard rows from every registered account's save.
 // Empty at launch; fills in as real users sign up and make progress.
-// (Cross-device boards need a server — this reads all accounts on THIS
+// (Cross-device boards need a server - this reads all accounts on THIS
 // device, which is the honest client-only equivalent.)
 
 export interface TraitStat {
@@ -57,7 +57,7 @@ function rowFromSave(accId: string, username: string, createdAt?: string): Playe
       statLevel: traits.reduce((m, t) => Math.max(m, t.level), 0),
       quests: state.questsThisMonth || 0,
       trust: state.trust ?? 100,
-      region: state.profile.region || '—',
+      region: state.profile.region || '-',
       age: state.profile.age ?? '',
       streak: state.streak || 0,
       avatar: { ...DEFAULT_AVATAR, ...(state.avatar || {}) },
@@ -87,7 +87,7 @@ export function getPlayer(id: string): PlayerRow | null {
 }
 
 // ---------------------------------------------------------------
-// Cloud variants — read from Supabase `profiles` (cross-device)
+// Cloud variants - read from Supabase `profiles` (cross-device)
 // ---------------------------------------------------------------
 // A streak is client-owned and only decays when that player opens the app, so
 // the server value goes stale for people who stop logging in. Treat a streak as
@@ -113,7 +113,7 @@ function cloudToRow(p: CloudProfile): PlayerRow {
     statLevel: traits.reduce((m, t) => Math.max(m, t.level), 0),
     quests: p.quests_this_month || 0,
     trust: p.trust ?? 100,
-    region: p.region || '—',
+    region: p.region || '-',
     age: p.age ?? '',
     streak: liveStreak(p.streak || 0, p.updated_at),
     avatar: { ...DEFAULT_AVATAR, ...((p.avatar as object) || {}) },

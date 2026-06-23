@@ -1,6 +1,6 @@
 import type { Rank } from './types'
 
-// Rank ladder — each bracket sets the life expectations for that tier.
+// Rank ladder - each bracket sets the life expectations for that tier.
 // Modelled on the deck's "WARLORD (lv51)" expectations page.
 export const RANKS: Rank[] = [
   {
@@ -8,7 +8,7 @@ export const RANKS: Rank[] = [
     title: 'Rookie',
     minLevel: 1,
     maxLevel: 9,
-    theme: 'The journey begins. You’ve shown up — that already puts you ahead.',
+    theme: 'The journey begins. You’ve shown up - that already puts you ahead.',
     expectations: [
       'Show up daily to your quests',
       'Basic routine forming',

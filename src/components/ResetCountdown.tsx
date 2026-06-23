@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { nextDailyReset, nextWeeklyReset, nextMonthlyReset } from '../lib/time'
 
 // ================================================================
-// RESET COUNTDOWN — live "time until reset" for daily / weekly /
+// RESET COUNTDOWN - live "time until reset" for daily / weekly /
 // monthly quests. Targets come from lib/time.ts, which anchors every
-// reset to SYDNEY midnight (DST-aware) — the same wall clock the quest
-// period keys use — so the countdown hits 0 the instant progress rolls
+// reset to SYDNEY midnight (DST-aware) - the same wall clock the quest
+// period keys use - so the countdown hits 0 the instant progress rolls
 // over.
 // ================================================================
 

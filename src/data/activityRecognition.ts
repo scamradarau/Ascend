@@ -1,5 +1,5 @@
 // ================================================================
-// ACTIVITY RECOGNITION — does the photo actually show the activity?
+// ACTIVITY RECOGNITION - does the photo actually show the activity?
 //
 // Runs an on-device image classifier (TensorFlow.js MobileNet, ImageNet
 // 1000 classes) on the captured frame. We map each photo quest to a set
@@ -8,7 +8,7 @@
 //   • expected match   → verified
 //   • neither (ambiguous) → pending human review
 // It's lazy-loaded so the model only downloads when a photo quest needs it.
-// 100% client-side — the image never leaves the device for this check.
+// 100% client-side - the image never leaves the device for this check.
 // ================================================================
 
 export type ActivityCategory = 'gym' | 'outdoors' | 'meal' | 'none'
@@ -22,7 +22,7 @@ interface CategorySpec {
 }
 
 // Labels that betray a photo OF A SCREEN (phone/monitor/TV showing the
-// activity) — a common spoof. Checked for EVERY category; a confident screen
+// activity) - a common spoof. Checked for EVERY category; a confident screen
 // match never auto-verifies, it goes to human review.
 const SCREEN_LABELS = [
   'monitor', 'screen', 'television', 'home theater', 'laptop', 'notebook',
@@ -37,7 +37,7 @@ const CATEGORIES: Record<Exclude<ActivityCategory, 'none'>, CategorySpec> = {
       'sweatshirt', 'jersey', 'maillot', 'racket', 'racquet', 'basketball', 'volleyball', 'rugby',
       'ping-pong', 'tennis ball', 'baseball', 'soccer ball', 'balance beam', 'gym', 'tread', 'bench',
     ],
-    // only things that genuinely contradict "at the gym" — NOT TVs/screens
+    // only things that genuinely contradict "at the gym" - NOT TVs/screens
     // (gyms have them; screens are handled by the global spoof check).
     forbidden: [
       'toilet', 'washbasin', 'bathtub', 'tub', 'bed', 'four-poster', 'crib',
@@ -126,8 +126,8 @@ export function evaluate(category: ActivityCategory, preds: Prediction[]): Activ
   const first = (frags: string[], minP: number) => matches(frags, minP)[0]
 
   // 1) ACCEPT on any reasonable evidence of the activity. The on-device image
-  //    model (ImageNet MobileNet) is noisy on real gym/outdoor/meal scenes —
-  //    e.g. a rack of dumbbells often scores "dumbbell" well under 0.3 — so an
+  //    model (ImageNet MobileNet) is noisy on real gym/outdoor/meal scenes -
+  //    e.g. a rack of dumbbells often scores "dumbbell" well under 0.3 - so an
   //    honest photo shouldn't be punished for a low score. The hard anti-cheat
   //    (single-use liveness code, GPS, image-hash dedup, trust) is server-side.
   //    Verify if: the model's TOP guess is an expected thing, OR any single
@@ -144,7 +144,7 @@ export function evaluate(category: ActivityCategory, preds: Prediction[]): Activ
       topLabel: hit.className,
       topProb: hit.probability,
       expectedLabel: spec.label,
-      reason: `Detected “${hit.className.split(',')[0]}” — consistent with ${spec.label}.`,
+      reason: `Detected “${hit.className.split(',')[0]}” - consistent with ${spec.label}.`,
     }
   }
 
@@ -157,7 +157,7 @@ export function evaluate(category: ActivityCategory, preds: Prediction[]): Activ
       topLabel: bad.className,
       topProb: bad.probability,
       expectedLabel: spec.label,
-      reason: `That looks like “${bad.className.split(',')[0]}” — not ${spec.label}. Capture the activity itself.`,
+      reason: `That looks like “${bad.className.split(',')[0]}” - not ${spec.label}. Capture the activity itself.`,
     }
   }
 
@@ -169,7 +169,7 @@ export function evaluate(category: ActivityCategory, preds: Prediction[]): Activ
       topLabel: screen.className,
       topProb: screen.probability,
       expectedLabel: spec.label,
-      reason: 'Looks like a photo of a screen — sent for human review.',
+      reason: 'Looks like a photo of a screen - sent for human review.',
     }
   }
 

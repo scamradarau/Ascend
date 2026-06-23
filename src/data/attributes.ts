@@ -1,6 +1,6 @@
 import type { Attribute, AttributeId } from './types'
 
-// The five core attributes — RPG-style stat groups the traits roll up into.
+// The five core attributes - RPG-style stat groups the traits roll up into.
 export const ATTRIBUTES: Attribute[] = [
   {
     id: 'mind',

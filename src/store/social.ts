@@ -31,7 +31,7 @@ const loadSeen = (): string[] => {
 const PHOTO_METHODS = new Set(['geo-photo', 'live-photo'])
 
 // ================================================================
-// SOCIAL store — friend requests + DMs, kept fresh by light polling
+// SOCIAL store - friend requests + DMs, kept fresh by light polling
 // (every 15s) while signed into a cloud account.
 // ================================================================
 
@@ -72,7 +72,7 @@ export const useSocial = create<SocialState>((set, get) => ({
   refresh: async () => {
     const me = useAuth.getState().user?.id ?? null
     if (me !== baselineUser) {
-      // account switched (or first load) — re-establish the Aether baseline
+      // account switched (or first load) - re-establish the Aether baseline
       baselineUser = me
       aetherBaselineDone = false
     }
@@ -106,7 +106,7 @@ export const useSocial = create<SocialState>((set, get) => ({
     }
 
     // reward sound when a photo review RESOLVES (the payoff for a photo quest
-    // lands at approval, not at submit) — detect pending → verified/flagged
+    // lands at approval, not at submit) - detect pending → verified/flagged
     // transitions. Skipped on the first populate so old reviews stay silent.
     const prev = get().submissions
     if (prev.length) {
@@ -120,7 +120,7 @@ export const useSocial = create<SocialState>((set, get) => ({
       }
       if (approved) {
         playSfx('verified')
-        // an approved photo is the player showing up — count it toward the
+        // an approved photo is the player showing up - count it toward the
         // (client-owned) streak. Idempotent per Sydney day, so doing other
         // quests too won't double-count.
         useGame.getState().registerCloudCheckIn()
@@ -146,7 +146,7 @@ export const useSocial = create<SocialState>((set, get) => ({
       aetherBaselineDone = true
       useGame.setState((g) => {
         const newTotal = typeof prog.total_exp === 'number' ? prog.total_exp : g.totalExp
-        // Aether shadows EXP at 1:4 — but ONLY for EXP earned WHILE playing
+        // Aether shadows EXP at 1:4 - but ONLY for EXP earned WHILE playing
         // (e.g. an approved photo review during this session). The first sync
         // just adopts the server baseline (a fresh login jumps totalExp 0 →
         // real), so it must not mint Aether.
@@ -156,7 +156,7 @@ export const useSocial = create<SocialState>((set, get) => ({
           totalExp: newTotal,
           aether: grantAether ? g.aether + Math.round(delta / 4) : g.aether,
           trust: typeof prog.trust === 'number' ? prog.trust : g.trust,
-          // streak is client-owned (Streak Freeze) — never synced down from server
+          // streak is client-owned (Streak Freeze) - never synced down from server
           questsThisMonth:
             typeof prog.quests_this_month === 'number' ? prog.quests_this_month : g.questsThisMonth,
           earnedBadges: Array.from(
@@ -185,7 +185,7 @@ export const useSocial = create<SocialState>((set, get) => ({
         for (const r of qps) {
           const at = r.quest_id.indexOf('@')
           if (at > 0) {
-            // challenge row: "<challengeId>@<period>" — only adopt the CURRENT period
+            // challenge row: "<challengeId>@<period>" - only adopt the CURRENT period
             const id = r.quest_id.slice(0, at)
             const period = r.quest_id.slice(at + 1)
             const c = challengeById(id)

@@ -14,7 +14,7 @@ import {
 } from '../lib/supabase'
 
 // ================================================================
-// Cloud sync — when the Supabase backend is configured, mirror each
+// Cloud sync - when the Supabase backend is configured, mirror each
 // player's save to Postgres and keep a public profile row up to date
 // (which powers the cross-device leaderboard). Local mode is untouched.
 // ================================================================
@@ -90,7 +90,7 @@ function pushNow() {
   // serialize the same way the persist layer does (functions dropped)
   const plain = JSON.parse(JSON.stringify(s)) as GameState
   void saveCloudSave(user.id, plain)
-  // Earned values (exp/trust/streak/trait_exp) are server-owned now — the
+  // Earned values (exp/trust/streak/trait_exp) are server-owned now - the
   // client only mirrors COSMETIC profile fields. The verify-submission Edge
   // Function is the sole writer of earned columns.
   void updateCloudCosmetic(user.id, {
@@ -101,7 +101,7 @@ function pushNow() {
   })
 
   // OWNER MODE: also push the (normally server-owned) earned columns, so owner
-  // edits — set level, force-complete a quest — reflect on the server and the
+  // edits - set level, force-complete a quest - reflect on the server and the
   // leaderboard, not just locally.
   if (s.ownerMode && isOwnerEmail(user.email)) {
     void pushOwnerEarned({

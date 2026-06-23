@@ -1,13 +1,13 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
 // ================================================================
-// Supabase client — the cloud backend for cross-device accounts,
+// Supabase client - the cloud backend for cross-device accounts,
 // saves and leaderboards.
 //
 // It activates ONLY when both env vars are present:
 //   VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
 // Without them, `isCloud` is false and the app runs in the existing
-// local (per-device) mode — so nothing breaks before the project is set up.
+// local (per-device) mode - so nothing breaks before the project is set up.
 //
 // Set the vars in `app/.env.local` for local dev and in Netlify →
 // Site configuration → Environment variables for production.
@@ -18,7 +18,7 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 
 export const isCloud = Boolean(url && anonKey)
 
-// Owner gating — only this email sees Owner Mode / the admin dashboard.
+// Owner gating - only this email sees Owner Mode / the admin dashboard.
 // Set VITE_OWNER_EMAIL (locally in .env.local, in prod in Netlify env vars).
 export const OWNER_EMAIL = (import.meta.env.VITE_OWNER_EMAIL as string | undefined)?.toLowerCase()
 export function isOwnerEmail(email?: string | null): boolean {
@@ -65,7 +65,7 @@ export async function fetchEarnedProgress(userId: string): Promise<EarnedProgres
     .eq('id', userId)
     .maybeSingle()
   if (!data) return null
-  // `plus` is a newer column — read it SEPARATELY so a profiles table that
+  // `plus` is a newer column - read it SEPARATELY so a profiles table that
   // hasn't run step8_plus.sql yet can't break core progress hydration.
   let plus: boolean | undefined
   const { data: pd } = await supabase.from('profiles').select('plus').eq('id', userId).maybeSingle()
@@ -76,7 +76,7 @@ export async function fetchEarnedProgress(userId: string): Promise<EarnedProgres
 // ---- Ascend Plus checkout ----
 // Asks the `create-checkout` Edge Function for a Stripe Checkout URL for the
 // chosen plan. Returns { url } to redirect to, or { error } (e.g. when Stripe
-// keys aren't configured yet — the Plus page shows a waitlist state then).
+// keys aren't configured yet - the Plus page shows a waitlist state then).
 export async function startPlusCheckout(
   plan: 'monthly' | 'annual' | 'lifetime',
 ): Promise<{ url?: string; error?: string }> {
@@ -170,7 +170,7 @@ export async function pushOwnerEarned(payload: OwnerEarned) {
   try {
     await supabase.functions.invoke('owner-sync', { body: payload })
   } catch {
-    /* best-effort — local state still updates */
+    /* best-effort - local state still updates */
   }
 }
 

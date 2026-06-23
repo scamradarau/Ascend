@@ -1,5 +1,5 @@
 // Reward info per leaderboard (deck slide 24). The boards themselves are
-// built live from registered accounts — see store/leaderboard.ts.
+// built live from registered accounts - see store/leaderboard.ts.
 
 // Monthly quest reward info per board (slide 24)
 export const REWARD_INFO = {

@@ -3,7 +3,7 @@ import { useGame } from '../../store/useGame'
 import type { VerificationResult, VerificationMethodId } from '../../data/verification'
 
 // ================================================================
-// SleepVerifier — two live, time-boxed check-ins.
+// SleepVerifier - two live, time-boxed check-ins.
 //
 // Anti-cheat:
 //  • "Going to bed" is only accepted in an evening window (20:00–04:00).
@@ -67,7 +67,7 @@ export default function SleepVerifier({ method, label, onResult, onCancel }: Pro
     onResult({
       method,
       status: 'verified',
-      note: `Slept ~${hours.toFixed(1)}h — bed & wake check-ins verified live.`,
+      note: `Slept ~${hours.toFixed(1)}h - bed & wake check-ins verified live.`,
       trustDelta: 2,
       meta: { capturedAt: new Date().toISOString(), dwellSec: Math.round(sleptMs / 1000) },
     })

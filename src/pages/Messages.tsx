@@ -87,7 +87,7 @@ export default function Messages() {
       <div className="mx-auto max-w-2xl">
         <PixelTitle className="text-xs text-[var(--accent)]">MESSAGES</PixelTitle>
         <div className="panel mt-4 p-8 text-center text-sm text-[var(--muted)]">
-          Private messages need a cloud account — they sync across devices.
+          Private messages need a cloud account - they sync across devices.
         </div>
       </div>
     )
@@ -169,7 +169,7 @@ export default function Messages() {
               <div className="flex-1 space-y-3 overflow-y-auto p-4">
                 {thread.length === 0 && (
                   <div className="py-8 text-center text-sm text-[var(--muted)]">
-                    No messages yet — send the first one.
+                    No messages yet - send the first one.
                   </div>
                 )}
                 {thread.map((m) => {

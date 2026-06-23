@@ -1,5 +1,5 @@
 // ================================================================
-// CLASSES — a rank-progression of masked hero portraits. Your class
+// CLASSES - a rank-progression of masked hero portraits. Your class
 // is derived from your level: you evolve up the ladder from Seer to
 // the apex Samurai Warlord as you climb. Each portrait is a painted/3D
 // PNG dropped in public/classes/<id>.png (transparent, square,

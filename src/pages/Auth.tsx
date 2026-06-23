@@ -45,7 +45,7 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
         navigate(useGame.getState().onboarded ? '/app/character' : '/disclaimers')
       }
     } catch (err) {
-      setError('Couldn’t complete that — please try again.')
+      setError('Couldn’t complete that - please try again.')
       // eslint-disable-next-line no-console
       console.error('[auth] submit failed', err)
     } finally {
@@ -112,7 +112,7 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
                   autoComplete="bday"
                 />
                 <p className="mt-1 text-[11px] text-[var(--muted)]/70">
-                  You must be at least 13. We use this to tailor your journey — it’s never shown publicly.
+                  You must be at least 13. We use this to tailor your journey - it’s never shown publicly.
                 </p>
               </div>
             )}

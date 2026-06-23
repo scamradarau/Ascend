@@ -18,7 +18,7 @@ export default function BodyFigure({ level }: { level: number }) {
 
   return (
     <div className="relative flex h-full min-h-[440px] w-full items-center justify-center">
-      {/* scan line — sweeps the FULL panel height (top → bottom). Animating
+      {/* scan line - sweeps the FULL panel height (top → bottom). Animating
           `top` (relative to this container) instead of transform, so it
           travels the whole panel rather than just its own band height. */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-full overflow-hidden">
@@ -38,11 +38,11 @@ export default function BodyFigure({ level }: { level: number }) {
           />
           <ClassAvatar level={level} config={avatar} size={300} classId={classId} owner={owner} />
         </div>
-        {/* class name — clears the aura ring */}
+        {/* class name - clears the aura ring */}
         <div className="mt-6 rounded-full border border-[var(--edge)] bg-black/60 px-3 py-1 text-[11px] uppercase tracking-wider text-[var(--accent)]">
           {cls.name}
         </div>
-        {/* level — stacked under the name (no overlap on any screen) */}
+        {/* level - stacked under the name (no overlap on any screen) */}
         <button
           onClick={() => navigate('/app/level')}
           className="mt-3 rounded-lg border border-[var(--edge-strong)] bg-black/70 px-5 py-1.5 text-center transition hover:shadow-glow"

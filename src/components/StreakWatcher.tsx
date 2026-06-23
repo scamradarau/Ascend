@@ -3,7 +3,7 @@ import { useGame, milestoneCrossed } from '../store/useGame'
 import { playSfx } from '../lib/sfx'
 
 // ================================================================
-// STREAK WATCHER — mounted once in the app shell. It (1) ticks the
+// STREAK WATCHER - mounted once in the app shell. It (1) ticks the
 // streak on load (weekly freeze grant + bridge missed days), (2) fires
 // a big celebration when you cross a streak milestone, and (3) shows a
 // "Streak Freeze used" banner when a freeze just saved your chain.
@@ -17,7 +17,7 @@ const MILESTONE_COPY: Record<number, { title: string; sub: string }> = {
   14: { title: 'Two weeks deep', sub: 'Most people quit by now. You didn’t.' },
   30: { title: 'Thirty days', sub: 'A month of proof. This is who you are now.' },
   60: { title: 'Sixty days', sub: 'Two months. The work is becoming automatic.' },
-  100: { title: '100 days', sub: 'Triple digits. Elite consistency — genuinely rare air.' },
+  100: { title: '100 days', sub: 'Triple digits. Elite consistency - genuinely rare air.' },
   180: { title: 'Half a year', sub: '180 days of earned progress. Unstoppable.' },
   365: { title: 'One full year', sub: '365 days. You are a different person than when you started.' },
 }
@@ -39,7 +39,7 @@ export default function StreakWatcher() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // celebrate when the streak crosses a milestone (any source — local or cloud)
+  // celebrate when the streak crosses a milestone (any source - local or cloud)
   useEffect(() => {
     const m = milestoneCrossed(streak, streakMilestone)
     if (m) markStreakMilestone(m)
@@ -105,7 +105,7 @@ export default function StreakWatcher() {
   )
 }
 
-// lightweight CSS confetti — no library, respects reduce-motion (gated by caller)
+// lightweight CSS confetti - no library, respects reduce-motion (gated by caller)
 function Confetti() {
   const colors = ['#ffcf5c', '#38e1ff', '#ff5ccf', '#9a7bff', '#5cff9d']
   const bits = Array.from({ length: 36 })

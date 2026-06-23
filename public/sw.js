@@ -1,4 +1,4 @@
-/* ASCEND service worker — handles Web Push notifications.
+/* ASCEND service worker - handles Web Push notifications.
    Registered by src/lib/push.ts; kept tiny on purpose. */
 
 self.addEventListener('install', () => self.skipWaiting())
@@ -13,7 +13,7 @@ self.addEventListener('push', (event) => {
   }
   const title = data.title || 'ASCEND'
   const options = {
-    body: data.body || 'Your streak is waiting — one quest keeps the chain alive. 🔥',
+    body: data.body || 'Your streak is waiting - one quest keeps the chain alive. 🔥',
     icon: data.icon || '/favicon.svg',
     badge: '/favicon.svg',
     tag: data.tag || 'ascend-reminder',

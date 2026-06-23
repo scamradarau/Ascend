@@ -116,7 +116,7 @@ export default function Friends() {
           <div className="space-y-2">
             {friendRows.length === 0 && (
               <div className="panel p-6 text-center text-sm text-[var(--muted)]">
-                No friends yet — add some from the list on the right.
+                No friends yet - add some from the list on the right.
               </div>
             )}
             {friendRows.map((p) => (
@@ -162,7 +162,7 @@ export default function Friends() {
               <p className="text-sm text-white">Player discovery opens soon</p>
               <p className="mx-auto mt-1.5 max-w-xs text-xs text-[var(--muted)]">
                 We’re still gathering the founding members. For now, grow your circle by inviting
-                people directly — your invites work right away.
+                people directly - your invites work right away.
               </p>
               <div className="mt-4 flex justify-center">
                 <InviteButton />

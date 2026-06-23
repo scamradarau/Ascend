@@ -4,7 +4,7 @@ import { levelFromTotalExp } from './leveling'
 import type { Badge } from './types'
 
 // ================================================================
-// BADGE ENGINE — turns each badge requirement's `metric` into a live
+// BADGE ENGINE - turns each badge requirement's `metric` into a live
 // value computed from game state, so progress fills and badges award
 // themselves. Pure: takes a snapshot, no store import (avoids a cycle).
 // ================================================================

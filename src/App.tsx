@@ -75,7 +75,7 @@ export default function App() {
   }, [pathname])
 
   // Resolve Ascend Plus authoritatively whenever the signed-in user changes.
-  // Owner = always Plus. Everyone else = whatever the server says — this is the
+  // Owner = always Plus. Everyone else = whatever the server says - this is the
   // source of truth and self-heals any stale local `plus` flag (so Plus can
   // never leak from one account to the next).
   useEffect(() => {

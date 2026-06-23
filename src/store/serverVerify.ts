@@ -6,7 +6,7 @@ import { todayKey } from '../lib/time'
 import type { VerificationResult } from '../data/verification'
 
 // ================================================================
-// SERVER VERIFY (Move 1) — routes a quest completion through the
+// SERVER VERIFY (Move 1) - routes a quest completion through the
 // server-authoritative Edge Functions instead of computing EXP on the
 // client:
 //   1. issue-liveness-code  → single-use server nonce
@@ -25,16 +25,16 @@ async function reconcileEarned(userId: string) {
   if (!prog) return
   useGame.setState((s) => {
     const newTotal = typeof prog.total_exp === 'number' ? prog.total_exp : s.totalExp
-    // Aether shadows EXP at 1:4 — granted once per server EXP delta
+    // Aether shadows EXP at 1:4 - granted once per server EXP delta
     const delta = newTotal - s.totalExp
     return {
       totalExp: newTotal,
       aether: delta > 0 ? s.aether + Math.round(delta / 4) : s.aether,
       trust: typeof prog.trust === 'number' ? prog.trust : s.trust,
-      // streak is client-owned (so Streak Freeze works) — do NOT sync it down
+      // streak is client-owned (so Streak Freeze works) - do NOT sync it down
       questsThisMonth:
         typeof prog.quests_this_month === 'number' ? prog.quests_this_month : s.questsThisMonth,
-      // union (never drop) — locally-awarded badges must not be wiped by a sync
+      // union (never drop) - locally-awarded badges must not be wiped by a sync
       earnedBadges: Array.from(
         new Set([...s.earnedBadges, ...(Array.isArray(prog.earned_badges) ? prog.earned_badges : [])]),
       ),
@@ -62,11 +62,11 @@ export interface ServerSubmitResult {
   status: 'verified' | 'pending' | 'flagged'
   exp: number
   mainDone?: boolean
-  /** server refused the submission (e.g. already logged today) — show this */
+  /** server refused the submission (e.g. already logged today) - show this */
   error?: string
 }
 
-// Full self-service wipe — clears the SERVER's earned state (profiles,
+// Full self-service wipe - clears the SERVER's earned state (profiles,
 // quest_progress, submissions) so "Reset all progress" isn't rolled back by
 // the next earned-values sync. Server function only ever touches the caller.
 export async function serverResetProgress(): Promise<{ ok: boolean; error?: string }> {
@@ -79,7 +79,7 @@ export async function serverResetProgress(): Promise<{ ok: boolean; error?: stri
   return { ok: true }
 }
 
-// Reset a main quest's server-side progress (only allowed while unfinished —
+// Reset a main quest's server-side progress (only allowed while unfinished -
 // the Edge Function refuses completed quests so EXP can't be farmed).
 export async function resetQuestProgress(questId: string): Promise<{ ok: boolean; error?: string }> {
   if (!supabase) return { ok: true } // offline: nothing server-side to clear
@@ -126,7 +126,7 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
       main_done?: boolean
       error?: string
     } | null) ?? {}
-  // server refusal (e.g. "already logged today") — surface it, change nothing
+  // server refusal (e.g. "already logged today") - surface it, change nothing
   if (res.error) return { status: 'flagged', exp: 0, error: res.error }
   const status = (res.status as ServerSubmitResult['status']) ?? 'pending'
   const exp = res.exp_awarded ?? 0
@@ -136,7 +136,7 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
   await reconcileEarned(userId)
 
   // 4. local UI-only state (journal entry always; "done" + rewards only on a
-  //    real verify — a pending photo stays NOT-done until an admin approves it)
+  //    real verify - a pending photo stays NOT-done until an admin approves it)
   let registerStreak = false
   useGame.setState((s) => {
     const at = new Date().toISOString()
@@ -181,10 +181,10 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
     return patch
   })
 
-  // streak is client-owned — advance it once per day on a verified daily
+  // streak is client-owned - advance it once per day on a verified daily
   if (registerStreak) useGame.getState().registerCloudCheckIn()
   // a verified quest counts toward lifetime totals (pending will count on
-  // approval, in social.refresh — so it isn't double-counted here)
+  // approval, in social.refresh - so it isn't double-counted here)
   if (status === 'verified') {
     useGame.getState().recordVerifiedQuest()
     useGame.getState().syncBadges()

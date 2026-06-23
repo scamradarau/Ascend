@@ -11,7 +11,7 @@ import { COSMETIC_GROUPS, type CosmeticSlot } from '../data/cosmetics'
 import Avatar from './Avatar'
 
 // ================================================================
-// RiveAvatarInner — the actual Rive runtime. Loaded LAZILY by
+// RiveAvatarInner - the actual Rive runtime. Loaded LAZILY by
 // RiveAvatar.tsx so the ~180KB Rive engine is only fetched when a
 // hero avatar mounts (and ideally only once a .riv file exists).
 //

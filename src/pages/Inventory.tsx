@@ -24,7 +24,7 @@ const STATUS_TONE: Record<string, string> = {
 }
 
 // Cosmetic items you can earn (deck: "Items ... cool effects"). Locked until
-// the listed feat is achieved — nothing is owned at the start.
+// the listed feat is achieved - nothing is owned at the start.
 const ITEMS = [
   { name: 'Ember of Focus', icon: '🔥', rarity: 'Rare', effect: 'Earn by deep-working 2h a day, 7 days straight. Glowing aura on your avatar.', owned: false },
   { name: 'Iron Crown', icon: '👑', rarity: 'Epic', effect: 'Reach rank 1 on any leaderboard. Animated crown cosmetic.', owned: false },
@@ -72,7 +72,7 @@ export default function Inventory() {
         </h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
           Earned by levelling traits and completing quests. Higher tiers unlock bigger real-world
-          rewards — verified by humans monthly.
+          rewards - verified by humans monthly.
         </p>
       </div>
 
@@ -187,7 +187,7 @@ export default function Inventory() {
           </p>
           {submissions.length === 0 ? (
             <p className="mt-6 text-center text-sm text-[var(--muted)]">
-              No proof logged yet — complete a daily quest to start your proof log.
+              No proof logged yet - complete a daily quest to start your proof log.
             </p>
           ) : (
             <ul className="mt-4 space-y-2">

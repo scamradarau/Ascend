@@ -12,7 +12,7 @@ const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const DAY = 86400000
 
 // ================================================================
-// ADVANCED STATS (Ascend Plus) — a coach's read on your progress:
+// ADVANCED STATS (Ascend Plus) - a coach's read on your progress:
 // consistency, momentum, focus/balance, effort quality, cadence and a
 // forward projection. Everything is derived from real, verified activity.
 // ================================================================
@@ -135,7 +135,7 @@ export default function Stats() {
       <div className="mx-auto max-w-2xl">
         <PixelTitle>ADVANCED STATS</PixelTitle>
         <p className="mt-2 text-sm text-[var(--muted)]">
-          A coach’s-eye read on your progress — consistency, momentum, Path balance, effort quality and
+          A coach’s-eye read on your progress - consistency, momentum, Path balance, effort quality and
           a forward projection.
         </p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -179,7 +179,7 @@ export default function Stats() {
         <Tile label="Integrity" value={`${trust}`} sub={trust >= 80 ? 'rewards unlocked' : 'below 80'} tone={trust >= 80 ? 'good' : 'warn'} />
       </div>
 
-      {/* consistency — 14-day heat strip */}
+      {/* consistency - 14-day heat strip */}
       <section className="panel p-5">
         <PixelTitle className="text-xs text-[var(--accent)]">CONSISTENCY · LAST 14 DAYS</PixelTitle>
         <div className="mt-4 flex items-end gap-1.5">
@@ -223,8 +223,8 @@ export default function Stats() {
         </div>
         <p className="mt-2 text-xs text-[var(--muted)]">
           {s.balance >= 60
-            ? 'Well-rounded — you’re developing several Paths together.'
-            : 'Specialised — most of your growth is in one Path. That’s fine for a sprint, but a neglected Path is where life quietly breaks.'}
+            ? 'Well-rounded - you’re developing several Paths together.'
+            : 'Specialised - most of your growth is in one Path. That’s fine for a sprint, but a neglected Path is where life quietly breaks.'}
         </p>
         <div className="mt-4 space-y-2">
           {s.attrVals.map((a) => (
@@ -311,7 +311,7 @@ export default function Stats() {
           <Tile label="Lifetime quests" value={`${lifetimeQuests}`} sub={`${questsThisMonth} this month`} />
         </div>
         <div className="mt-4 flex items-center gap-3 rounded-lg border border-cosmos-cyan/20 bg-cosmos-cyan/5 p-3 text-xs text-[var(--muted)]">
-          🧊 <span>You have <strong className="text-cosmos-cyan">{freezes}/{freezeCap(plus)}</strong> Streak Freezes banked — Plus lets you hold up to {freezeCap(true)}.</span>
+          🧊 <span>You have <strong className="text-cosmos-cyan">{freezes}/{freezeCap(plus)}</strong> Streak Freezes banked - Plus lets you hold up to {freezeCap(true)}.</span>
         </div>
       </section>
     </div>

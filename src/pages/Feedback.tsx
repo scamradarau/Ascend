@@ -30,7 +30,7 @@ export default function Feedback() {
     if (text.trim().length < 4) return
     setList((p) => [{ text: text.trim(), type, votes: 1, status: 'Reviewing', voted: true }, ...p])
     setText('')
-    flash('Suggestion submitted — thank you!')
+    flash('Suggestion submitted - thank you!')
   }
 
   const upvote = (i: number) =>
@@ -47,7 +47,7 @@ export default function Feedback() {
         <h1 className="mt-2 font-display text-2xl font-bold text-white">Shape the platform</h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
           New traits and features are added based on your feedback. Suggest a trait, a quest, or a
-          feature — and upvote others’ ideas.
+          feature - and upvote others’ ideas.
         </p>
       </div>
 
@@ -57,7 +57,7 @@ export default function Feedback() {
           {list.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center text-sm text-[var(--muted)]">
               <span className="mb-2 text-3xl">💡</span>
-              No suggestions yet — be the first. Your idea could become the next trait or feature.
+              No suggestions yet - be the first. Your idea could become the next trait or feature.
             </div>
           ) : (
             <ul className="mt-4 space-y-2.5">

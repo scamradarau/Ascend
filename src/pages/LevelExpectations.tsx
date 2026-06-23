@@ -19,7 +19,7 @@ export default function LevelExpectations() {
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-[var(--muted)]">
           Your rank sets the bar for income, physique and life experience. This is for motivation &
-          entertainment — anything more or less, request a rank change.
+          entertainment - anything more or less, request a rank change.
         </p>
       </div>
 
@@ -56,7 +56,7 @@ export default function LevelExpectations() {
       {/* current expectations */}
       <div className="panel mt-5 p-6">
         <span className="font-pixel text-xs text-[var(--accent)] glow-text">
-          {rank.title.toUpperCase()} — LIFE EXPECTATIONS
+          {rank.title.toUpperCase()} - LIFE EXPECTATIONS
         </span>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {rank.expectations.map((e) => (

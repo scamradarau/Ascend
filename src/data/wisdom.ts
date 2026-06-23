@@ -1,4 +1,4 @@
-// Rotating daily wisdom — one quote per calendar day (deterministic).
+// Rotating daily wisdom - one quote per calendar day (deterministic).
 export const WISDOM: { quote: string; by: string }[] = [
   { quote: 'We are what we repeatedly do. Excellence, then, is not an act, but a habit.', by: 'Aristotle' },
   { quote: 'Discipline equals freedom.', by: 'Jocko Willink' },

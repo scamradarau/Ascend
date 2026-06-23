@@ -75,7 +75,7 @@ export default function Settings() {
       const r = await enablePush()
       if (r.ok) {
         setPushOn(true)
-        setPushMsg('Reminders on — we’ll nudge you if you haven’t checked in by evening.')
+        setPushMsg('Reminders on - we’ll nudge you if you haven’t checked in by evening.')
       } else {
         setPushMsg(r.error ?? 'Could not enable reminders.')
       }
@@ -85,7 +85,7 @@ export default function Settings() {
   const testPush = async () => {
     setPushMsg('Sending…')
     const r = await sendTestPush()
-    setPushMsg(r.ok ? 'Test sent — check your notifications.' : r.error ?? 'Could not send test.')
+    setPushMsg(r.ok ? 'Test sent - check your notifications.' : r.error ?? 'Could not send test.')
   }
 
   // Owner test account unlocks every cosmetic + class for testing.
@@ -95,7 +95,7 @@ export default function Settings() {
   const next = nextClass(level)
 
   const doReset = async () => {
-    // server first — earned values live in profiles and would otherwise be
+    // server first - earned values live in profiles and would otherwise be
     // synced right back within one poll
     const r = await serverResetProgress()
     if (!r.ok) {
@@ -118,10 +118,10 @@ export default function Settings() {
         <span className="font-pixel text-xs text-[var(--accent)]">CLASS &amp; COSMETICS</span>
         <p className="mt-1 text-xs text-[var(--muted)]">
           Climb the ranks to unlock new classes, then wear whichever unlocked class you like. Auras
-          and frames are yours to equip — unlock more via levels, badges, streaks or the Shop.
+          and frames are yours to equip - unlock more via levels, badges, streaks or the Shop.
         </p>
 
-        {/* class ladder — swap between any unlocked class */}
+        {/* class ladder - swap between any unlocked class */}
         <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-6">
           {CLASSES.map((c) => {
             const unlocked = isClassUnlocked(c, level, isOwner)
@@ -287,7 +287,7 @@ export default function Settings() {
       <div className="panel mt-5 p-6">
         <span className="font-pixel text-xs text-cosmos-gold">INVITE FRIENDS</span>
         <p className="mt-1 text-xs text-[var(--muted)]">
-          ASCEND is better with rivals. Share the link — they’ll land on a quick overview, then
+          ASCEND is better with rivals. Share the link - they’ll land on a quick overview, then
           can create their own character and join the leaderboard.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -391,7 +391,7 @@ export default function Settings() {
           ))}
         </div>
         <p className="mt-3 text-[10px] text-[var(--muted)]">
-          Audio packs are placeholders in this build — wire your own loops to enable playback.
+          Audio packs are placeholders in this build - wire your own loops to enable playback.
         </p>
       </div>
 
@@ -401,7 +401,7 @@ export default function Settings() {
         <span className="font-pixel text-xs text-cosmos-gold">OWNER MODE</span>
         <div className="mt-4 flex items-center justify-between gap-4">
           <span className="text-sm text-slate-300">
-            Unlock the owner dashboard — analytics, the verification review queue, and reward
+            Unlock the owner dashboard - analytics, the verification review queue, and reward
             controls. (In production this is gated to admin accounts.)
           </span>
           <button
@@ -424,7 +424,7 @@ export default function Settings() {
         <div>
           <span className="font-pixel text-xs text-[var(--accent)]">FEEDBACK</span>
           <p className="mt-1 text-sm text-slate-300">
-            Found a bug or have an idea? We read everything — early players shape the game.
+            Found a bug or have an idea? We read everything - early players shape the game.
           </p>
         </div>
         <button onClick={() => navigate('/app/feedback')} className="btn btn-ghost shrink-0 text-xs">
@@ -437,7 +437,7 @@ export default function Settings() {
         <span className="font-pixel text-xs text-[var(--accent)]">SOUND &amp; ACCESSIBILITY</span>
         <div className="mt-4 flex items-center justify-between gap-4">
           <span className="text-sm text-slate-300">
-            <span className="font-semibold text-white">Sound effects</span> — chiptune cues when you
+            <span className="font-semibold text-white">Sound effects</span> - chiptune cues when you
             submit and complete quests, level up and slay challenge bosses.
           </span>
           <button
@@ -450,7 +450,7 @@ export default function Settings() {
         </div>
         <div className="mt-4 flex items-center justify-between gap-4 border-t border-white/5 pt-4">
           <span className="text-sm text-slate-300">
-            <span className="font-semibold text-white">Reduce motion</span> — turn off animated
+            <span className="font-semibold text-white">Reduce motion</span> - turn off animated
             backgrounds, glows and transitions. (Your device’s system setting is always respected
             automatically.)
           </span>
@@ -470,7 +470,7 @@ export default function Settings() {
           <>
             <div className="mt-4 flex items-center justify-between gap-4">
               <span className="text-sm text-slate-300">
-                <span className="font-semibold text-white">Daily streak reminders</span> — a gentle
+                <span className="font-semibold text-white">Daily streak reminders</span> - a gentle
                 nudge if you haven’t checked in, so a missed day doesn’t cost you your streak. No
                 spam, one a day.
               </span>
@@ -499,7 +499,7 @@ export default function Settings() {
             <ol className="mt-2 list-decimal space-y-1 pl-5 text-[13px] text-[var(--muted)]">
               <li>In Safari, tap the <span className="text-white">Share</span> button (the square with an up-arrow).</li>
               <li>Choose <span className="text-white">Add to Home Screen</span>.</li>
-              <li>Open ASCEND from the new icon, then come back to this screen — the reminder toggle will be here.</li>
+              <li>Open ASCEND from the new icon, then come back to this screen - the reminder toggle will be here.</li>
             </ol>
             <p className="mt-2 text-[11px]">Requires iOS 16.4 or newer.</p>
           </div>
@@ -516,9 +516,9 @@ export default function Settings() {
         <span className="font-pixel text-xs text-[var(--accent)]">PROFILE &amp; DATA</span>
         <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
           {[
-            ['Handle', profile?.handle ?? '—'],
-            ['Age', String(profile?.age || '—')],
-            ['Region', profile?.region ?? '—'],
+            ['Handle', profile?.handle ?? '-'],
+            ['Age', String(profile?.age || '-')],
+            ['Region', profile?.region ?? '-'],
             ['Level', String(level)],
           ].map(([k, v]) => (
             <div key={k} className="rounded-lg border border-white/8 bg-white/[0.02] p-3">

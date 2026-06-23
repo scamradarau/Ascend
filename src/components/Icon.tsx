@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 
 // ================================================================
-// Icon — ASCEND's own bespoke icon set (warm-white glyphs with a soft
+// Icon - ASCEND's own bespoke icon set (warm-white glyphs with a soft
 // golden glow), replacing stock emoji. PNG assets live in /public/icons.
 // Drop-in: <Icon name="streak" /> sits anywhere an emoji used to.
 // ================================================================

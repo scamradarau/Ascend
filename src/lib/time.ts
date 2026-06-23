@@ -1,5 +1,5 @@
 // ================================================================
-// TIME — all quest reset boundaries are anchored to SYDNEY local time
+// TIME - all quest reset boundaries are anchored to SYDNEY local time
 // (Australia/Sydney), so dailies/weeklies/monthlies roll over at
 // Sydney midnight regardless of the player's device timezone. DST
 // (AEST ↔ AEDT) is handled automatically via the Intl APIs.
@@ -11,7 +11,7 @@
 
 const TZ = 'Australia/Sydney'
 
-// (Sydney wall-clock − UTC) in ms at the given instant — the classic,
+// (Sydney wall-clock − UTC) in ms at the given instant - the classic,
 // DST-correct offset trick using locale round-tripping.
 function tzOffsetMs(date: Date): number {
   const utc = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }))

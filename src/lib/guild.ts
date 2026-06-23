@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 
 // ================================================================
-// GUILD — shared community group chat (backend, per channel).
+// GUILD - shared community group chat (backend, per channel).
 // Cloud-only; degrades to no-ops without Supabase.
 // ================================================================
 
@@ -27,7 +27,7 @@ export async function fetchGuildMessages(channel: string, limit = 100): Promise<
   return rows.reverse()
 }
 
-// Latest post time per channel (for unread dots) — one cheap query.
+// Latest post time per channel (for unread dots) - one cheap query.
 export async function fetchChannelActivity(): Promise<Record<string, string>> {
   if (!supabase) return {}
   const { data } = await supabase

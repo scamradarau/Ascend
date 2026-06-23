@@ -4,7 +4,7 @@ import RuneScenery from './RuneScenery'
 import OlympusScenery from './OlympusScenery'
 
 // ================================================================
-// ThemeBackground — uses a painted background image per theme
+// ThemeBackground - uses a painted background image per theme
 // (public/themes/<theme>.webp) when present; otherwise falls back to
 // the procedural animated scenery so nothing regresses before the art
 // is added. A dark vignette keeps UI panels readable on top.
@@ -71,6 +71,6 @@ export default function ThemeBackground({ theme }: { theme: Theme }) {
     )
   }
 
-  // fallback — animated scenery (current look)
+  // fallback - animated scenery (current look)
   return theme === 'rune' ? <RuneScenery /> : theme === 'olympus' ? <OlympusScenery /> : <CosmosScenery />
 }

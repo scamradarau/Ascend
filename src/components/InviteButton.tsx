@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-// Shareable invite — points friends at the brochure (which links into the app).
+// Shareable invite - points friends at the brochure (which links into the app).
 export const BROCHURE_URL = 'https://playascend.com.au/brochure.html'
-const SHARE_TEXT = "I'm testing ASCEND — self-improvement as a game. Come level up with me:"
+const SHARE_TEXT = "I'm testing ASCEND - self-improvement as a game. Come level up with me:"
 
 export default function InviteButton({ className }: { className?: string }) {
   const [copied, setCopied] = useState(false)
@@ -14,7 +14,7 @@ export default function InviteButton({ className }: { className?: string }) {
         await navigator.share({ title: 'ASCEND', text: SHARE_TEXT, url: BROCHURE_URL })
         return
       } catch {
-        /* user cancelled — fall through to copy */
+        /* user cancelled - fall through to copy */
       }
     }
     // otherwise copy the link to clipboard

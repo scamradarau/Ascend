@@ -1,6 +1,6 @@
 import type { VerificationResult, VerificationMethodId } from '../../data/verification'
 
-// A simple, honest tap-to-confirm — for trivial daily habits where heavy
+// A simple, honest tap-to-confirm - for trivial daily habits where heavy
 // proof would be overkill (e.g. "maintain your streak today").
 export default function CheckInVerifier({
   method,
@@ -29,7 +29,7 @@ export default function CheckInVerifier({
       <div className="rounded-xl border border-white/10 bg-black/30 p-5 text-center">
         <div className="text-3xl">✅</div>
         <p className="mt-2 text-sm text-[var(--muted)]">
-          Done it today? Tap to confirm — on your honour. (One check-in per day.)
+          Done it today? Tap to confirm - on your honour. (One check-in per day.)
         </p>
       </div>
       <div className="mt-5 flex items-center justify-between gap-2">

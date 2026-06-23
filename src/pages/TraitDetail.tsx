@@ -21,11 +21,11 @@ import PlusUpsell from '../components/PlusUpsell'
 // Generic mastery milestones shown on every trait.
 const MASTERY = [
   { level: 1, title: 'Initiate', perk: 'Trait added to your stats. Daily tasks unlocked.' },
-  { level: 3, title: 'Apprentice', perk: 'Habit forming — bonus Aether on this trait’s quests.' },
-  { level: 5, title: 'Adept', perk: 'Momentum tier — counts toward attribute mastery.' },
+  { level: 3, title: 'Apprentice', perk: 'Habit forming - bonus Aether on this trait’s quests.' },
+  { level: 5, title: 'Adept', perk: 'Momentum tier - counts toward attribute mastery.' },
   { level: 10, title: 'Expert', perk: 'Counts toward mastery badges (Scholar, Iron Will…).' },
   { level: 15, title: 'Master', perk: 'Unlocks a prestige cosmetic flair on your avatar.' },
-  { level: 20, title: 'Grandmaster', perk: 'Trait mastered — permanent passive to your overall level.' },
+  { level: 20, title: 'Grandmaster', perk: 'Trait mastered - permanent passive to your overall level.' },
 ]
 
 export default function TraitDetail() {
@@ -76,7 +76,7 @@ export default function TraitDetail() {
 
   const onAccept = () => {
     if (capReached) {
-      flash(`Daily limit reached — you can add up to ${TRAIT_ADD_CAP} traits per day.`)
+      flash(`Daily limit reached - you can add up to ${TRAIT_ADD_CAP} traits per day.`)
       return
     }
     if (addTrait(t.id)) flash(`${t.name} added to your stats!`)
@@ -89,7 +89,7 @@ export default function TraitDetail() {
     completeDailyTask(t.id, task.id, { exp: task.exp, label: task.label }, result)
     const after = levelFromTotalExp(totalExp + task.exp).level
     playQuestResult(result.status, after > before)
-    if (result.status === 'flagged') flash('⚠ Flagged — no EXP')
+    if (result.status === 'flagged') flash('⚠ Flagged - no EXP')
     else if (result.status === 'pending') flash('⏳ Sent for review')
     else {
       flash(after > before ? `LEVEL UP → Lv ${after}` : `+${task.exp} EXP`)
@@ -149,7 +149,7 @@ export default function TraitDetail() {
                   onClick={() => !mqProgress && !mqDone && dropTrait(t.id)}
                   disabled={!!mqProgress || mqDone}
                   className="btn btn-ghost mt-4 w-full text-[11px]"
-                  title={mqProgress || mqDone ? 'Locked — main quest in progress' : 'Drop trait'}
+                  title={mqProgress || mqDone ? 'Locked - main quest in progress' : 'Drop trait'}
                 >
                   {mqProgress || mqDone ? '🔒 Committed' : 'Drop trait'}
                 </button>
@@ -160,7 +160,7 @@ export default function TraitDetail() {
                   {slotsFull
                     ? `All ${maxActiveTraits(plus)} trait slots are full. Finish or drop one to add this.`
                     : capReached
-                      ? `You’ve hit today’s limit of ${TRAIT_ADD_CAP} new traits. Come back tomorrow — this stops quest-farming.`
+                      ? `You’ve hit today’s limit of ${TRAIT_ADD_CAP} new traits. Come back tomorrow - this stops quest-farming.`
                       : `Add this trait to your stats and start levelling it. (${changesLeft} trait change${changesLeft === 1 ? '' : 's'} left today.)`}
                 </p>
                 <button
@@ -171,7 +171,7 @@ export default function TraitDetail() {
                   ✦ Accept trait
                 </button>
                 {slotsFull && (
-                  <PlusUpsell className="mt-3" message="Slots full? Ascend Plus runs 5 traits at once — no need to drop one." />
+                  <PlusUpsell className="mt-3" message="Slots full? Ascend Plus runs 5 traits at once - no need to drop one." />
                 )}
               </>
             )}

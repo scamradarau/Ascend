@@ -88,7 +88,7 @@ export interface Badge {
   reward: 'LOW' | 'MID' | 'HIGH'
   // each requirement maps to a live, computed metric (see data/badgeEngine.ts).
   // `total` is the target value; current progress is derived from game state,
-  // never hand-set — so badges actually fill and award themselves.
+  // never hand-set - so badges actually fill and award themselves.
   requirements: { label: string; total: number; metric: string }[]
 }
 

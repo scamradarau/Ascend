@@ -11,14 +11,14 @@ import ResetCountdown from '../components/ResetCountdown'
 import { PixelTitle, Pill, ExpBar } from '../components/ui'
 
 // ================================================================
-// THE WORLD — your ascent, made visible. The five Paths are literal
+// THE WORLD - your ascent, made visible. The five Paths are literal
 // regions of the realm; each region's light grows with the REAL trait
 // EXP you've verified inside it. Monthly challenges are the region
 // bosses; weeklies are roaming mini-bosses. Nothing here is play-
 // pretend: every glow on this map was earned through proof.
 // ================================================================
 
-// deterministic organic blob (no randomness — stable between renders)
+// deterministic organic blob (no randomness - stable between renders)
 function blobPath(cx: number, cy: number, r: number, mult: number[]): string {
   const pts = mult.map((m, i) => {
     const a = (i / mult.length) * Math.PI * 2 - Math.PI / 2
@@ -115,7 +115,7 @@ export default function WorldMap() {
           <h1 className="mt-2 font-display text-2xl font-bold text-white">Your ascent, made visible</h1>
           <p className="mt-1 max-w-2xl text-sm text-[var(--muted)]">
             The five Paths are regions of the realm. Every glow you see here was earned with
-            verified quests — the map only lights up where you’ve actually done the work.
+            verified quests - the map only lights up where you’ve actually done the work.
           </p>
         </div>
         <Pill tone="gold">Lv {level} · standing in {ATTRIBUTES.find((a) => a.id === hereId)?.path}</Pill>
@@ -246,7 +246,7 @@ export default function WorldMap() {
       {/* ---------------- BOSS FIGHTS ---------------- */}
       {(
         [
-          ['monthly', '👹 REGION BOSSES', 'Slay one per month — every verified log is a strike. Land the final blow before the reset to claim the full bounty.'],
+          ['monthly', '👹 REGION BOSSES', 'Slay one per month - every verified log is a strike. Land the final blow before the reset to claim the full bounty.'],
           ['weekly', '🐺 ROAMING MINI-BOSSES', 'Fresh prey every week. Same rules: one strike per day, bounty on the kill.'],
         ] as const
       ).map(([scope, heading, blurb]) => (
@@ -275,7 +275,7 @@ export default function WorldMap() {
                       <div className="text-[11px] text-[var(--muted)]">{c.desc}</div>
                     </div>
                   </div>
-                  {/* boss HP bar — drains as your verified logs land */}
+                  {/* boss HP bar - drains as your verified logs land */}
                   <div className="mt-3">
                     <div className="mb-1 flex justify-between text-[10px] uppercase tracking-widest">
                       <span className="text-cosmos-magenta">Boss HP</span>

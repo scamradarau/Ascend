@@ -11,7 +11,7 @@ import {
 import { validateHandle } from '../lib/handles'
 
 // ================================================================
-// AUTH — accounts, sessions & per-account saves.
+// AUTH - accounts, sessions & per-account saves.
 //
 // ⚠️ PRODUCTION NOTE: real multi-device login needs a backend (an API
 // + database that stores password hashes and issues session tokens).
@@ -69,7 +69,7 @@ function randomSalt(): string {
   return [...a].map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-// crypto.randomUUID is only defined in secure contexts — provide a fallback.
+// crypto.randomUUID is only defined in secure contexts - provide a fallback.
 function uuid(): string {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
   const b = crypto.getRandomValues(new Uint8Array(16))
@@ -81,7 +81,7 @@ function uuid(): string {
     .join('')}-${h.slice(10, 16).join('')}`
 }
 
-// Iterative salted JS hash — used only when the Web Crypto SubtleCrypto API
+// Iterative salted JS hash - used only when the Web Crypto SubtleCrypto API
 // is unavailable (i.e. an insecure context like a plain-http LAN address).
 // On HTTPS / localhost we use real PBKDF2-SHA256 below.
 function fallbackHash(password: string, salt: string): string {
@@ -233,7 +233,7 @@ export const useAuth = create<AuthState>((set) => ({
       if (!res.data?.session) {
         const si = await cloudSignIn(email, password)
         if (si.error)
-          return { ok: false, error: 'Account created — please confirm your email, then log in.' }
+          return { ok: false, error: 'Account created - please confirm your email, then log in.' }
         user = si.data?.user ?? user
       }
       if (!user) return { ok: false, error: 'Sign-up failed. Try again.' }

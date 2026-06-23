@@ -61,7 +61,7 @@ export default function MainQuestCard({
   const questId = variant === 'practical' ? practicalQuestId(traitId) : `main:${traitId}`
 
   // The "Read a book" path is ALWAYS a reading check-in (or a written
-  // reflection) — never a photo, whatever the quest's authored checkIn says.
+  // reflection) - never a photo, whatever the quest's authored checkIn says.
   // Only the practical 2-week challenge uses photo/geo proof.
   const checkInMethod: VerificationMethodId =
     variant === 'practical'
@@ -108,7 +108,7 @@ export default function MainQuestCard({
     }
     resetMainQuestLocal(traitId)
     setBusy(false)
-    onFlash?.('Commitment reset — challenge progress cleared.')
+    onFlash?.('Commitment reset - challenge progress cleared.')
   }
 
   const submit = async (result: VerificationResult) => {
@@ -116,7 +116,7 @@ export default function MainQuestCard({
     const commit = mainCommitment[traitId]
     const label =
       variant === 'practical' && commit
-        ? `Main quest · ${mq.title} — “${commit}”`
+        ? `Main quest · ${mq.title} - “${commit}”`
         : `Main quest · ${mq.title}`
     if (serverVerify) {
       onFlash?.('⏳ Verifying…')
@@ -126,12 +126,12 @@ export default function MainQuestCard({
         r.error
           ? `⚠ ${r.error}`
           : r.status === 'flagged'
-            ? '⚠ Flagged — no EXP'
+            ? '⚠ Flagged - no EXP'
             : r.status === 'pending'
-              ? '📸 Sent for review — pass it to keep your streak; the EXP lands when the challenge is complete.'
+              ? '📸 Sent for review - pass it to keep your streak; the EXP lands when the challenge is complete.'
               : r.mainDone
                 ? `🏆 Quest complete! +${r.exp} EXP`
-                : 'Check-in verified — progress logged.',
+                : 'Check-in verified - progress logged.',
       )
       return
     }
@@ -284,7 +284,7 @@ export default function MainQuestCard({
           method={checkInMethod}
           label={
             variant === 'practical' && mainCommitment[traitId]
-              ? `${mq.title} — ${mainCommitment[traitId]}`
+              ? `${mq.title} - ${mainCommitment[traitId]}`
               : mq.title
           }
           book={variant === 'book' ? mq.book : undefined}

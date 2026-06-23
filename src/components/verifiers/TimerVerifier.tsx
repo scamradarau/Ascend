@@ -3,7 +3,7 @@ import type { VerificationResult, VerificationMethodId } from '../../data/verifi
 import { assessText } from '../../data/textQuality'
 
 // ================================================================
-// TimerVerifier — foreground-locked sessions for Focus & Meditation.
+// TimerVerifier - foreground-locked sessions for Focus & Meditation.
 //
 // Anti-cheat:
 //  • Counts REAL elapsed wall-clock time (Date.now deltas), so
@@ -118,7 +118,7 @@ export default function TimerVerifier({
 
   const submit = () => {
     const flags: string[] = []
-    if (interruptions > 2) flags.push(`${interruptions} interruptions — focus broke repeatedly`)
+    if (interruptions > 2) flags.push(`${interruptions} interruptions - focus broke repeatedly`)
     if (requireReflection && reflectionQuality.reasons.length) flags.push(...reflectionQuality.reasons)
     const gibberish = requireReflection && reflectionQuality.gibberish
     const status: VerificationResult['status'] =
@@ -219,7 +219,7 @@ export default function TimerVerifier({
           />
           {pasteBlocked && (
             <p className="mt-1 text-[11px] text-cosmos-magenta">
-              Paste is disabled — type your own reflection.
+              Paste is disabled - type your own reflection.
             </p>
           )}
         </div>

@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 
 // ================================================================
-// PUSH — Web Push subscription plumbing. Registers the service worker,
+// PUSH - Web Push subscription plumbing. Registers the service worker,
 // asks permission, subscribes with the VAPID public key, and stores the
 // subscription in Supabase so the backend can send daily streak
 // reminders (the missing re-engagement channel). All best-effort.

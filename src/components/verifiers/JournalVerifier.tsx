@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { VerificationResult, VerificationMethodId } from '../../data/verification'
 import { assessText } from '../../data/textQuality'
 
-// Reflection / journal — typed only, minimum effort enforced.
+// Reflection / journal - typed only, minimum effort enforced.
 interface Props {
   method: VerificationMethodId
   label: string
@@ -19,7 +19,7 @@ export default function JournalVerifier({ method, label, minWords = 15, onResult
   const ok = words >= minWords && !quality.gibberish
 
   const submit = () => {
-    // text is judged on-device by the AI — no human review queue. Gibberish
+    // text is judged on-device by the AI - no human review queue. Gibberish
     // or spam → flagged (no reward); a genuine entry → verified instantly.
     const status: VerificationResult['status'] =
       quality.gibberish || quality.spam ? 'flagged' : 'verified'
@@ -59,7 +59,7 @@ export default function JournalVerifier({ method, label, minWords = 15, onResult
         autoFocus
       />
       {pasteBlocked && (
-        <p className="mt-1 text-[11px] text-cosmos-magenta">Paste is disabled — type your own words.</p>
+        <p className="mt-1 text-[11px] text-cosmos-magenta">Paste is disabled - type your own words.</p>
       )}
       {words >= minWords && quality.gibberish && (
         <p className="mt-1 text-[11px] text-cosmos-magenta">

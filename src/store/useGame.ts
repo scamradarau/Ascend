@@ -90,7 +90,7 @@ export interface GameState {
   playstyle: Playstyle // casual floor ↔ hardcore ceiling; drives pace + how much system shows
   streak: number
   lastActiveDate: string | null
-  // streak freeze — protects your streak across a missed day (loss-aversion
+  // streak freeze - protects your streak across a missed day (loss-aversion
   // is the strongest retention hook; this softens it so one slip ≠ ruin)
   streakFreezes: number
   freezeWeek: string | null // ISO week of the last weekly free freeze
@@ -100,7 +100,7 @@ export interface GameState {
   celebrateStreak: number | null // a milestone pending its celebration modal
   submissions: Submission[]
   earnedBadges: string[]
-  // badge tracking — fed to data/badgeEngine.ts to compute live progress
+  // badge tracking - fed to data/badgeEngine.ts to compute live progress
   bestStreak: number // highest streak ever reached
   lifetimeQuests: number // total verified quests completed (lifetime)
   peakBoards: string[] // leaderboard ids where you've hit rank 1 (sticky)
@@ -120,7 +120,7 @@ export interface GameState {
   // weekly / monthly challenge progress (resets per period)
   challenges: Record<string, { count: number; period: string; done: boolean }>;
 
-  // social — friends are other accounts' ids
+  // social - friends are other accounts' ids
   friends: string[]
 
   // chosen main-quest path per trait: 'book' (read) or 'practical' (2-week challenge)
@@ -180,7 +180,7 @@ const todayStr = () => todayKey()
 // streak-freeze + milestone tuning
 export const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100, 180, 365]
 export const TRAIT_ADD_CAP = 2 // most traits you can add per Sydney day (anti-farm)
-// minimum Integrity (trust) score to redeem real rewards — makes cheating for
+// minimum Integrity (trust) score to redeem real rewards - makes cheating for
 // rewards self-defeating, since flagged submissions drop Integrity below this.
 export const REWARD_INTEGRITY_MIN = 80
 const FREEZE_COST = 250 // Aether to buy one
@@ -219,7 +219,7 @@ function applyResultEconomy(
   result: VerificationResult,
 ): { expGain: number; aetherGain: number; trust: number } {
   // Only a VERIFIED pass pays. Pending (awaiting/uncertain review) and flagged
-  // pay nothing — so you can't farm EXP by spamming photos "for review".
+  // pay nothing - so you can't farm EXP by spamming photos "for review".
   const mult = result.status === 'verified' ? 1 : 0
   const expGain = Math.round(expBase * mult)
   const aetherGain = Math.round((expBase / 4) * mult)
@@ -313,7 +313,7 @@ export const useGame = create<GameState>()(
           if (s.plusAetherMonth !== mk) {
             updates.plusAetherMonth = mk
             updates.aether = (updates.aether ?? s.aether) + PLUS_MONTHLY_AETHER
-            updates.freezeNotice = `✦ Ascend Plus — +${PLUS_MONTHLY_AETHER} Aether monthly bonus!`
+            updates.freezeNotice = `✦ Ascend Plus - +${PLUS_MONTHLY_AETHER} Aether monthly bonus!`
           }
         }
         // 2. bridge missed days with freezes, or let the streak lapse
@@ -327,9 +327,9 @@ export const useGame = create<GameState>()(
             if (missed >= 1 && have >= missed) {
               updates.streakFreezes = have - missed
               updates.lastActiveDate = yesterday // bridged → streak continues at next check-in
-              updates.freezeNotice = `🧊 Streak Freeze used — your ${s.streak}-day streak is safe!`
+              updates.freezeNotice = `🧊 Streak Freeze used - your ${s.streak}-day streak is safe!`
             } else {
-              updates.streak = 0 // beyond protection — the chain breaks
+              updates.streak = 0 // beyond protection - the chain breaks
             }
           }
         }
@@ -344,7 +344,7 @@ export const useGame = create<GameState>()(
       },
 
       // cloud check-ins go through the server, but the STREAK is client-owned
-      // (so Streak Freeze works without a backend round-trip) — advance it here.
+      // (so Streak Freeze works without a backend round-trip) - advance it here.
       registerCloudCheckIn: () => {
         const s = get()
         const today = todayStr()
@@ -488,7 +488,7 @@ export const useGame = create<GameState>()(
       completeDailyTask: (traitId, taskId, payload, result) => {
         const state = get()
         const key = `${traitId}:${taskId}:${todayStr()}`
-        if (state.dailyLog[key]) return // one per day — no backfilling, no double-claims
+        if (state.dailyLog[key]) return // one per day - no backfilling, no double-claims
 
         const today = todayStr()
         let streak = state.streak
@@ -705,7 +705,7 @@ export const useGame = create<GameState>()(
           bestStreak: 0,
           lifetimeQuests: 0,
           peakBoards: [],
-          plus: false, // entitlement is re-established from the server / owner-check on load — never carried across accounts
+          plus: false, // entitlement is re-established from the server / owner-check on load - never carried across accounts
           plusAetherMonth: null,
           avatar: { ...DEFAULT_AVATAR },
           purchasedCosmetics: [],

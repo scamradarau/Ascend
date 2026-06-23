@@ -5,7 +5,7 @@ const TERMS: { title: string; body: string[] }[] = [
   {
     title: '1. What Ascend is (and isn’t)',
     body: [
-      'Ascend is a gamified self-improvement platform. Levels, ranks and “life expectations” are for motivation and entertainment — they are not professional advice.',
+      'Ascend is a gamified self-improvement platform. Levels, ranks and “life expectations” are for motivation and entertainment - they are not professional advice.',
       'Nothing in Ascend is medical, financial, legal or psychological advice. Consult a qualified professional before making decisions about your health, money or wellbeing.',
       'Train within your limits. You are responsible for exercising safely and for any activity you choose to do for a quest.',
     ],
@@ -14,12 +14,12 @@ const TERMS: { title: string; body: string[] }[] = [
     title: '2. Eligibility & your account',
     body: [
       'You must be at least 13 years old to use Ascend.',
-      'One account per person. Your account is yours alone — don’t share credentials or let others submit proof as you.',
+      'One account per person. Your account is yours alone - don’t share credentials or let others submit proof as you.',
       'You’re responsible for what happens on your account. Keep your password safe.',
     ],
   },
   {
-    title: '3. Fair play — the one rule that matters',
+    title: '3. Fair play - the one rule that matters',
     body: [
       'The honest path is the only path. Every level on the ladder must be earned with real, verified effort.',
       'Do not fake, stage, replay or manipulate quest proof; do not tamper with the client, the API, or other players’ data.',
@@ -29,7 +29,7 @@ const TERMS: { title: string; body: string[] }[] = [
   {
     title: '4. Community guidelines',
     body: [
-      'Respect the climb: no harassment, hate speech, slurs, threats or bullying — in handles, chat, messages or photos.',
+      'Respect the climb: no harassment, hate speech, slurs, threats or bullying - in handles, chat, messages or photos.',
       'Keep it safe-for-work: no sexual, violent, shocking or illegal content anywhere, including quest photos.',
       'No spam, scams, advertising or self-promotion in the Guild or DMs.',
       'Handles must be appropriate; offensive handles are filtered at creation and can be force-renamed by moderators.',
@@ -40,7 +40,7 @@ const TERMS: { title: string; body: string[] }[] = [
     title: '5. Your content & proof',
     body: [
       'You own the photos and writing you submit. By submitting them you grant Ascend a limited licence to store and review them solely to verify your progress and keep the game fair.',
-      'Quest proof is private — it is never shown on your public profile or the leaderboards. See the Privacy & Confidentiality policy for details.',
+      'Quest proof is private - it is never shown on your public profile or the leaderboards. See the Privacy & Confidentiality policy for details.',
       'Submit only content you have the right to share, and never include other people who haven’t agreed to appear.',
     ],
   },
@@ -64,7 +64,7 @@ const TERMS: { title: string; body: string[] }[] = [
     title: '8. Service & liability',
     body: [
       'Ascend is provided “as is”. We work hard on uptime and data integrity, but we can’t guarantee uninterrupted service or that progress will never need to be restored.',
-      'To the maximum extent permitted by law, Ascend’s liability is limited to the amount you’ve paid us in the past 12 months (currently: nothing — the platform is free during launch).',
+      'To the maximum extent permitted by law, Ascend’s liability is limited to the amount you’ve paid us in the past 12 months (currently: nothing - the platform is free during launch).',
       'We may update these terms as the platform evolves. Material changes will be announced in-app; continuing to play means you accept the updated terms.',
     ],
   },

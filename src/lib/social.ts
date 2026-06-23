@@ -2,7 +2,7 @@ import { supabase } from './supabase'
 import type { CloudProfile } from './supabase'
 
 // ================================================================
-// SOCIAL — friend requests (accept/decline) + 1:1 direct messages.
+// SOCIAL - friend requests (accept/decline) + 1:1 direct messages.
 // Cloud-only (requires Supabase). All functions degrade to no-ops /
 // empty results when the client isn't configured.
 // ================================================================
@@ -90,7 +90,7 @@ export async function sendMessage(me: string, to: string, body: string): Promise
   return { error: error?.message }
 }
 
-// All my messages (recent first), capped — enough to build conversations + unread.
+// All my messages (recent first), capped - enough to build conversations + unread.
 export async function fetchMyMessages(me: string, limit = 400): Promise<MessageRow[]> {
   if (!supabase) return []
   const { data } = await supabase
@@ -156,7 +156,7 @@ export async function fetchPendingReview(limit = 100): Promise<SubmissionRow[]> 
   return (data as SubmissionRow[]) ?? []
 }
 
-// Claim a real reward — server enforces Integrity 80+ + level (see the
+// Claim a real reward - server enforces Integrity 80+ + level (see the
 // redeem-reward Edge Function). Returns the redemption result or an error.
 export async function redeemReward(rewardId: string) {
   if (!supabase) return { error: 'unavailable' as const }

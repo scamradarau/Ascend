@@ -4,7 +4,7 @@ import Avatar from './Avatar'
 
 // Lazy wrapper: the heavy Rive runtime lives in RiveAvatarInner and is
 // code-split into its own chunk. We only fetch that chunk once we've
-// confirmed a real avatar.riv is actually deployed — otherwise we just
+// confirmed a real avatar.riv is actually deployed - otherwise we just
 // render the procedural SVG <Avatar/>. This keeps the Rive engine off the
 // wire entirely until the art exists, then activates with no code change.
 const Inner = lazy(() => import('./RiveAvatarInner'))

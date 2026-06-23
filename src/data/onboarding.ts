@@ -27,7 +27,7 @@ export interface OnboardingAnswers {
   // commitment & motivation
   dailyTime: '15' | '30' | '60' | '90'
   motivation: 'rewards' | 'mastery' | 'competition' | 'purpose'
-  // how you want to play — sets your pace and how much of the system shows
+  // how you want to play - sets your pace and how much of the system shows
   playstyle: 'casual' | 'standard' | 'hardcore'
   // lifestyle signals (each contributes to starting level)
   sleep: string // poor | ok | great
@@ -114,7 +114,7 @@ export const DAILY_TIME_OPTIONS: { id: OnboardingAnswers['dailyTime']; label: st
 
 export type Playstyle = OnboardingAnswers['playstyle']
 
-// Playstyle sets your daily pace AND how much of the system surfaces — the
+// Playstyle sets your daily pace AND how much of the system surfaces - the
 // casual floor vs the hardcore ceiling. Changeable any time in Settings.
 export const PLAYSTYLE_OPTIONS: {
   id: Playstyle
@@ -123,7 +123,7 @@ export const PLAYSTYLE_OPTIONS: {
   desc: string
   target: number
 }[] = [
-  { id: 'casual', label: 'Casual', icon: '🌱', desc: 'Gentle pace. One quest a day is a win — no guilt, no grind.', target: 1 },
+  { id: 'casual', label: 'Casual', icon: '🌱', desc: 'Gentle pace. One quest a day is a win - no guilt, no grind.', target: 1 },
   { id: 'standard', label: 'Standard', icon: '⚔️', desc: 'A balanced daily rhythm with room to push when you want.', target: 2 },
   { id: 'hardcore', label: 'Hardcore', icon: '🔥', desc: 'Max grind. Leaderboards, deep stats and the full system, on from day one.', target: 4 },
 ]
@@ -162,7 +162,7 @@ export interface OnboardingResult {
   playstyle: Playstyle
 }
 
-// Everyone starts at Level 1. The questionnaire no longer sets your level —
+// Everyone starts at Level 1. The questionnaire no longer sets your level -
 // the ladder is climbed purely through verified in-game progress. Instead it
 // tailors WHICH starter traits/quests we recommend you start with.
 export function computeOnboarding(a: OnboardingAnswers): OnboardingResult {
@@ -173,7 +173,7 @@ export function computeOnboarding(a: OnboardingAnswers): OnboardingResult {
   const startingExp = 0
 
   rationale.push(
-    'Everyone starts at Level 1 — the ladder is earned purely through verified progress. No head starts.',
+    'Everyone starts at Level 1 - the ladder is earned purely through verified progress. No head starts.',
   )
 
   // ---- trait recommendations ----
@@ -192,7 +192,7 @@ export function computeOnboarding(a: OnboardingAnswers): OnboardingResult {
   a.obstacles.forEach((oid) => {
     OBSTACLE_OPTIONS.find((o) => o.id === oid)?.attrs.forEach((at) => (attrScore[at] += 5))
   })
-  // motivation nudges WHICH traits we lead with (a light bias — your goals
+  // motivation nudges WHICH traits we lead with (a light bias - your goals
   // still dominate). Rewards → visible, trackable wins; Mastery → depth of
   // mind; Competition → measurable, leaderboard-climbing discipline; Purpose
   // → values and inner strength.
@@ -251,28 +251,28 @@ export function computeOnboarding(a: OnboardingAnswers): OnboardingResult {
     body: 'an elite body',
   }
   rationale.push(
-    `We focused your first 3 quests on ${goalNames[topAttr]} — the area where your goals and current gaps line up most.`,
+    `We focused your first 3 quests on ${goalNames[topAttr]} - the area where your goals and current gaps line up most.`,
   )
   if (a.obstacles.length) {
     const obsName = OBSTACLE_OPTIONS.find((o) => o.id === a.obstacles[0])?.label.toLowerCase()
     if (obsName) rationale.push(`Your daily tasks are tuned to help you beat ${obsName}.`)
   }
-  // motivation note — speak to what actually drives them
+  // motivation note - speak to what actually drives them
   const motivationNote: Record<OnboardingAnswers['motivation'], string> = {
-    rewards: 'You’re here for the rewards — every verified quest earns Aether and pushes you toward unlocks.',
+    rewards: 'You’re here for the rewards - every verified quest earns Aether and pushes you toward unlocks.',
     mastery: 'You want real mastery, so we leaned your path toward depth over box-ticking.',
-    competition: 'You came to compete — these are traits that climb the leaderboard fastest.',
-    purpose: 'You’re driven by purpose — we weighted your path toward the values you want to live by.',
+    competition: 'You came to compete - these are traits that climb the leaderboard fastest.',
+    purpose: 'You’re driven by purpose - we weighted your path toward the values you want to live by.',
   }
   rationale.push(motivationNote[a.motivation])
 
-  // daily quest target — set by your chosen playstyle (the casual floor vs the
+  // daily quest target - set by your chosen playstyle (the casual floor vs the
   // hardcore ceiling). A goal to aim for, not a cap.
   const dailyQuestTarget = playstyleTarget(a.playstyle)
   const playstyleNote: Record<Playstyle, string> = {
-    casual: `Casual pace — one quest a day is a win. We’ll keep the pressure low and the system simple while you build the habit.`,
-    standard: `Standard pace — a steady ${dailyQuestTarget} quests a day to build real momentum without burning out.`,
-    hardcore: `Hardcore — ${dailyQuestTarget} quests a day, with leaderboards, deep stats and the full progression system unlocked from the start. Grind deep.`,
+    casual: `Casual pace - one quest a day is a win. We’ll keep the pressure low and the system simple while you build the habit.`,
+    standard: `Standard pace - a steady ${dailyQuestTarget} quests a day to build real momentum without burning out.`,
+    hardcore: `Hardcore - ${dailyQuestTarget} quests a day, with leaderboards, deep stats and the full progression system unlocked from the start. Grind deep.`,
   }
   rationale.push(playstyleNote[a.playstyle])
 

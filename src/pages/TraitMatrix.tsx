@@ -9,7 +9,7 @@ import { maxActiveTraits } from '../data/plus'
 import PlusUpsell from '../components/PlusUpsell'
 
 // ================================================================
-// MAIN QUESTS — decluttered: first you choose a Path (5 cards), then
+// MAIN QUESTS - decluttered: first you choose a Path (5 cards), then
 // you see only that Path's quests. Deep-linkable via ?path=<attr> so
 // the World Map regions land straight on their own quest list.
 // ================================================================
@@ -40,7 +40,7 @@ export default function TraitMatrix() {
           <p className="mt-1 max-w-2xl text-sm text-[var(--muted)]">
             {attr
               ? attr.blurb
-              : `Five great paths, each with quests to master. You can walk ${traitCap} quests at a time — focus beats scatter.`}
+              : `Five great paths, each with quests to master. You can walk ${traitCap} quests at a time - focus beats scatter.`}
           </p>
         </div>
         <Pill tone={slotsLeft > 0 ? 'exp' : 'gold'}>
@@ -48,7 +48,7 @@ export default function TraitMatrix() {
         </Pill>
       </div>
 
-      {/* your current build — always visible, wherever you are */}
+      {/* your current build - always visible, wherever you are */}
       {activeTraits.length > 0 && (
         <div className="panel mb-6 p-4">
           <div className="mb-2 flex items-center justify-between gap-2">
@@ -81,7 +81,7 @@ export default function TraitMatrix() {
                     disabled={locked}
                     title={
                       locked
-                        ? 'Committed — finish or reset the main quest before dropping'
+                        ? 'Committed - finish or reset the main quest before dropping'
                         : `Drop ${t.name}`
                     }
                     aria-label={locked ? 'Trait committed' : `Drop ${t.name}`}
@@ -108,7 +108,7 @@ export default function TraitMatrix() {
         <Modal open onClose={() => setConfirmDrop(null)} title="Drop this trait?">
           <p className="text-sm leading-relaxed text-slate-300">
             Drop <span className="font-bold text-white">{dropping.name}</span>? This frees a build
-            slot. Your earned trait EXP is <span className="text-exp">kept</span> — re-add it any
+            slot. Your earned trait EXP is <span className="text-exp">kept</span> - re-add it any
             time and it picks up exactly where it left off.
           </p>
           <div className="mt-5 flex gap-2">

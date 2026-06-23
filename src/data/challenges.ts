@@ -1,7 +1,7 @@
 import type { VerifyMethod } from './types'
 
 // ================================================================
-// CHALLENGES — weekly & monthly quests. Longer, harder, and worth far
+// CHALLENGES - weekly & monthly quests. Longer, harder, and worth far
 // more than dailies. They reset each period so there's always a fresh
 // mountain to climb (and a fair shot at the reward).
 // ================================================================

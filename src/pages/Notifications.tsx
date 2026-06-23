@@ -32,7 +32,7 @@ export default function Notifications() {
       <div className="mx-auto max-w-2xl">
         <PixelTitle className="text-xs text-[var(--accent)]">NOTIFICATIONS</PixelTitle>
         <div className="panel mt-4 p-8 text-center text-sm text-[var(--muted)]">
-          Friend requests &amp; notifications need a cloud account — they sync across devices.
+          Friend requests &amp; notifications need a cloud account - they sync across devices.
         </div>
       </div>
     )

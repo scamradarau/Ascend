@@ -63,7 +63,7 @@ export default function Leaderboards() {
         statLevel: traits.reduce((m, t) => Math.max(m, t.level), 0),
         quests: questsThisMonth,
         trust,
-        region: profile?.region || '—',
+        region: profile?.region || '-',
         age: profile?.age ?? '',
         streak,
         avatar,
@@ -90,7 +90,7 @@ export default function Leaderboards() {
   // record a rank-1 finish on ANY board (sticky → feeds the Overachiever badge)
   const recordPeakBoard = useGame((s) => s.recordPeakBoard)
   useEffect(() => {
-    // need at least 2 players — you can't "dominate" a ladder you're alone on
+    // need at least 2 players - you can't "dominate" a ladder you're alone on
     // (otherwise a brand-new account is rank 1 by default and Overachiever
     // would award trivially).
     if (!authUser || players.length < 2) return
@@ -108,7 +108,7 @@ export default function Leaderboards() {
 
   const info = REWARD_INFO[board]
   const empty = ranked.length === 0
-  // a board with only a handful of climbers reads as exclusive, not dead —
+  // a board with only a handful of climbers reads as exclusive, not dead -
   // frame it as founding-member early access (self-hides once it fills out).
   const founding = ranked.length > 0 && ranked.length <= 12
   const podium = ranked.slice(0, 3)
@@ -149,7 +149,7 @@ export default function Leaderboards() {
           <div>
             <div className="font-display text-sm font-bold text-white">You’re a founding Ascender</div>
             <p className="text-xs text-[var(--muted)]">
-              The ladder is brand new — every name here is one of the very first. Climb now and you’re
+              The ladder is brand new - every name here is one of the very first. Climb now and you’re
               the rank everyone who comes later has to chase.
             </p>
           </div>
@@ -244,7 +244,7 @@ export default function Leaderboards() {
                       <div className="text-[10px] uppercase tracking-wide text-[var(--muted)]">
                         {rankForLevel(e.level).title} · {e.region} ·{' '}
                         <span
-                          title="Integrity — anti-cheat trust score"
+                          title="Integrity - anti-cheat trust score"
                           className={
                             e.trust >= 80
                               ? 'text-exp'
@@ -317,7 +317,7 @@ export default function Leaderboards() {
               ))}
             </div>
             <p className="mt-3 text-[10px] text-[var(--muted)]">
-              A preview of what climbing will earn. These perks unlock as we onboard sponsors —
+              A preview of what climbing will earn. These perks unlock as we onboard sponsors -
               Aether and bragging rights are live now.
             </p>
           </div>

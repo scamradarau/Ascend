@@ -19,7 +19,7 @@ export default function PlusUpsell({ message, className }: { message?: string; c
           Unlock {PLUS_TRAIT_CAP - FREE_TRAIT_CAP} more trait slots with Ascend Plus
         </div>
         <div className="text-xs text-[var(--muted)]">
-          {message ?? `Build ${PLUS_TRAIT_CAP} traits at once instead of ${FREE_TRAIT_CAP} — plus exclusive cosmetics & more streak freezes.`}
+          {message ?? `Build ${PLUS_TRAIT_CAP} traits at once instead of ${FREE_TRAIT_CAP} - plus exclusive cosmetics & more streak freezes.`}
         </div>
       </div>
       <span className="shrink-0 text-xs font-bold uppercase tracking-wider text-cosmos-gold">

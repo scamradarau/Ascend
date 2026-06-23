@@ -3,7 +3,7 @@ import type { AvatarConfig } from '../data/cosmetics'
 import { AURA_COLORS, FRAME_COLORS } from './Avatar'
 
 // ================================================================
-// CosmeticRings — the animated aura + frame, drawn as a transparent
+// CosmeticRings - the animated aura + frame, drawn as a transparent
 // SVG overlay so it can sit on top of ANY avatar art (the class portrait
 // in ClassAvatar, or the procedural bust). Tuned for a portrait that fills
 // ~r80 of the 200-unit box, so the frame hugs the rim and the aura blooms

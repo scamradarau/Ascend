@@ -1,4 +1,4 @@
-// Animated cosmic backdrop for the Cosmos theme — nebula clouds, a ringed
+// Animated cosmic backdrop for the Cosmos theme - nebula clouds, a ringed
 // planet, a moon, layered twinkling stars, drifting shooting stars, a faint
 // constellation and a horizon glow. Pure CSS/SVG, fixed behind the UI.
 export default function CosmosScenery({ contained = false }: { contained?: boolean }) {

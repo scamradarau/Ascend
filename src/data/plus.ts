@@ -1,8 +1,8 @@
 // ================================================================
-// ASCEND PLUS — the paid membership.
+// ASCEND PLUS - the paid membership.
 //
 // GUARDRAIL (non-negotiable): Plus sells convenience, capacity,
-// cosmetics and insight — NEVER progression. No paid EXP, levels,
+// cosmetics and insight - NEVER progression. No paid EXP, levels,
 // ranks, badges or leaderboard standing. The whole moat is "verified,
 // earned, can't be faked", and a pay-to-win tier would destroy it.
 //
@@ -10,7 +10,7 @@
 // `create-checkout` Edge Function builds the session; `stripe-webhook`
 // flips profiles.plus. Until Stripe keys are set as function secrets
 // the checkout call returns a clear "not configured yet" error and the
-// Plus page shows a waitlist state — so nothing breaks before setup.
+// Plus page shows a waitlist state - so nothing breaks before setup.
 // ================================================================
 
 export type PlusPlan = 'monthly' | 'annual' | 'lifetime'
@@ -41,7 +41,7 @@ export const PLUS_PLANS: PlusPlanInfo[] = [
     name: 'Annual',
     price: 'A$49.99',
     cadence: 'per year',
-    blurb: '7-day free trial, then ~A$4.17/mo — nearly half off.',
+    blurb: '7-day free trial, then ~A$4.17/mo - nearly half off.',
     badge: 'Best value',
     mode: 'subscription',
   },
@@ -50,7 +50,7 @@ export const PLUS_PLANS: PlusPlanInfo[] = [
     name: 'Founders Lifetime',
     price: 'A$59',
     cadence: 'once',
-    blurb: 'Pay once, Plus forever. Beta only — first 100 founders.',
+    blurb: 'Pay once, Plus forever. Beta only - first 100 founders.',
     badge: 'Founders',
     mode: 'payment',
   },
@@ -71,12 +71,12 @@ export const PLUS_BENEFITS: PlusBenefit[] = [
   {
     icon: '🌿',
     title: '5 active traits',
-    detail: 'Pursue five paths at once instead of three — put more of your life in play.',
+    detail: 'Pursue five paths at once instead of three - put more of your life in play.',
   },
   {
     icon: '◈',
     title: 'Monthly Aether bonus',
-    detail: '500 Aether every month, on the house — spend it on cosmetics, streak freezes or rewards.',
+    detail: '500 Aether every month, on the house - spend it on cosmetics, streak freezes or rewards.',
   },
   {
     icon: '🧊',
@@ -86,7 +86,7 @@ export const PLUS_BENEFITS: PlusBenefit[] = [
   {
     icon: '✦',
     title: 'Exclusive cosmetics',
-    detail: 'The Aether aura and Founders frame — Plus-only, and a visible ✦ mark on the leaderboard.',
+    detail: 'The Aether aura and Founders frame - Plus-only, and a visible ✦ mark on the leaderboard.',
   },
   {
     icon: '📊',
@@ -100,7 +100,7 @@ export const PLUS_BENEFITS: PlusBenefit[] = [
   },
 ]
 
-// Plus NEVER touches these — stated plainly for trust.
+// Plus NEVER touches these - stated plainly for trust.
 export const PLUS_NEVER =
   'Plus never sells EXP, levels, ranks, badges or leaderboard position. Every place you climb is earned and verified.'
 
@@ -117,7 +117,7 @@ export function freezeCap(plus: boolean): number {
   return plus ? PLUS_FREEZE_CAP : FREE_FREEZE_CAP
 }
 
-// Plus members get a free Aether stipend each month (cosmetic currency —
+// Plus members get a free Aether stipend each month (cosmetic currency -
 // never progression). Granted client-side in useGame.tickStreak.
 export const PLUS_MONTHLY_AETHER = 500
 export const PLUS_TRIAL_DAYS = 7

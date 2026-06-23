@@ -1,7 +1,7 @@
 import { TRAITS } from './traits'
 
 // ================================================================
-// BOOKS — where to buy, borrow free, or read free (public domain).
+// BOOKS - where to buy, borrow free, or read free (public domain).
 // We don't host any copyrighted text; we link out to legitimate
 // sources: retailers to buy, Open Library to borrow, and Project
 // Gutenberg / Standard Ebooks for public-domain titles.
@@ -24,9 +24,9 @@ const PUBLIC_DOMAIN: { match: string; label: string; url: string }[] = [
   { match: 'Think and Grow Rich', label: 'Read free · Archive', url: 'https://archive.org/details/thinkgrowrich00hill' },
 ]
 
-// "Title — Author" → parts
+// "Title - Author" → parts
 export function parseBook(book: string): { title: string; author?: string } {
-  const [title, author] = book.split(' — ')
+  const [title, author] = book.split(' - ')
   return { title: title?.trim() ?? book, author: author?.trim() }
 }
 

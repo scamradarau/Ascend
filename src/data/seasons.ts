@@ -1,5 +1,5 @@
 // ================================================================
-// SEASONS — a rotating "battle pass" of self-improvement.
+// SEASONS - a rotating "battle pass" of self-improvement.
 // Earning EXP also earns Season XP; each tier grants Aether or a
 // cosmetic. Resets periodically to keep the meta fresh and give
 // everyone a fresh shot at the top (mirrors the deck's reward rotation).

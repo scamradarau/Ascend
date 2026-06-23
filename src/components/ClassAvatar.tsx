@@ -5,7 +5,7 @@ import Avatar, { AURA_COLORS } from './Avatar'
 import CosmeticRings from './CosmeticRings'
 
 // ================================================================
-// ClassAvatar — renders the player's rank CLASS portrait inside the
+// ClassAvatar - renders the player's rank CLASS portrait inside the
 // avatar frame, with the equipped aura glowing behind and the frame
 // ring on top. The class is derived from `level`.
 //
@@ -28,7 +28,7 @@ export default function ClassAvatar({
   animated?: boolean
   /** the current player's chosen class (own avatar); omit for other players */
   classId?: string | null
-  /** owner test account — all classes selectable */
+  /** owner test account - all classes selectable */
   owner?: boolean
 }) {
   const [failed, setFailed] = useState(false)

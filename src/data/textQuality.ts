@@ -59,12 +59,12 @@ export function assessText(raw: string): TextAssessment {
     flags += 2
   }
 
-  // 3) vowel ratio — real prose is ~35–45% vowels; anything this low is junk
+  // 3) vowel ratio - real prose is ~35–45% vowels; anything this low is junk
   if (letters.length >= 12) {
     const vowels = (letters.match(/[aeiou]/g) ?? []).length
     const ratio = vowels / letters.length
     if (ratio < 0.24) {
-      reasons.push('Far too few vowels — not real words')
+      reasons.push('Far too few vowels - not real words')
       flags += 2
     } else if (ratio < 0.3) {
       reasons.push('Unusually few vowels')
@@ -104,12 +104,12 @@ export function assessText(raw: string): TextAssessment {
     flags += 1
   }
 
-  // 8) tiny alphabet — home-row mashing like "asd asd asd", "jkl jkl" uses
+  // 8) tiny alphabet - home-row mashing like "asd asd asd", "jkl jkl" uses
   //    only a handful of distinct letters. Real writing uses many.
   if (letters.length >= 12) {
     const distinctLetters = new Set(letters.split('')).size
     if (distinctLetters <= 5) {
-      reasons.push('Only a few distinct letters — keyboard mashing')
+      reasons.push('Only a few distinct letters - keyboard mashing')
       flags += 3
     } else if (distinctLetters <= 8) {
       reasons.push('Unusually few distinct letters')
@@ -126,7 +126,7 @@ export function assessText(raw: string): TextAssessment {
     }
   }
 
-  // 10) vowel-less tokens — real words almost always contain a vowel (incl. y).
+  // 10) vowel-less tokens - real words almost always contain a vowel (incl. y).
   //     Tokens like "rhf", "gdrt", "txh", "rghdftw" are unambiguous junk. This
   //     is the strongest single signal for scattered keyboard-mashing.
   const vowellessJunk = cleanTokens.filter((t) => t.length >= 3 && !VOWELS.test(t))
@@ -138,7 +138,7 @@ export function assessText(raw: string): TextAssessment {
     flags += 1
   }
 
-  // 11) no real words — a genuine reflection of any length contains common
+  // 11) no real words - a genuine reflection of any length contains common
   //     English function words ("I", "the", "to", "and"…). Zero of them across
   //     many tokens means it isn't real writing.
   if (cleanTokens.length >= 8) {

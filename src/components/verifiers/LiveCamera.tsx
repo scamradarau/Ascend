@@ -8,12 +8,12 @@ import {
 } from '../../data/activityRecognition'
 
 // ================================================================
-// LiveCamera — the anti-cheat cornerstone.
+// LiveCamera - the anti-cheat cornerstone.
 //
 // Why this design beats gallery cheating:
 //  • We NEVER render an <input type="file">. There is no file picker,
 //    so importing an old/saved/screenshotted image is structurally
-//    impossible — the only pixels we can read come from the live
+//    impossible - the only pixels we can read come from the live
 //    MediaStream sensor via getUserMedia().
 //  • At capture we burn a one-time liveness code + live timestamp
 //    (+ GPS when required) directly into the image. A replayed or
@@ -120,7 +120,7 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // returning from the background suspends the camera on mobile — resume it
+  // returning from the background suspends the camera on mobile - resume it
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState !== 'visible') return
@@ -151,7 +151,7 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
     const ctx = canvas.getContext('2d')!
     ctx.drawImage(video, 0, 0, w, h)
 
-    // clean, higher-res square crop of the LIVE frame for the classifier —
+    // clean, higher-res square crop of the LIVE frame for the classifier -
     // captured before the liveness overlay and at 256px (not the 160px proof
     // thumbnail), since small/letterboxed inputs badly hurt MobileNet accuracy.
     const side = Math.min(w, h)
@@ -203,13 +203,13 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
           const preds = await classify(probe)
           setVerdict(evaluate(expectedCategory, preds))
         } catch {
-          // model/network failure — don't block, mark unknown
+          // model/network failure - don't block, mark unknown
           setVerdict({
             verdict: 'pending',
             topLabel: 'unknown',
             topProb: 0,
             expectedLabel: expectedCategory,
-            reason: 'Scene check unavailable — sent for review.',
+            reason: 'Scene check unavailable - sent for review.',
           })
         } finally {
           setDetecting(false)
@@ -221,8 +221,8 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
 
   function submit(demo: boolean) {
     const flags: string[] = []
-    if (needGps && !gps) flags.push('No GPS fix — location unverified')
-    if (demo) flags.push('Camera unavailable — demo capture, needs review')
+    if (needGps && !gps) flags.push('No GPS fix - location unverified')
+    if (demo) flags.push('Camera unavailable - demo capture, needs review')
     if (verdict && verdict.verdict !== 'verified') flags.push(verdict.reason)
 
     // activity verdict influences final status
@@ -267,7 +267,7 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
       </div>
 
       <div className="relative overflow-hidden rounded-xl border border-[var(--edge-strong)] bg-black">
-        {/* the ONLY image source is the live sensor — no file input exists */}
+        {/* the ONLY image source is the live sensor - no file input exists */}
         {phase !== 'captured' ? (
           <video
             ref={videoRef}
@@ -368,7 +368,7 @@ export default function LiveCamera({ method, needGps, label, onResult, onCancel 
               </button>
               {verdict?.verdict === 'reject' ? (
                 <button disabled className="btn btn-primary text-xs" title={verdict.reason}>
-                  ✗ Wrong scene — retake
+                  ✗ Wrong scene - retake
                 </button>
               ) : (
                 <button

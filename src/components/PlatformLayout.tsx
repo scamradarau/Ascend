@@ -13,7 +13,7 @@ import Companion from './Companion'
 import StreakWatcher from './StreakWatcher'
 import BadgeWatcher from './BadgeWatcher'
 
-// Grouped nav — the daily loop first, everything else clustered so the
+// Grouped nav - the daily loop first, everything else clustered so the
 // drawer reads in seconds. Alerts & Messages live as header icons (badges
 // belong in sight, not in a drawer); Feedback lives inside Settings.
 const NAV_SECTIONS: { heading: string; items: { to: string; label: string; icon: string }[] }[] = [
@@ -113,7 +113,7 @@ export default function PlatformLayout() {
             </PixelTitle>
           </button>
 
-          {/* menu toggle — opens the slide-out nav drawer (keeps the bar uncluttered) */}
+          {/* menu toggle - opens the slide-out nav drawer (keeps the bar uncluttered) */}
           <button
             onClick={() => setMenuOpen(true)}
             title="Menu"
@@ -125,10 +125,10 @@ export default function PlatformLayout() {
 
           <div className="flex-1" />
 
-          {/* alerts + messages — always in sight, never buried in the drawer */}
+          {/* alerts + messages - always in sight, never buried in the drawer */}
           <button
             onClick={() => navigate('/app/notifications')}
-            title="Alerts — quest reviews & friend requests"
+            title="Alerts - quest reviews & friend requests"
             aria-label="Alerts"
             className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--edge)] bg-black/30 text-sm transition hover:border-[var(--accent)]/60"
           >
@@ -157,13 +157,13 @@ export default function PlatformLayout() {
           <button
             onClick={() => navigate('/app/shop')}
             className="hidden shrink-0 items-center gap-1 rounded-lg border border-cosmos-gold/40 bg-cosmos-gold/5 px-2.5 py-1.5 font-pixel text-[10px] text-cosmos-gold sm:flex"
-            title="Aether — spend in the Shop"
+            title="Aether - spend in the Shop"
           >
             <Icon name="aether" /> {aether}
           </button>
           <div
             className="hidden shrink-0 items-center gap-1 rounded-lg border border-[var(--edge)] bg-black/30 px-2.5 py-1.5 text-[10px] lg:flex"
-            title="Integrity score — your anti-cheat trust rating"
+            title="Integrity score - your anti-cheat trust rating"
           >
             <span className="uppercase tracking-wider text-[var(--muted)]">Integrity</span>
             <span className={trust >= 80 ? 'text-exp' : trust >= 50 ? 'text-amber-300' : 'text-cosmos-magenta'}>
@@ -217,10 +217,10 @@ export default function PlatformLayout() {
         {streak > 0 && (
           <div className="flex items-center justify-center gap-3 border-t border-[var(--edge)] bg-black/20 px-4 py-1 text-[11px] font-semibold uppercase tracking-widest text-exp">
             <span className="inline-flex items-center gap-1.5">
-              <Icon name="streak" /> {streak}-day streak — keep the chain alive
+              <Icon name="streak" /> {streak}-day streak - keep the chain alive
             </span>
             {freezes > 0 && (
-              <span className="inline-flex items-center gap-1 text-cosmos-cyan" title={`${freezes} Streak Freeze${freezes > 1 ? 's' : ''} — protects your streak across a missed day`}>
+              <span className="inline-flex items-center gap-1 text-cosmos-cyan" title={`${freezes} Streak Freeze${freezes > 1 ? 's' : ''} - protects your streak across a missed day`}>
                 <Icon name="freeze" /> {freezes}
               </span>
             )}
@@ -284,7 +284,7 @@ export default function PlatformLayout() {
         <Outlet />
       </main>
 
-      {/* Lumi — the floating guide, present on every page */}
+      {/* Lumi - the floating guide, present on every page */}
       <Companion />
 
       {/* streak freeze + milestone celebrations */}
@@ -294,7 +294,7 @@ export default function PlatformLayout() {
       <BadgeWatcher />
 
       <footer className="relative z-10 border-t border-[var(--edge)] py-6 text-center text-xs text-[var(--muted)]">
-        ASCEND — Treating self improvement as game progression. ·{' '}
+        ASCEND - Treating self improvement as game progression. ·{' '}
         <span className="text-[var(--accent)]">Let’s get you to the endgame.</span>
         <div className="mt-2">
           <NavLink to="/app/guide" className="text-[var(--muted)] hover:text-[var(--accent)]">

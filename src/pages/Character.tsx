@@ -80,12 +80,12 @@ export default function Character() {
   const onBuyFreeze = () => {
     const cap = freezeCap(plus)
     if (streakFreezes >= cap) {
-      setToast(`🧊 You’re already stocked up — max ${cap} freezes${plus ? '' : ' (4 with Ascend Plus)'}.`)
+      setToast(`🧊 You’re already stocked up - max ${cap} freezes${plus ? '' : ' (4 with Ascend Plus)'}.`)
     } else if (buyStreakFreeze()) {
       playSfx('aether')
-      setToast('🧊 Streak Freeze purchased — your chain is protected.')
+      setToast('🧊 Streak Freeze purchased - your chain is protected.')
     } else {
-      setToast('Not enough Aether — a freeze costs ◈250.')
+      setToast('Not enough Aether - a freeze costs ◈250.')
     }
     setTimeout(() => setToast(null), 2600)
   }
@@ -109,9 +109,9 @@ export default function Character() {
         playQuestResult(r.status, levelFromTotalExp(useGame.getState().totalExp).level > lvlBefore)
         setToast(
           r.status === 'flagged'
-            ? '⚠ Flagged — no EXP'
+            ? '⚠ Flagged - no EXP'
             : r.status === 'pending'
-              ? '📸 Sent for review — pass it and you’ll earn the EXP; if not, no EXP and you can retry.'
+              ? '📸 Sent for review - pass it and you’ll earn the EXP; if not, no EXP and you can retry.'
               : `+${r.exp} EXP · ${task.label}`,
         )
         setTimeout(() => setToast(null), 3400)
@@ -125,9 +125,9 @@ export default function Character() {
     playQuestResult(result.status, levelFromTotalExp(totalExp + task.exp).level > before)
     setToast(
       result.status === 'flagged'
-        ? '⚠ Submission flagged — no EXP'
+        ? '⚠ Submission flagged - no EXP'
         : result.status === 'pending'
-          ? '⏳ Sent for review — no EXP unless it passes.'
+          ? '⏳ Sent for review - no EXP unless it passes.'
           : levelFromTotalExp(totalExp + task.exp).level > before
             ? `LEVEL UP! → Lv ${levelFromTotalExp(totalExp + task.exp).level}`
             : `+${task.exp} EXP · ${task.label}`,
@@ -157,7 +157,7 @@ export default function Character() {
           <div>
             <p className="text-sm italic text-slate-200">“{wisdom.quote}”</p>
             <p className="mt-0.5 text-[11px] uppercase tracking-widest text-[var(--muted)]">
-              — {wisdom.by}
+              - {wisdom.by}
             </p>
           </div>
         </div>
@@ -168,7 +168,7 @@ export default function Character() {
               {nextStreakMilestone > streak ? `${nextStreakMilestone - streak}d to reward` : 'milestone!'}
             </div>
           </div>
-          {/* streak freeze — protects the chain across a missed day */}
+          {/* streak freeze - protects the chain across a missed day */}
           <button
             onClick={onBuyFreeze}
             title="Streak Freeze protects your streak across one missed day. You get one free each week; buy more with Aether."
@@ -185,7 +185,7 @@ export default function Character() {
         </div>
       </div>
 
-      {/* earned badges — your trophy shelf */}
+      {/* earned badges - your trophy shelf */}
       {earnedBadges.length > 0 && (
         <div className="panel mb-5 p-4">
           <div className="mb-2 flex items-center justify-between">
@@ -212,15 +212,15 @@ export default function Character() {
         </div>
       )}
 
-      {/* first-run guide — visible until the first EXP lands, then gone forever */}
+      {/* first-run guide - visible until the first EXP lands, then gone forever */}
       {totalExp === 0 && (
         <div className="panel hud-corner mb-5 border-cosmos-cyan/40 p-5">
           <span className="font-pixel text-xs text-cosmos-cyan glow-text">⚡ FIRST STEPS</span>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             {[
-              ['1', 'Complete a daily quest', 'Start with a quick check-in or timer quest — your first EXP is 2 minutes away.'],
+              ['1', 'Complete a daily quest', 'Start with a quick check-in or timer quest - your first EXP is 2 minutes away.'],
               ['2', 'Prove it', 'Photo quests verify instantly when the shot is clear; otherwise a human reviews it (yellow = under review).'],
-              ['3', 'Come back tomorrow', 'Your streak is the real engine. Day 2 is where most people quit — don’t be most people.'],
+              ['3', 'Come back tomorrow', 'Your streak is the real engine. Day 2 is where most people quit - don’t be most people.'],
             ].map(([n, title, body]) => (
               <div key={n} className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
                 <div className="font-pixel text-sm text-cosmos-cyan">{n}</div>
@@ -243,7 +243,7 @@ export default function Character() {
               <span className="stat-label text-xs">Name</span>
               <span className="text-right font-bold text-white">{profile?.handle}</span>
               <span className="stat-label text-xs">Age</span>
-              <span className="text-right font-bold text-white">{profile?.age || '—'}</span>
+              <span className="text-right font-bold text-white">{profile?.age || '-'}</span>
               <span className="stat-label text-xs">Region</span>
               <span className="text-right font-bold text-white">{profile?.region}</span>
             </div>
@@ -265,7 +265,7 @@ export default function Character() {
           </div>
 
           <div className="mt-4">
-            <div className="mb-3 stat-label text-xs">Stats — traits in progress</div>
+            <div className="mb-3 stat-label text-xs">Stats - traits in progress</div>
             <div className="space-y-3">
               {activeTraits.map((at) => {
                 const t = traitById(at.id)!
@@ -318,7 +318,7 @@ export default function Character() {
             <Pill tone="gold">resets 00:00</Pill>
           </div>
           <p className="mb-4 text-xs text-[var(--muted)]">
-            Check a quest to log it — you’ll be prompted to provide evidence of completion.
+            Check a quest to log it - you’ll be prompted to provide evidence of completion.
           </p>
 
           <div className="-mr-2 max-h-[460px] space-y-2.5 overflow-y-auto pr-2">

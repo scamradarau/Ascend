@@ -101,13 +101,13 @@ export default function Plus() {
     <div className="mx-auto max-w-3xl">
       <PixelTitle>ASCEND PLUS</PixelTitle>
       <p className="mt-2 text-sm text-[var(--muted)]">
-        Go further, fund the build, and wear it. Free forever to play — Plus adds capacity, cosmetics
+        Go further, fund the build, and wear it. Free forever to play - Plus adds capacity, cosmetics
         and insight.
       </p>
 
       {justPaid && (
         <div className="mt-4 rounded-xl border border-cosmos-cyan/40 bg-cosmos-cyan/5 p-3 text-sm text-cosmos-cyan">
-          ✅ Payment received — activating your membership. This can take a few seconds.{' '}
+          ✅ Payment received - activating your membership. This can take a few seconds.{' '}
           <button onClick={refresh} className="underline">
             Refresh
           </button>
@@ -148,7 +148,7 @@ export default function Plus() {
       </div>
 
       <p className="mt-3 text-center text-xs text-cosmos-cyan">
-        ✦ Subscriptions start with a <strong>7-day free trial</strong> — you won’t be charged until day 8,
+        ✦ Subscriptions start with a <strong>7-day free trial</strong> - you won’t be charged until day 8,
         and you can cancel anytime before then.
       </p>
 

@@ -52,7 +52,7 @@ export default function PlayerProfile() {
   const rank = rankForLevel(p.level)
   const cls = classForLevel(p.level)
   // for your own profile, the local store has freshly-earned badges that may
-  // not have synced to the cloud row yet — merge so they show immediately.
+  // not have synced to the cloud row yet - merge so they show immediately.
   const badgeIds = isSelf ? Array.from(new Set([...p.badges, ...myBadges])) : p.badges
   const earned = BADGES.filter((b) => badgeIds.includes(b.id))
   // your own profile reflects local Plus immediately, before the cloud row syncs
@@ -102,7 +102,7 @@ export default function PlayerProfile() {
               onClick={() => (isFriend ? removeFriend(p.id) : addFriend(p.id))}
               className={`mt-5 w-full text-sm ${isFriend ? 'btn btn-ghost' : 'btn btn-primary'}`}
             >
-              {isFriend ? '✓ Friends — remove' : '+ Add friend'}
+              {isFriend ? '✓ Friends - remove' : '+ Add friend'}
             </button>
           )}
           {!isSelf && isCloud && (
@@ -115,7 +115,7 @@ export default function PlayerProfile() {
               disabled={reported}
               className="mt-3 w-full text-[11px] uppercase tracking-widest text-[var(--muted)] transition hover:text-cosmos-magenta disabled:opacity-60"
             >
-              {reported ? '✓ Reported — thank you' : '⚐ Report player'}
+              {reported ? '✓ Reported - thank you' : '⚐ Report player'}
             </button>
           )}
           {!isSelf && owner && (

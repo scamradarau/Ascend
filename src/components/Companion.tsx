@@ -4,11 +4,11 @@ import { useGame } from '../store/useGame'
 import { playSfx } from '../lib/sfx'
 
 // ================================================================
-// LUMI — a little luminous guide-wisp that floats at the bottom-right
+// LUMI - a little luminous guide-wisp that floats at the bottom-right
 // of every page (think Yui from SAO). Tap her to open a chat; ask
 // anything about self-improvement and she answers, drawing on the same
 // distilled wisdom engine that powered The Stoic. She is the one
-// constant companion of your climb — warm, brief, always there.
+// constant companion of your climb - warm, brief, always there.
 // ================================================================
 
 interface ChatMsg {
@@ -17,9 +17,9 @@ interface ChatMsg {
 }
 
 const GREETING =
-  'Hey — I’m Lumi, your guide on the climb. ✦\n\nStuck on something? Ask me anything — discipline, focus, fear, motivation, purpose, a setback you can’t shake. I’ll give it to you straight.'
+  'Hey - I’m Lumi, your guide on the climb. ✦\n\nStuck on something? Ask me anything - discipline, focus, fear, motivation, purpose, a setback you can’t shake. I’ll give it to you straight.'
 
-// the little astral sprite — a glowing four-point star with a soft halo
+// the little astral sprite - a glowing four-point star with a soft halo
 function LumiSprite({ size = 34, still = false }: { size?: number; still?: boolean }) {
   return (
     <svg

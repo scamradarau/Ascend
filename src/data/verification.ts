@@ -5,7 +5,7 @@ import type { DailyTask } from './types'
 // ----------------------------------------------------------------
 // The core of Ascend is trust. Every quest type has a verification
 // method designed around a simple question: "How would someone fake
-// this?" — then we close that gap. Each method documents the cheat
+// this?" - then we close that gap. Each method documents the cheat
 // vectors it defends against and the layers it stacks.
 // ================================================================
 
@@ -49,7 +49,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
       'Taking a photo of a photo / a screen',
     ],
     defenses: [
-      'Camera-only capture via the device sensor — there is NO file picker, so gallery upload is structurally impossible',
+      'Camera-only capture via the device sensor - there is NO file picker, so gallery upload is structurally impossible',
       'A one-time liveness code + live timestamp are burned into the frame at capture, so old/replayed images won’t carry today’s token',
       'On-device AI scene recognition checks the photo actually shows the activity (a gym photo can’t be a toilet)',
       'Capture metadata (exact time, session nonce) is bound to the submission',
@@ -63,7 +63,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
     id: 'geo-photo',
     label: 'Live Photo + Location',
     icon: '📍',
-    blurb: 'Live photo with GPS — proves you’re actually there.',
+    blurb: 'Live photo with GPS - proves you’re actually there.',
     cheatVectors: [
       'Submitting a gym photo from home',
       'Re-using last week’s workout photo',
@@ -92,7 +92,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
       'Clock-fiddling to fast-forward the timer',
     ],
     defenses: [
-      'Foreground lock: the Page Visibility API detects tab/app switches — leaving voids the session',
+      'Foreground lock: the Page Visibility API detects tab/app switches - leaving voids the session',
       'The timer counts real elapsed wall-clock time; it can’t be skipped by changing the device clock',
       'Periodic random "still here?" focus pings must be acknowledged',
       'Session length + interruption count are logged for review',
@@ -111,7 +111,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
       'Backgrounding the app',
     ],
     defenses: [
-      'Foreground lock via Page Visibility — leaving the screen voids the session',
+      'Foreground lock via Page Visibility - leaving the screen voids the session',
       'Real wall-clock timing (clock changes don’t help)',
       'A short post-session reflection (what came up) gates completion and deters bots',
     ],
@@ -132,7 +132,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
     ],
     defenses: [
       'A minimum on-task dwell timer must elapse before you can submit',
-      'Paste is blocked in the summary field — you must type it yourself',
+      'Paste is blocked in the summary field - you must type it yourself',
       'Minimum word count + low-effort/duplicate-text heuristics',
       'AI plagiarism + AI-generated-text detection on the summary',
       'A rotating comprehension question only an actual reader could answer',
@@ -145,10 +145,10 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
     id: 'journal',
     label: 'Reflection',
     icon: '✍️',
-    blurb: 'A genuine written reflection — typed, not pasted.',
+    blurb: 'A genuine written reflection - typed, not pasted.',
     cheatVectors: ['Pasting filler text', 'One-word entries', 'Copying a previous entry'],
     defenses: [
-      'Paste blocked — typed entry only',
+      'Paste blocked - typed entry only',
       'Minimum word count enforced',
       'Duplicate-of-previous-entry detection',
       'AI-generated-text flagging',
@@ -161,7 +161,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
     id: 'sleep-window',
     label: 'Sleep Window',
     icon: '🌙',
-    blurb: 'Check in at night and again in the morning — within real windows.',
+    blurb: 'Check in at night and again in the morning - within real windows.',
     cheatVectors: [
       'Logging "8 hours" at 3pm',
       'Backfilling yesterday’s sleep',
@@ -169,7 +169,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
     defenses: [
       'Night check-in only accepted in an evening window; morning check-in only in a morning window',
       'The gap between the two must be a plausible sleep duration',
-      'No backfilling — both check-ins are timestamped live, same calendar cycle',
+      'No backfilling - both check-ins are timestamped live, same calendar cycle',
     ],
     trustReward: 2,
     camera: false,
@@ -183,7 +183,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
     cheatVectors: ['Tapping without doing it'],
     defenses: [
       'One tap per day (no double-claims, no backfilling)',
-      'Kept light on purpose — for trivial daily habits where heavy proof would be overkill. Your integrity score still rides on honesty.',
+      'Kept light on purpose - for trivial daily habits where heavy proof would be overkill. Your integrity score still rides on honesty.',
     ],
     trustReward: 1,
     camera: false,
@@ -192,7 +192,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
 }
 
 // ----------------------------------------------------------------
-// Resolver — map a task to its verification method.
+// Resolver - map a task to its verification method.
 // Explicit `task.verify` wins; otherwise we infer from the label +
 // legacy `evidence` field so existing trait data keeps working.
 // ----------------------------------------------------------------

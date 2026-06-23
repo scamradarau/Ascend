@@ -1,19 +1,19 @@
 import type { Badge } from './types'
 
 // Badges & Achievements. Every requirement maps to a METRIC that is computed
-// live from game state (see data/badgeEngine.ts) — so progress actually fills
+// live from game state (see data/badgeEngine.ts) - so progress actually fills
 // and badges award themselves. Criteria are all things the game can verify;
 // nothing relies on unprovable real-world claims.
 //
 // Metric keys:
-//   bestStreak            — highest streak ever reached
-//   lifetimeQuests        — total verified quests completed
-//   completedMains        — main quests completed
-//   playerLevel           — overall character level
-//   traitLevel:<id>       — level of a specific trait
-//   attrTraitLevel:<attr> — highest trait level within an attribute
-//   rank1:<board>         — reached rank 1 on a leaderboard (legendary|quests|stat)
-//   onboarded             — finished onboarding
+//   bestStreak            - highest streak ever reached
+//   lifetimeQuests        - total verified quests completed
+//   completedMains        - main quests completed
+//   playerLevel           - overall character level
+//   traitLevel:<id>       - level of a specific trait
+//   attrTraitLevel:<attr> - highest trait level within an attribute
+//   rank1:<board>         - reached rank 1 on a leaderboard (legendary|quests|stat)
+//   onboarded             - finished onboarding
 export const BADGES: Badge[] = [
   {
     id: 'first-steps',
@@ -42,7 +42,7 @@ export const BADGES: Badge[] = [
   {
     id: 'entrepreneur',
     name: 'Entrepreneur',
-    desc: 'Build relentless drive — the engine behind anything you’ll create.',
+    desc: 'Build relentless drive - the engine behind anything you’ll create.',
     icon: '💼',
     reward: 'HIGH',
     requirements: [

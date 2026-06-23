@@ -7,7 +7,7 @@ import { RANKS } from '../data/ranks'
 import { TRAITS } from '../data/traits'
 
 // ================================================================
-// CODEX — the in-game user guide / manual.
+// CODEX - the in-game user guide / manual.
 // ================================================================
 
 interface Section {
@@ -52,7 +52,7 @@ const SECTIONS: Section[] = [
       <>
         <P>
           Ascend treats self-improvement like game progression. Instead of vague goals, you get a
-          visible character with stats, EXP bars, levels, quests and ranks — so you always know{' '}
+          visible character with stats, EXP bars, levels, quests and ranks - so you always know{' '}
           <em>where you are</em> and <em>exactly what to do next</em>.
         </P>
         <P>
@@ -74,14 +74,14 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <P>
-          Ascend runs in your browser, but you can install it like a real app — your own icon, full
+          Ascend runs in your browser, but you can install it like a real app - your own icon, full
           screen, and daily reminder notifications. Takes about 15 seconds.
         </P>
         <div className="mt-4 font-semibold text-white">📱 iPhone / iPad (Safari)</div>
         <List
           items={[
             <>Open Ascend in <strong>Safari</strong> (not another browser).</>,
-            <>Tap the <strong>Share</strong> button — the square with an up-arrow.</>,
+            <>Tap the <strong>Share</strong> button - the square with an up-arrow.</>,
             <>Scroll down and tap <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</>,
             <>Open Ascend from the new icon, then turn on reminders in <strong>Settings → Notifications</strong>.</>,
           ]}
@@ -143,15 +143,15 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <P>
-          The <strong>Main Quests</strong> page holds {TRAITS.length}+ traits across the five Paths —
+          The <strong>Main Quests</strong> page holds {TRAITS.length}+ traits across the five Paths -
           confidence, focus, discipline, resilience, charisma, physique and many more. Each is a
           skill you can level with specific, proven actions, and your progress lights up its region
           on the <strong>World Map</strong>.
         </P>
         <Callout tone="gold">
-          You build up to <strong>3 traits at a time</strong> — <strong>Ascend Plus</strong> raises
+          You build up to <strong>3 traits at a time</strong> - <strong>Ascend Plus</strong> raises
           that to <strong>5</strong>. Either way, focus beats scatter. Once you start a trait’s{' '}
-          <strong>main quest</strong>, you’re committed until it’s finished — no flip-flopping. This
+          <strong>main quest</strong>, you’re committed until it’s finished - no flip-flopping. This
           is by design: it builds trust in the process.
         </Callout>
         <P>Each trait page is a mini-library: what it is, why it helps, how to level it, daily tasks, a main-quest book, and hot tips.</P>
@@ -170,7 +170,7 @@ const SECTIONS: Section[] = [
         </P>
         <P>
           <strong>Main quests</strong> are bigger commitments with two paths: read a great book and
-          apply it (4 check-ins), or take the <strong>2-week practical challenge</strong> — lock in
+          apply it (4 check-ins), or take the <strong>2-week practical challenge</strong> - lock in
           your commitment, then prove it with one photo check-in per day for 14 days. Either way,
           the big EXP payout lands when you <em>finish</em> the quest, not per check-in.
         </P>
@@ -178,15 +178,15 @@ const SECTIONS: Section[] = [
           <strong>Weekly &amp; monthly challenges</strong> work the same way: each verified log
           (max one per day) moves the progress bar, and the full EXP + Aether is paid out{' '}
           <strong>in one hit when you complete every session before the reset</strong>. Miss the
-          target and the period resets with no payout — the reward is for finishing, not for
+          target and the period resets with no payout - the reward is for finishing, not for
           showing up once.
         </P>
         <List
           items={[
-            'Check a quest to log it — you’ll be prompted to verify it (see below).',
+            'Check a quest to log it - you’ll be prompted to verify it (see below).',
             'Verified = EXP + Aether (Aether is always EXP ÷ 4). Pending = awaiting review, pays nothing until approved. Flagged = nothing.',
             'Multi-step quests (mains, weeklies, monthlies) pay their full reward only on completion.',
-            'One completion per quest per day — days roll over at midnight Sydney time. No backfilling yesterday.',
+            'One completion per quest per day - days roll over at midnight Sydney time. No backfilling yesterday.',
           ]}
         />
       </>
@@ -200,20 +200,20 @@ const SECTIONS: Section[] = [
       <>
         <P>
           A <strong>Streak Freeze</strong> protects your streak across a missed day. Miss a day with a
-          freeze banked and it’s spent automatically to bridge the gap — your chain stays alive instead
+          freeze banked and it’s spent automatically to bridge the gap - your chain stays alive instead
           of resetting to zero. It’s insurance for real life: a sick day, travel, a flat-out week.
         </P>
         <P>How you accumulate them:</P>
         <List
           items={[
             'You start with one freeze in your pocket.',
-            'You earn one free freeze every week — it banks automatically (no action needed).',
+            'You earn one free freeze every week - it banks automatically (no action needed).',
             'You can also buy extra freezes with Aether (◈250 each) from the Character page.',
             'They’re spent automatically, oldest first, the moment a missed day would have broken your streak.',
           ]}
         />
         <Callout tone="gold">
-          You can bank up to <strong>2 freezes</strong> on a free account — <strong>Ascend Plus</strong>{' '}
+          You can bank up to <strong>2 freezes</strong> on a free account - <strong>Ascend Plus</strong>{' '}
           raises the cap to <strong>4</strong>, so you can cover a longer break (a holiday, exam week)
           without losing months of momentum.
         </Callout>
@@ -247,7 +247,7 @@ const SECTIONS: Section[] = [
           ))}
         </div>
         <Callout tone="magenta">
-          Photo quests use your <strong>live camera only</strong> — there’s no upload button, so old
+          Photo quests use your <strong>live camera only</strong> - there’s no upload button, so old
           or saved photos simply can’t be submitted. A one-time code &amp; timestamp are stamped into
           every capture.
         </Callout>
@@ -266,8 +266,8 @@ const SECTIONS: Section[] = [
         </P>
         <List
           items={[
-            <><strong>Real rewards require an Integrity of 80+.</strong> Cheating gets submissions flagged, which drops your Integrity below the line and locks you out of rewards — so faking your way to a prize is self-defeating.</>,
-            'Flagged submissions go to human review — approved restores trust, rejected docks it.',
+            <><strong>Real rewards require an Integrity of 80+.</strong> Cheating gets submissions flagged, which drops your Integrity below the line and locks you out of rewards - so faking your way to a prize is self-defeating.</>,
+            'Flagged submissions go to human review - approved restores trust, rejected docks it.',
             'Integrity recovers as you complete honest, verified quests. It’s the cheapest thing to protect and the most expensive to lose. Play straight.',
           ]}
         />
@@ -282,7 +282,7 @@ const SECTIONS: Section[] = [
       <>
         <P>
           Your level places you in a <strong>rank</strong>. Each rank sets the life expectations for
-          that tier — a motivating north star, not a literal rulebook.
+          that tier - a motivating north star, not a literal rulebook.
         </P>
         <div className="mt-3 space-y-1.5">
           {RANKS.map((r) => (
@@ -308,8 +308,8 @@ const SECTIONS: Section[] = [
         </P>
         <List
           items={[
-            'Cosmetics — auras, frames, energy cores and helmets for your avatar.',
-            'Real-world rewards — coupons, gift cards, memberships, tech and cash, funded by sponsors.',
+            'Cosmetics - auras, frames, energy cores and helmets for your avatar.',
+            'Real-world rewards - coupons, gift cards, memberships, tech and cash, funded by sponsors.',
             'High-value rewards check your integrity score before fulfilment.',
           ]}
         />
@@ -328,7 +328,7 @@ const SECTIONS: Section[] = [
           and milestones.
         </P>
         <P>
-          <strong>Seasons</strong> are a rotating track of tiered rewards — every bit of EXP you earn
+          <strong>Seasons</strong> are a rotating track of tiered rewards - every bit of EXP you earn
           also fills your season pass, so there’s always something to climb toward.
         </P>
       </>
@@ -341,11 +341,11 @@ const SECTIONS: Section[] = [
     body: (
       <>
         <P>
-          Three <strong>leaderboards</strong> — Legendary (overall level), Stat (trait level) and
+          Three <strong>leaderboards</strong> - Legendary (overall level), Stat (trait level) and
           Quests (this month). Top players earn rotating real rewards so everyone gets a fair shot.
         </P>
         <P>
-          The <strong>Guild</strong> is one big community — share wins, find accountability partners
+          The <strong>Guild</strong> is one big community - share wins, find accountability partners
           and climb together. You go faster alone; you go further together.
         </P>
       </>
@@ -359,12 +359,12 @@ const SECTIONS: Section[] = [
       <>
         <List
           items={[
-            'Pick one foundational trait first (Focus, Self-Discipline or Vitality) — it multiplies everything else.',
+            'Pick one foundational trait first (Focus, Self-Discipline or Vitality) - it multiplies everything else.',
             'Never miss twice. A single missed day is a slip; two is the start of a new (bad) habit.',
             'Stack quests onto existing routines (after coffee → meditate). Triggers beat willpower.',
-            'Finish main-quest books — they’re the biggest EXP and unlock Scholar.',
+            'Finish main-quest books - they’re the biggest EXP and unlock Scholar.',
             'Protect your streak; protect your integrity. Both compound.',
-            'Use the Guild for accountability — public commitment lifts follow-through.',
+            'Use the Guild for accountability - public commitment lifts follow-through.',
           ]}
         />
       </>
@@ -379,11 +379,11 @@ const SECTIONS: Section[] = [
         <div className="space-y-3">
           {[
             ['Why is there a trait limit?', 'Focus. Spreading thin is why most self-improvement fails. Free players run 3 traits at once; Ascend Plus unlocks 5. A tight set keeps you consistent and lets you actually finish.'],
-            ['Can I change my traits?', 'Yes — until you start a main quest. Once committed, finish it. You can swap freely before that.'],
+            ['Can I change my traits?', 'Yes - until you start a main quest. Once committed, finish it. You can swap freely before that.'],
             ['Why can’t I upload a photo from my gallery?', 'Because that’s the #1 way people cheat. Live capture only keeps the leaderboards and rewards meaningful.'],
-            ['Is the life-expectations page literal?', 'No — it’s motivational and for entertainment. Anything more or less, request a rank change.'],
+            ['Is the life-expectations page literal?', 'No - it’s motivational and for entertainment. Anything more or less, request a rank change.'],
             ['What happens if I’m flagged unfairly?', 'It goes to human review. If approved, your EXP and integrity are restored.'],
-            ['Does my progress save?', 'Yes — locally in your browser for this build. A full account/cloud sync is the production next step.'],
+            ['Does my progress save?', 'Yes - locally in your browser for this build. A full account/cloud sync is the production next step.'],
           ].map(([q, a]) => (
             <div key={q} className="rounded-lg border border-white/8 bg-white/[0.02] p-3">
               <div className="font-display font-bold text-white">{q}</div>

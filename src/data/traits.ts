@@ -16,14 +16,14 @@ export const TRAITS: Trait[] = [
     tier: 'low',
     tagline: 'Master the art of concentration and sheer focus.',
     description:
-      'Focus is the ability to direct sustained attention at a single objective while filtering out noise. It is the foundation skill that multiplies every other trait — a sharp mind compounds.',
+      'Focus is the ability to direct sustained attention at a single objective while filtering out noise. It is the foundation skill that multiplies every other trait - a sharp mind compounds.',
     benefit:
       'Deeper work in less time, faster skill acquisition, and freedom from the scattered, reactive state most people live in.',
     howToLevel: [
       'Protect a daily 2-hour deep-work block with zero context switching.',
       'Train attention with 10 minutes of meditation every morning.',
       'Engineer your environment so distraction is harder than the work.',
-      'Sleep 6–8 hours — focus is downstream of recovery.',
+      'Sleep 6–8 hours - focus is downstream of recovery.',
     ],
     dailyTasks: [
       { id: 'focus-med', label: '10 minutes of meditation', evidence: 'reflection', verify: 'meditation-timer', minMinutes: 10, hint: 'Use the Insight Timer app.', exp: 20 },
@@ -33,14 +33,14 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Eat That Frog!” & build a consistent schedule',
-      book: 'Eat That Frog! — Brian Tracy',
-      why: 'Eat That Frog! challenges your working practices, explains the self-discipline needed to succeed, and gets to the root cause of why people procrastinate — then shows how to boost productivity for good. Building set systems gives outer order for inner chaos; routines act as mental guardrails so you don’t veer off track.',
+      book: 'Eat That Frog! - Brian Tracy',
+      why: 'Eat That Frog! challenges your working practices, explains the self-discipline needed to succeed, and gets to the root cause of why people procrastinate - then shows how to boost productivity for good. Building set systems gives outer order for inner chaos; routines act as mental guardrails so you don’t veer off track.',
       checkIn: 'summary',
       exp: 220,
     },
     hotTips: [
       'Set your phone’s colour filter to black & grey.',
-      'When focus fades, spike your heart rate — do 3 pushups.',
+      'When focus fades, spike your heart rate - do 3 pushups.',
       'Turn off all phone notifications.',
       'Delete attention-vampire apps like TikTok.',
     ],
@@ -53,7 +53,7 @@ export const TRAITS: Trait[] = [
     tagline: 'Turn obstacles into solvable puzzles.',
     description:
       'Problem solving is the structured ability to break a messy situation into parts, find leverage, and act. It is pattern recognition plus deliberate practice.',
-    benefit: 'You become the person who is handed the hard problems — and the rewards that come with them.',
+    benefit: 'You become the person who is handed the hard problems - and the rewards that come with them.',
     howToLevel: [
       'Write the problem as a single sentence before attempting a solution.',
       'List 10 possible approaches before judging any of them.',
@@ -65,12 +65,12 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Thinking, Fast and Slow”',
-      book: 'Thinking, Fast and Slow — Daniel Kahneman',
+      book: 'Thinking, Fast and Slow - Daniel Kahneman',
       why: 'Understanding the two systems that drive how you think exposes the biases sabotaging your decisions and sharpens your judgment under uncertainty.',
       checkIn: 'summary',
       exp: 220,
     },
-    hotTips: ['Sleep on hard problems — the subconscious solves overnight.', 'Explain it out loud to a “rubber duck.”'],
+    hotTips: ['Sleep on hard problems - the subconscious solves overnight.', 'Explain it out loud to a “rubber duck.”'],
   },
   {
     id: 'strategic',
@@ -78,7 +78,7 @@ export const TRAITS: Trait[] = [
     attribute: 'mind',
     tier: 'high',
     tagline: 'See three moves ahead.',
-    description: 'Strategy is choosing where to play and how to win — allocating finite energy to the highest-leverage moves.',
+    description: 'Strategy is choosing where to play and how to win - allocating finite energy to the highest-leverage moves.',
     benefit: 'You stop being busy and start being effective. Outcomes compound in your favour.',
     howToLevel: ['Define a 12-month objective and reverse-engineer the path.', 'Audit your week: cut the lowest-leverage 20%.'],
     dailyTasks: [
@@ -87,7 +87,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “The 7 Habits of Highly Effective People”',
-      book: 'The 7 Habits of Highly Effective People — Stephen Covey',
+      book: 'The 7 Habits of Highly Effective People - Stephen Covey',
       why: 'A timeless framework for prioritising what matters and acting from principle rather than impulse.',
       checkIn: 'summary',
       exp: 230,
@@ -100,16 +100,16 @@ export const TRAITS: Trait[] = [
     attribute: 'mind',
     tier: 'low',
     tagline: 'Live in the present, on purpose.',
-    description: 'Mindfulness is non-judgmental awareness of the present moment — the antidote to anxious autopilot.',
+    description: 'Mindfulness is non-judgmental awareness of the present moment - the antidote to anxious autopilot.',
     benefit: 'Lower stress, sharper attention, and the space to respond instead of react.',
     howToLevel: ['Meditate daily.', 'Practise single-tasking.', 'Do a 60-second body scan when stressed.'],
     dailyTasks: [
-      { id: 'mind-med', label: 'Consistent deep breathing — 5 minutes', evidence: 'reflection', verify: 'meditation-timer', minMinutes: 5, exp: 18 },
+      { id: 'mind-med', label: 'Consistent deep breathing - 5 minutes', evidence: 'reflection', verify: 'meditation-timer', minMinutes: 5, exp: 18 },
       { id: 'mind-gratitude', label: 'Write 3 things you’re grateful for', evidence: 'reflection', exp: 15 },
     ],
     mainQuest: {
       title: 'Read “The Power of Now”',
-      book: 'The Power of Now — Eckhart Tolle',
+      book: 'The Power of Now - Eckhart Tolle',
       why: 'It dismantles the mental noise that pulls you out of the present and into needless suffering.',
       checkIn: 'summary',
       exp: 200,
@@ -131,7 +131,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Mindset”',
-      book: 'Mindset — Carol Dweck',
+      book: 'Mindset - Carol Dweck',
       why: 'The research that reframes how you relate to challenge, effort and failure.',
       checkIn: 'summary',
       exp: 200,
@@ -153,7 +153,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Create a consistent weekly schedule & follow it for 7 days',
-      book: 'Make Time — Knapp & Zeratsky',
+      book: 'Make Time - Knapp & Zeratsky',
       why: 'Routines reduce the mental effort of deciding what to do next, freeing willpower for the work itself.',
       checkIn: 'summary',
       exp: 230,
@@ -169,7 +169,7 @@ export const TRAITS: Trait[] = [
     tier: 'low',
     tagline: 'Do what must be done, whether you feel like it or not.',
     description:
-      'Self-discipline is the bridge between goals and accomplishment — the trained capacity to act on your intentions rather than your moods.',
+      'Self-discipline is the bridge between goals and accomplishment - the trained capacity to act on your intentions rather than your moods.',
     benefit: 'Everything you want is on the other side of consistent action. Discipline is the engine that gets you there.',
     howToLevel: [
       'Make one non-negotiable daily keystone habit.',
@@ -179,13 +179,13 @@ export const TRAITS: Trait[] = [
     ],
     dailyTasks: [
       { id: 'disc-cold', label: 'Take a cold shower', evidence: 'reflection', verify: 'check-in', exp: 4 },
-      { id: 'disc-wake', label: 'Wake at your set time — no snooze', evidence: 'reflection', verify: 'check-in', exp: 4 },
+      { id: 'disc-wake', label: 'Wake at your set time - no snooze', evidence: 'reflection', verify: 'check-in', exp: 4 },
       { id: 'disc-keystone', label: 'Complete your keystone habit', evidence: 'reflection', verify: 'check-in', exp: 4 },
     ],
     mainQuest: {
       title: 'Read “Atomic Habits” & install one keystone habit',
-      book: 'Atomic Habits — James Clear',
-      why: 'It shows that discipline is engineered, not willed — tiny systems and identity shifts make the right action automatic.',
+      book: 'Atomic Habits - James Clear',
+      why: 'It shows that discipline is engineered, not willed - tiny systems and identity shifts make the right action automatic.',
       checkIn: 'summary',
       exp: 230,
     },
@@ -213,7 +213,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Maintain a 30-day unbroken streak',
-      book: 'The Compound Effect — Darren Hardy',
+      book: 'The Compound Effect - Darren Hardy',
       why: 'Proves how small, consistent choices snowball into massive results over time.',
       checkIn: 'summary',
       exp: 240,
@@ -234,7 +234,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Grit”',
-      book: 'Grit — Angela Duckworth',
+      book: 'Grit - Angela Duckworth',
       why: 'Shows that passion and perseverance predict success more than raw talent.',
       checkIn: 'summary',
       exp: 210,
@@ -255,8 +255,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “So Good They Can’t Ignore You”',
-      book: 'So Good They Can’t Ignore You — Cal Newport',
-      why: 'Argues that rare and valuable skills — built through diligent practice — are the real path to a career you love.',
+      book: 'So Good They Can’t Ignore You - Cal Newport',
+      why: 'Argues that rare and valuable skills - built through diligent practice - are the real path to a career you love.',
       checkIn: 'summary',
       exp: 210,
     },
@@ -268,7 +268,7 @@ export const TRAITS: Trait[] = [
     attribute: 'will',
     tier: 'mid',
     tagline: 'Move before you’re told to.',
-    description: 'Initiative is self-started action — seeing what needs doing and doing it without waiting for permission.',
+    description: 'Initiative is self-started action - seeing what needs doing and doing it without waiting for permission.',
     benefit: 'Initiative is the trait that gets you noticed, promoted, and trusted with bigger bets.',
     howToLevel: ['Each day, do one thing no one asked you to.', 'Default to action over deliberation on reversible decisions.'],
     dailyTasks: [
@@ -276,8 +276,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Ship a small self-directed project in 7 days',
-      book: 'The War of Art — Steven Pressfield',
-      why: 'Names the “Resistance” that stops you starting — and how professionals beat it daily.',
+      book: 'The War of Art - Steven Pressfield',
+      why: 'Names the “Resistance” that stops you starting - and how professionals beat it daily.',
       checkIn: 'reflection',
       exp: 220,
     },
@@ -300,8 +300,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Man’s Search for Meaning”',
-      book: 'Man’s Search for Meaning — Viktor Frankl',
-      why: 'The definitive account of finding purpose — and the will to endure — in even the darkest conditions.',
+      book: 'Man’s Search for Meaning - Viktor Frankl',
+      why: 'The definitive account of finding purpose - and the will to endure - in even the darkest conditions.',
       checkIn: 'summary',
       exp: 220,
     },
@@ -312,8 +312,8 @@ export const TRAITS: Trait[] = [
     name: 'Emotional Intelligence',
     attribute: 'heart',
     tier: 'mid',
-    tagline: 'Read the room — and yourself.',
-    description: 'EQ is the ability to perceive, understand and regulate emotions — your own and others’.',
+    tagline: 'Read the room - and yourself.',
+    description: 'EQ is the ability to perceive, understand and regulate emotions - your own and others’.',
     benefit: 'Better relationships, calmer decisions, and influence that doesn’t rely on force.',
     howToLevel: ['Name your emotions in the moment.', 'Pause before reacting.', 'Practise active listening.'],
     dailyTasks: [
@@ -322,7 +322,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Emotional Intelligence”',
-      book: 'Emotional Intelligence — Daniel Goleman',
+      book: 'Emotional Intelligence - Daniel Goleman',
       why: 'The book that proved EQ can matter more than IQ for a successful life.',
       checkIn: 'summary',
       exp: 210,
@@ -343,8 +343,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Learned Optimism”',
-      book: 'Learned Optimism — Martin Seligman',
-      why: 'Teaches the explanatory style that separates optimists from the rest — and how to learn it.',
+      book: 'Learned Optimism - Martin Seligman',
+      why: 'Teaches the explanatory style that separates optimists from the rest - and how to learn it.',
       checkIn: 'summary',
       exp: 200,
     },
@@ -356,7 +356,7 @@ export const TRAITS: Trait[] = [
     attribute: 'heart',
     tier: 'low',
     tagline: 'Become someone you respect.',
-    description: 'Self-image is the internal picture you hold of who you are — it quietly sets the ceiling on your behaviour.',
+    description: 'Self-image is the internal picture you hold of who you are - it quietly sets the ceiling on your behaviour.',
     benefit: 'Raise the picture and your actions rise to match it.',
     howToLevel: ['Keep promises to yourself.', 'Curate your inputs and your environment.', 'Dress and act as your future self.'],
     dailyTasks: [
@@ -365,8 +365,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Psycho-Cybernetics”',
-      book: 'Psycho-Cybernetics — Maxwell Maltz',
-      why: 'The classic on how self-image governs your results — and how to reprogram it.',
+      book: 'Psycho-Cybernetics - Maxwell Maltz',
+      why: 'The classic on how self-image governs your results - and how to reprogram it.',
       checkIn: 'summary',
       exp: 200,
     },
@@ -386,8 +386,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Collect 10 rejections on purpose',
-      book: 'Rejection Proof — Jia Jiang',
-      why: 'Desensitises you to rejection through deliberate exposure — and reveals how often “no” is just a starting point.',
+      book: 'Rejection Proof - Jia Jiang',
+      why: 'Desensitises you to rejection through deliberate exposure - and reveals how often “no” is just a starting point.',
       checkIn: 'reflection',
       exp: 220,
     },
@@ -402,13 +402,13 @@ export const TRAITS: Trait[] = [
     tier: 'low',
     tagline: 'Back yourself before the evidence arrives.',
     description:
-      'Confidence is calibrated self-trust — the belief that you can figure it out, built from a track record of kept promises and faced fears.',
+      'Confidence is calibrated self-trust - the belief that you can figure it out, built from a track record of kept promises and faced fears.',
     benefit: 'Confidence opens doors: you speak up, take swings, and lead. It is magnetic and it is trainable.',
     howToLevel: [
       'Build proof: keep small promises to yourself daily.',
-      'Adopt confident body language — posture, eye contact, slow speech.',
+      'Adopt confident body language - posture, eye contact, slow speech.',
       'Do one thing that scares you every day.',
-      'Master a skill — competence breeds confidence.',
+      'Master a skill - competence breeds confidence.',
     ],
     dailyTasks: [
       { id: 'conf-fear', label: 'Do one thing outside your comfort zone', evidence: 'reflection', exp: 22 },
@@ -417,8 +417,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “The Confidence Gap” & complete 5 comfort-zone challenges',
-      book: 'The Confidence Gap — Russ Harris',
-      why: 'It separates the feeling of confidence from the action of confidence — teaching you to act boldly before the feeling arrives.',
+      book: 'The Confidence Gap - Russ Harris',
+      why: 'It separates the feeling of confidence from the action of confidence - teaching you to act boldly before the feeling arrives.',
       checkIn: 'summary',
       exp: 230,
     },
@@ -439,8 +439,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “How to Win Friends and Influence People”',
-      book: 'How to Win Friends and Influence People — Dale Carnegie',
-      why: 'The timeless manual on making people feel valued — the root of all influence.',
+      book: 'How to Win Friends and Influence People - Dale Carnegie',
+      why: 'The timeless manual on making people feel valued - the root of all influence.',
       checkIn: 'summary',
       exp: 220,
     },
@@ -461,8 +461,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Extreme Ownership”',
-      book: 'Extreme Ownership — Jocko Willink & Leif Babin',
-      why: 'The principle that leaders own everything in their world — and how that mindset wins.',
+      book: 'Extreme Ownership - Jocko Willink & Leif Babin',
+      why: 'The principle that leaders own everything in their world - and how that mindset wins.',
       checkIn: 'summary',
       exp: 240,
     },
@@ -482,7 +482,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Never Eat Alone”',
-      book: 'Never Eat Alone — Keith Ferrazzi',
+      book: 'Never Eat Alone - Keith Ferrazzi',
       why: 'The playbook for building a generous, powerful network that lasts.',
       checkIn: 'summary',
       exp: 210,
@@ -496,19 +496,19 @@ export const TRAITS: Trait[] = [
     tier: 'mid',
     tagline: 'Command the room when it counts.',
     description: 'Presentation is the craft of delivering ideas to an audience with clarity, presence and impact.',
-    benefit: 'The ability to present well makes your ideas — and you — impossible to ignore.',
+    benefit: 'The ability to present well makes your ideas - and you - impossible to ignore.',
     howToLevel: ['Rehearse out loud, not in your head.', 'Open with a hook, close with a call to action.'],
     dailyTasks: [
       { id: 'pres-rehearse', label: 'Rehearse speaking for 5 minutes', evidence: 'reflection', exp: 16 },
     ],
     mainQuest: {
       title: 'Read “Talk Like TED” & deliver a 5-minute talk',
-      book: 'Talk Like TED — Carmine Gallo',
-      why: 'Distils what makes the best talks in the world land — and how to replicate it.',
+      book: 'Talk Like TED - Carmine Gallo',
+      why: 'Distils what makes the best talks in the world land - and how to replicate it.',
       checkIn: 'reflection',
       exp: 210,
     },
-    hotTips: ['Slow down — silence is power.', 'One idea per slide.'],
+    hotTips: ['Slow down - silence is power.', 'One idea per slide.'],
   },
 
   // ============================ BODY ============================
@@ -518,7 +518,7 @@ export const TRAITS: Trait[] = [
     attribute: 'body',
     tier: 'low',
     tagline: 'Build the body that carries the mission.',
-    description: 'Physique is the trained, capable, energetic body — strength, conditioning and composition working together.',
+    description: 'Physique is the trained, capable, energetic body - strength, conditioning and composition working together.',
     benefit: 'Energy, confidence and discipline radiate from a body you’ve built. It upgrades every other stat.',
     howToLevel: ['Train with progressive overload 3–5×/week.', 'Hit a protein target daily.', 'Prioritise sleep and steps.'],
     dailyTasks: [
@@ -528,8 +528,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Train consistently for 8 weeks',
-      book: 'Bigger Leaner Stronger — Michael Matthews',
-      why: 'A no-nonsense, evidence-based system for building muscle and losing fat that actually sticks — the training and nutrition principles behind a real physique.',
+      book: 'Bigger Leaner Stronger - Michael Matthews',
+      why: 'A no-nonsense, evidence-based system for building muscle and losing fat that actually sticks - the training and nutrition principles behind a real physique.',
       checkIn: 'summary',
       exp: 250,
     },
@@ -551,8 +551,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Why We Sleep” & fix your sleep for 2 weeks',
-      book: 'Why We Sleep — Matthew Walker',
-      why: 'Reveals how central sleep is to literally everything — and how to protect it.',
+      book: 'Why We Sleep - Matthew Walker',
+      why: 'Reveals how central sleep is to literally everything - and how to protect it.',
       checkIn: 'summary',
       exp: 200,
     },
@@ -560,7 +560,7 @@ export const TRAITS: Trait[] = [
   },
 
   // ================================================================
-  // EXPANDED LIBRARY — more traits across every attribute.
+  // EXPANDED LIBRARY - more traits across every attribute.
   // ================================================================
 
   // -------------------------- MIND --------------------------
@@ -571,17 +571,17 @@ export const TRAITS: Trait[] = [
     tier: 'mid',
     tagline: 'Connect ideas no one else does.',
     description:
-      'Creativity is the skill of generating novel, useful combinations — it is trained through volume, cross-pollination and play, not waited on as inspiration.',
+      'Creativity is the skill of generating novel, useful combinations - it is trained through volume, cross-pollination and play, not waited on as inspiration.',
     benefit: 'Creative output compounds into a body of work, a personal brand, and options others don’t have.',
-    howToLevel: ['Create before you consume each morning.', 'Steal like an artist — remix what you admire.', 'Ship volume; quality follows quantity.'],
+    howToLevel: ['Create before you consume each morning.', 'Steal like an artist - remix what you admire.', 'Ship volume; quality follows quantity.'],
     dailyTasks: [
       { id: 'cre-make', label: 'Make something small and share it', evidence: 'reflection', verify: 'journal', exp: 22 },
       { id: 'cre-ideas', label: 'Write 10 ideas on one problem', evidence: 'reflection', verify: 'journal', exp: 18 },
     ],
     mainQuest: {
       title: 'Read “Steal Like an Artist” & ship 7 creations in 7 days',
-      book: 'Steal Like an Artist — Austin Kleon',
-      why: 'Demystifies creativity into habits anyone can run — and frees you from the myth of pure originality.',
+      book: 'Steal Like an Artist - Austin Kleon',
+      why: 'Demystifies creativity into habits anyone can run - and frees you from the myth of pure originality.',
       checkIn: 'summary',
       exp: 220,
     },
@@ -602,12 +602,12 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Ultralearning” & run a 2-week skill sprint',
-      book: 'Ultralearning — Scott Young',
-      why: 'A field guide to aggressive self-education — the exact tactics to master hard skills fast.',
+      book: 'Ultralearning - Scott Young',
+      why: 'A field guide to aggressive self-education - the exact tactics to master hard skills fast.',
       checkIn: 'summary',
       exp: 220,
     },
-    hotTips: ['Test yourself — testing is learning.', 'Teach it to cement it.', 'Struggle is the signal you’re learning.'],
+    hotTips: ['Test yourself - testing is learning.', 'Teach it to cement it.', 'Struggle is the signal you’re learning.'],
   },
   {
     id: 'decision-making',
@@ -623,7 +623,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Decisive” & apply the WRAP framework',
-      book: 'Decisive — Chip & Dan Heath',
+      book: 'Decisive - Chip & Dan Heath',
       why: 'Gives you a repeatable process that defeats the four villains of bad decisions.',
       checkIn: 'summary',
       exp: 215,
@@ -636,7 +636,7 @@ export const TRAITS: Trait[] = [
     attribute: 'mind',
     tier: 'mid',
     tagline: 'Remember names, ideas, everything.',
-    description: 'Memory is a skill, not a gift — built with techniques like the memory palace, chunking and spaced repetition.',
+    description: 'Memory is a skill, not a gift - built with techniques like the memory palace, chunking and spaced repetition.',
     benefit: 'A sharp memory makes you magnetic in conversation and faster at everything you learn.',
     howToLevel: ['Build a memory palace.', 'Use spaced-repetition flashcards.', 'Repeat names back when you meet people.'],
     dailyTasks: [
@@ -644,8 +644,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Moonwalking with Einstein” & memorise a 20-item list',
-      book: 'Moonwalking with Einstein — Joshua Foer',
-      why: 'A journalist becomes a memory champion in a year — and shows you exactly how.',
+      book: 'Moonwalking with Einstein - Joshua Foer',
+      why: 'A journalist becomes a memory champion in a year - and shows you exactly how.',
       checkIn: 'summary',
       exp: 200,
     },
@@ -659,7 +659,7 @@ export const TRAITS: Trait[] = [
     attribute: 'will',
     tier: 'low',
     tagline: 'Play the long game without flinching.',
-    description: 'Patience is delayed gratification in action — the ability to stay the course when rewards are far off.',
+    description: 'Patience is delayed gratification in action - the ability to stay the course when rewards are far off.',
     benefit: 'The patient inherit the compounding returns the impatient quit before. It is a quiet superpower.',
     howToLevel: ['Delay one impulse a day on purpose.', 'Zoom out to the 10-year view.', 'Practise doing nothing for 5 minutes.'],
     dailyTasks: [
@@ -667,8 +667,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “The Marshmallow Test”',
-      book: 'The Marshmallow Test — Walter Mischel',
-      why: 'The science of self-control — and how to strengthen the “cool” system that resists temptation.',
+      book: 'The Marshmallow Test - Walter Mischel',
+      why: 'The science of self-control - and how to strengthen the “cool” system that resists temptation.',
       checkIn: 'summary',
       exp: 195,
     },
@@ -680,7 +680,7 @@ export const TRAITS: Trait[] = [
     attribute: 'will',
     tier: 'mid',
     tagline: 'Feel the fear and act anyway.',
-    description: 'Courage is not the absence of fear but action in its presence — built by repeatedly choosing the harder right over the easier wrong.',
+    description: 'Courage is not the absence of fear but action in its presence - built by repeatedly choosing the harder right over the easier wrong.',
     benefit: 'Everything you want most sits just past a fear. Courage is the key that unlocks it.',
     howToLevel: ['Do one scary thing daily.', 'Say the hard truth kindly.', 'Volunteer before you feel ready.'],
     dailyTasks: [
@@ -689,19 +689,19 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Feel the Fear and Do It Anyway”',
-      book: 'Feel the Fear and Do It Anyway — Susan Jeffers',
+      book: 'Feel the Fear and Do It Anyway - Susan Jeffers',
       why: 'Reframes fear as a companion to growth and gives tools to act in spite of it.',
       checkIn: 'summary',
       exp: 215,
     },
-    hotTips: ['Courage is a muscle — train it small.', 'Fear means it matters.', 'Action kills anxiety.'],
+    hotTips: ['Courage is a muscle - train it small.', 'Fear means it matters.', 'Action kills anxiety.'],
   },
   {
     id: 'accountability',
     name: 'Accountability',
     attribute: 'will',
     tier: 'low',
-    tagline: 'Own it all — no excuses.',
+    tagline: 'Own it all - no excuses.',
     description: 'Accountability is taking full ownership of your results and your responses, refusing the comfort of blame.',
     benefit: 'The moment you own everything, you gain the power to change everything. Excuses are expensive.',
     howToLevel: ['Replace “I had to” with “I chose to”.', 'Tell someone your goal.', 'Track and review honestly.'],
@@ -710,7 +710,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Discipline Is Destiny”',
-      book: 'Discipline Is Destiny — Ryan Holiday',
+      book: 'Discipline Is Destiny - Ryan Holiday',
       why: 'A modern Stoic case that self-command is the foundation of every other virtue and success.',
       checkIn: 'summary',
       exp: 210,
@@ -723,7 +723,7 @@ export const TRAITS: Trait[] = [
     attribute: 'will',
     tier: 'high',
     tagline: 'Callous your mind. Want more, then earn it.',
-    description: 'Drive is the engine of relentless pursuit — and like Goggins teaches, it’s forged by voluntarily seeking discomfort.',
+    description: 'Drive is the engine of relentless pursuit - and like Goggins teaches, it’s forged by voluntarily seeking discomfort.',
     benefit: 'Drive separates the dreamers from the doers. It’s the willingness to suffer for what you want.',
     howToLevel: ['Set a goal that scares you.', 'Do the thing you least want to do, first.', 'Keep an “accountability mirror”.'],
     dailyTasks: [
@@ -732,7 +732,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Can’t Hurt Me” & complete a 7-day discomfort challenge',
-      book: 'Can’t Hurt Me — David Goggins',
+      book: 'Can’t Hurt Me - David Goggins',
       why: 'A brutal, inspiring blueprint for callousing your mind and breaking self-imposed limits.',
       checkIn: 'summary',
       exp: 240,
@@ -747,7 +747,7 @@ export const TRAITS: Trait[] = [
     attribute: 'heart',
     tier: 'low',
     tagline: 'Rewire your brain toward enough.',
-    description: 'Gratitude is the trained practice of noticing and appreciating what’s good — the fastest evidence-based route to wellbeing.',
+    description: 'Gratitude is the trained practice of noticing and appreciating what’s good - the fastest evidence-based route to wellbeing.',
     benefit: 'Gratitude raises happiness, sleep and resilience, and dissolves the comparison trap.',
     howToLevel: ['Keep a nightly gratitude log.', 'Tell one person why you appreciate them.', 'Savour one small thing fully.'],
     dailyTasks: [
@@ -756,7 +756,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Run a 21-day gratitude journal',
-      book: 'The Gratitude Diaries — Janice Kaplan',
+      book: 'The Gratitude Diaries - Janice Kaplan',
       why: 'A year-long experiment in gratitude that measurably transformed the author’s relationships and joy.',
       checkIn: 'reflection',
       exp: 195,
@@ -769,7 +769,7 @@ export const TRAITS: Trait[] = [
     attribute: 'heart',
     tier: 'low',
     tagline: 'Be your own ally, not your own critic.',
-    description: 'Self-compassion is treating yourself with the kindness you’d give a good friend — which research shows builds more resilience than self-criticism.',
+    description: 'Self-compassion is treating yourself with the kindness you’d give a good friend - which research shows builds more resilience than self-criticism.',
     benefit: 'It frees you from the harsh inner voice that burns you out, and keeps you in the game longer.',
     howToLevel: ['Notice your inner critic and reframe it.', 'Speak to yourself as a friend.', 'Allow rest without guilt.'],
     dailyTasks: [
@@ -777,12 +777,12 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Self-Compassion”',
-      book: 'Self-Compassion — Dr Kristin Neff',
+      book: 'Self-Compassion - Dr Kristin Neff',
       why: 'The foundational science showing kindness to yourself outperforms self-criticism for motivation and health.',
       checkIn: 'summary',
       exp: 195,
     },
-    hotTips: ['Progress, not perfection.', 'You’re human — that’s allowed.', 'Rest is part of the work.'],
+    hotTips: ['Progress, not perfection.', 'You’re human - that’s allowed.', 'Rest is part of the work.'],
   },
   {
     id: 'stoicism',
@@ -791,7 +791,7 @@ export const TRAITS: Trait[] = [
     tier: 'mid',
     tagline: 'Control the controllables. Let go of the rest.',
     description: 'Stoic practice trains you to separate what’s in your control from what isn’t, and to meet life with calm reason.',
-    benefit: 'Unshakeable calm under pressure — the trait behind clear thinking and steady leadership.',
+    benefit: 'Unshakeable calm under pressure - the trait behind clear thinking and steady leadership.',
     howToLevel: ['Each morning, name what you can & can’t control.', 'Practise negative visualisation.', 'Pause between stimulus and response.'],
     dailyTasks: [
       { id: 'sto-control', label: 'Morning control / no-control list', evidence: 'reflection', verify: 'journal', exp: 16 },
@@ -799,12 +799,12 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Meditations” by Marcus Aurelius',
-      book: 'Meditations — Marcus Aurelius',
-      why: 'The private journal of a Roman emperor — the original manual for a calm, disciplined, virtuous mind.',
+      book: 'Meditations - Marcus Aurelius',
+      why: 'The private journal of a Roman emperor - the original manual for a calm, disciplined, virtuous mind.',
       checkIn: 'summary',
       exp: 215,
     },
-    hotTips: ['It’s not events, but our judgments.', 'Amor fati — love your fate.', 'Memento mori — focus the day.'],
+    hotTips: ['It’s not events, but our judgments.', 'Amor fati - love your fate.', 'Memento mori - focus the day.'],
   },
   {
     id: 'purpose',
@@ -812,7 +812,7 @@ export const TRAITS: Trait[] = [
     attribute: 'heart',
     tier: 'mid',
     tagline: 'Find your reason to get up in the morning.',
-    description: 'Purpose — ikigai — is the intersection of what you love, what you’re good at, what the world needs, and what you can be paid for.',
+    description: 'Purpose - ikigai - is the intersection of what you love, what you’re good at, what the world needs, and what you can be paid for.',
     benefit: 'A clear purpose is the ultimate motivation multiplier and a buffer against burnout and drift.',
     howToLevel: ['Journal on your ikigai four circles.', 'Do one purpose-aligned action daily.', 'Subtract what drains meaning.'],
     dailyTasks: [
@@ -820,8 +820,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Ikigai” & map your four circles',
-      book: 'Ikigai — Héctor García & Francesc Miralles',
-      why: 'The Japanese secret to a long, meaningful life — and a framework to find your own reason for being.',
+      book: 'Ikigai - Héctor García & Francesc Miralles',
+      why: 'The Japanese secret to a long, meaningful life - and a framework to find your own reason for being.',
       checkIn: 'summary',
       exp: 210,
     },
@@ -835,7 +835,7 @@ export const TRAITS: Trait[] = [
     attribute: 'charisma',
     tier: 'mid',
     tagline: 'Make people feel seen.',
-    description: 'Charisma is a learnable set of behaviours — presence, warmth and power — not a fixed trait you’re born with.',
+    description: 'Charisma is a learnable set of behaviours - presence, warmth and power - not a fixed trait you’re born with.',
     benefit: 'Charismatic people get the benefit of the doubt, the opportunities, and the room. It’s trainable.',
     howToLevel: ['Be fully present in conversations.', 'Project warmth + competence.', 'Listen more than you speak.'],
     dailyTasks: [
@@ -843,7 +843,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “The Charisma Myth” & practise the techniques',
-      book: 'The Charisma Myth — Olivia Fox Cabane',
+      book: 'The Charisma Myth - Olivia Fox Cabane',
       why: 'Breaks charisma into specific, practisable behaviours of presence, power and warmth.',
       checkIn: 'summary',
       exp: 215,
@@ -856,7 +856,7 @@ export const TRAITS: Trait[] = [
     attribute: 'charisma',
     tier: 'mid',
     tagline: 'Turn moments into stories people remember.',
-    description: 'Storytelling is the craft of structuring experience into narrative that moves people — the most persuasive skill there is.',
+    description: 'Storytelling is the craft of structuring experience into narrative that moves people - the most persuasive skill there is.',
     benefit: 'Stories sell ideas, build connection and make you unforgettable in any room.',
     howToLevel: ['Collect a daily story from your life.', 'Find the change/stakes in each one.', 'Practise telling them out loud.'],
     dailyTasks: [
@@ -864,8 +864,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Storyworthy” & tell 5 true stories',
-      book: 'Storyworthy — Matthew Dicks',
-      why: 'A proven system for finding, crafting and telling stories that captivate — from a Moth champion.',
+      book: 'Storyworthy - Matthew Dicks',
+      why: 'A proven system for finding, crafting and telling stories that captivate - from a Moth champion.',
       checkIn: 'reflection',
       exp: 210,
     },
@@ -877,7 +877,7 @@ export const TRAITS: Trait[] = [
     attribute: 'charisma',
     tier: 'high',
     tagline: 'Get what you want without burning bridges.',
-    description: 'Negotiation is tactical empathy + structure — understanding the other side deeply, then guiding to a deal.',
+    description: 'Negotiation is tactical empathy + structure - understanding the other side deeply, then guiding to a deal.',
     benefit: 'A single raise, deal or rate negotiated well can be worth more than a year of work.',
     howToLevel: ['Use calibrated “how/what” questions.', 'Label emotions to defuse them.', 'Never split the difference on value.'],
     dailyTasks: [
@@ -885,8 +885,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Read “Never Split the Difference” & negotiate something real',
-      book: 'Never Split the Difference — Chris Voss',
-      why: 'An FBI hostage negotiator’s playbook of tactical empathy — devastatingly effective in everyday life.',
+      book: 'Never Split the Difference - Chris Voss',
+      why: 'An FBI hostage negotiator’s playbook of tactical empathy - devastatingly effective in everyday life.',
       checkIn: 'summary',
       exp: 235,
     },
@@ -898,7 +898,7 @@ export const TRAITS: Trait[] = [
     attribute: 'charisma',
     tier: 'low',
     tagline: 'Dress like the person you’re becoming.',
-    description: 'Style is non-verbal communication — grooming, fit and presentation that signal self-respect before you say a word.',
+    description: 'Style is non-verbal communication - grooming, fit and presentation that signal self-respect before you say a word.',
     benefit: 'You’re judged in seconds. Looking intentional opens doors and lifts how you feel and act.',
     howToLevel: ['Dress one notch above the room.', 'Nail fit over brand.', 'Build a simple grooming routine.'],
     dailyTasks: [
@@ -906,7 +906,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Build a capsule wardrobe & a daily grooming routine',
-      book: 'Dressing the Man — Alan Flusser',
+      book: 'Dressing the Man - Alan Flusser',
       why: 'Timeless principles of fit, proportion and colour that make anyone look sharp.',
       checkIn: 'summary',
       exp: 190,
@@ -921,7 +921,7 @@ export const TRAITS: Trait[] = [
     attribute: 'body',
     tier: 'low',
     tagline: 'Fuel the machine on purpose.',
-    description: 'Nutrition is the daily practice of eating to perform — adequate protein, whole foods, and an honest relationship with what you consume.',
+    description: 'Nutrition is the daily practice of eating to perform - adequate protein, whole foods, and an honest relationship with what you consume.',
     benefit: 'You can’t out-train a bad diet. Energy, body composition and mood all start on your plate.',
     howToLevel: ['Hit a protein target each meal.', 'Eat whole foods 80% of the time.', 'Stop drinking your calories.'],
     dailyTasks: [
@@ -930,7 +930,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Track your food honestly for 14 days',
-      book: 'How Not to Die — Dr Michael Greger',
+      book: 'How Not to Die - Dr Michael Greger',
       why: 'An evidence-packed guide to eating for longevity and disease prevention.',
       checkIn: 'summary',
       exp: 200,
@@ -943,7 +943,7 @@ export const TRAITS: Trait[] = [
     attribute: 'body',
     tier: 'mid',
     tagline: 'Build a heart and lungs that don’t quit.',
-    description: 'Endurance is cardiovascular capacity built through consistent running, rucking or cycling — the base layer of physical vitality.',
+    description: 'Endurance is cardiovascular capacity built through consistent running, rucking or cycling - the base layer of physical vitality.',
     benefit: 'A strong engine means more energy for everything and a longer, healthier life.',
     howToLevel: ['Run/zone-2 cardio 3×/week.', 'Add distance gradually (10% rule).', 'Breathe through your nose to pace.'],
     dailyTasks: [
@@ -951,8 +951,8 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Train for & complete a 5K (couch-to-5K)',
-      book: 'Born to Run — Christopher McDougall',
-      why: 'A thrilling case that humans are built to run — and how to do it joyfully and injury-free.',
+      book: 'Born to Run - Christopher McDougall',
+      why: 'A thrilling case that humans are built to run - and how to do it joyfully and injury-free.',
       checkIn: 'summary',
       exp: 230,
     },
@@ -972,7 +972,7 @@ export const TRAITS: Trait[] = [
     ],
     mainQuest: {
       title: 'Run a 30-day daily mobility routine',
-      book: 'Becoming a Supple Leopard — Dr Kelly Starrett',
+      book: 'Becoming a Supple Leopard - Dr Kelly Starrett',
       why: 'The definitive manual on movement, mobility and resolving pain at the source.',
       checkIn: 'reflection',
       exp: 195,

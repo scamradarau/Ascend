@@ -3,7 +3,7 @@ import type { AvatarConfig } from '../data/cosmetics'
 import { HELMET_ICONS, HELMET_ICON_VB } from '../data/helmetArt'
 
 // ================================================================
-// Avatar — a layered, procedural SVG bust.
+// Avatar - a layered, procedural SVG bust.
 //   frame ring  ←  aura/particles  ←  energy body  ←  helmet
 // Helmets, auras, frames and skins all come from the player's
 // AvatarConfig and evolve with achievement.
@@ -88,7 +88,7 @@ export default function Avatar({
           <stop offset="70%" stopColor={aura} stopOpacity="0.12" />
           <stop offset="100%" stopColor={aura} stopOpacity="0" />
         </radialGradient>
-        {/* Ascend Plus set — the Aether aura + Founders frame share this
+        {/* Ascend Plus set - the Aether aura + Founders frame share this
             violet↔gold identity so they read as one premium pairing */}
         <radialGradient id={`plusAura-${uid}`} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#c084fc" stopOpacity="0.6" />
@@ -156,20 +156,20 @@ export default function Avatar({
         </filter>
       </defs>
 
-      {/* Aether (Ascend Plus) — a living violet→gold halo: a pulsing field,
+      {/* Aether (Ascend Plus) - a living violet→gold halo: a pulsing field,
           twin counter-rotating dashed rings and layered sparkle-stars. The
           deliberate partner to the Founders frame. */}
       {isAetherAura && (
         <g>
           <circle cx="100" cy="100" r="99" fill={`url(#plusAura-${uid})`} className={animated ? 'animate-pulseGlow' : ''} />
-          {/* gold ring — rotates clockwise */}
+          {/* gold ring - rotates clockwise */}
           <g>
             {animated && (
               <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="18s" repeatCount="indefinite" />
             )}
             <circle cx="100" cy="100" r="96" fill="none" stroke="#fbbf24" strokeWidth="2.5" strokeDasharray="2 9" opacity="0.9" filter={`url(#glow-${uid})`} />
           </g>
-          {/* violet ring — rotates the other way */}
+          {/* violet ring - rotates the other way */}
           <g>
             {animated && (
               <animateTransform attributeName="transform" type="rotate" from="360 100 100" to="0 100 100" dur="26s" repeatCount="indefinite" />
@@ -198,21 +198,21 @@ export default function Avatar({
         </g>
       )}
 
-      {/* aura — a pulsing field, twin counter-rotating dashed rings and
+      {/* aura - a pulsing field, twin counter-rotating dashed rings and
           sparkle-stars, all in the aura's own colour (same treatment as the
           Aether aura, just single-tone) */}
       {hasAura && !isAetherAura && (
         <g>
           {/* soft outer field */}
           <circle cx="100" cy="100" r="99" fill={`url(#aura-${uid})`} className={animated ? 'animate-pulseGlow' : ''} />
-          {/* ring — rotates clockwise */}
+          {/* ring - rotates clockwise */}
           <g>
             {animated && (
               <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="20s" repeatCount="indefinite" />
             )}
             <circle cx="100" cy="100" r="96" fill="none" stroke={aura} strokeWidth="2.5" strokeDasharray="2 9" opacity="0.85" filter={`url(#glow-${uid})`} />
           </g>
-          {/* fainter ring — rotates the other way */}
+          {/* fainter ring - rotates the other way */}
           <g>
             {animated && (
               <animateTransform attributeName="transform" type="rotate" from="360 100 100" to="0 100 100" dur="28s" repeatCount="indefinite" />
@@ -239,7 +239,7 @@ export default function Avatar({
         </g>
       )}
 
-      {/* Founders frame (Ascend Plus) — a violet→gold gradient ring with gold
+      {/* Founders frame (Ascend Plus) - a violet→gold gradient ring with gold
           + violet rails, fine bi-colour ticks and four cardinal gem accents;
           the deliberate partner to the Aether aura */}
       {isFounderFrame ? (
@@ -272,7 +272,7 @@ export default function Avatar({
               />
             )
           })}
-          {/* faceted gems — large at cardinals, small on the diagonals */}
+          {/* faceted gems - large at cardinals, small on the diagonals */}
           {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
             const a = (deg * Math.PI) / 180
             const big = deg % 90 === 0
@@ -294,7 +294,7 @@ export default function Avatar({
           })}
         </g>
       ) : config.frame === 'basic' ? (
-        /* starting frame — plain, no effects */
+        /* starting frame - plain, no effects */
         <circle cx="100" cy="100" r="90" fill="none" stroke={frame} strokeWidth="2" opacity={0.85} />
       ) : (
         <g>
@@ -353,7 +353,7 @@ export default function Avatar({
       <g clipPath={`url(#clip-${uid})`}>
         <rect x="18" y="18" width="164" height="164" fill="#05070f" />
 
-        {/* bust — one bold, clean silhouette to match the icon helmets */}
+        {/* bust - one bold, clean silhouette to match the icon helmets */}
         <path
           d="M32 184 Q34 138 72 130 Q86 127 100 127 Q114 127 128 130 Q166 138 168 184 Z"
           fill={`url(#body-${uid})`}
@@ -422,7 +422,7 @@ function Helmet({
 }) {
   const art = HELMET_ART[id]
 
-  // bare (or unknown) — a subtle energy band, face fully visible
+  // bare (or unknown) - a subtle energy band, face fully visible
   if (!art) {
     return <path d="M74 62 Q100 56 126 62" fill="none" stroke={c1} strokeWidth="2" opacity="0.4" />
   }
