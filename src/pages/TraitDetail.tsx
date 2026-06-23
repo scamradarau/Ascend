@@ -17,6 +17,7 @@ import {
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
 import { maxActiveTraits } from '../data/plus'
 import PlusUpsell from '../components/PlusUpsell'
+import Icon, { ATTR_ICON } from '../components/Icon'
 
 // Generic mastery milestones shown on every trait.
 const MASTERY = [
@@ -118,9 +119,7 @@ export default function TraitDetail() {
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-2xl">
             <div className="mb-2 flex items-center gap-2">
-              <span className="text-2xl" style={{ color: attr.color }}>
-                {attr.icon}
-              </span>
+              <Icon name={ATTR_ICON[attr.id]} size={26} />
               <Pill>{attr.name}</Pill>
               <Pill tone={t.tier === 'low' ? 'exp' : t.tier === 'mid' ? 'default' : 'violet'}>
                 {t.tier} tier

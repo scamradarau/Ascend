@@ -24,6 +24,7 @@ import BodyFigure from '../components/BodyFigure'
 import { VerificationModal } from '../components/VerificationModal'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
 import { maxActiveTraits, freezeCap } from '../data/plus'
+import Icon, { ATTR_ICON } from '../components/Icon'
 
 interface PendingTask {
   traitId: string
@@ -279,7 +280,7 @@ export default function Character() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-1.5 font-display text-sm font-bold uppercase tracking-wide text-white">
-                        <span style={{ color: attr.color }}>{attr.icon}</span>
+                        <Icon name={ATTR_ICON[attr.id]} size={16} />
                         {t.name}
                       </span>
                       <span className="font-pixel text-[11px] text-[var(--accent)]">

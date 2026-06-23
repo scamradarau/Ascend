@@ -4,6 +4,7 @@ import { useGame, isTaskDoneToday, traitLevel } from '../store/useGame'
 import { useSocial } from '../store/social'
 import { useAuth } from '../store/auth'
 import { isCloud, isOwnerEmail } from '../lib/supabase'
+import Icon, { ATTR_ICON } from '../components/Icon'
 import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
@@ -280,7 +281,7 @@ export default function Quests() {
                     className="flex h-11 w-11 items-center justify-center rounded-xl border text-xl"
                     style={{ borderColor: attr.color, boxShadow: `0 0 14px ${attr.color}55` }}
                   >
-                    {attr.icon}
+                    <Icon name={ATTR_ICON[attr.id]} size={22} />
                   </span>
                   <span>
                     <span className="block font-display text-lg font-bold text-white">{t.name}</span>

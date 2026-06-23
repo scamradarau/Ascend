@@ -9,6 +9,7 @@ import type { AttributeId } from '../data/types'
 import ClassAvatar from '../components/ClassAvatar'
 import ResetCountdown from '../components/ResetCountdown'
 import { PixelTitle, Pill, ExpBar } from '../components/ui'
+import Icon, { ATTR_ICON } from '../components/Icon'
 
 // ================================================================
 // THE WORLD - your ascent, made visible. The five Paths are literal
@@ -186,9 +187,13 @@ export default function WorldMap() {
                 <text x={g.cx} y={g.cy + 30} textAnchor="middle" fill="rgba(255,255,255,0.55)" fontSize="11">
                   {conquered}/{questsInRegion} quests conquered
                 </text>
-                <text x={g.cx} y={g.cy + 54} textAnchor="middle" fontSize="20">
-                  {attr.icon}
-                </text>
+                <image
+                  href={`/icons/${ATTR_ICON[attr.id]}.png`}
+                  x={g.cx - 14}
+                  y={g.cy + 40}
+                  width="28"
+                  height="28"
+                />
               </g>
             )
           })}
@@ -230,7 +235,7 @@ export default function WorldMap() {
             style={{ borderColor: explored ? `${attr.color}55` : undefined }}
           >
             <div className="flex items-center gap-2">
-              <span className="text-lg">{attr.icon}</span>
+              <Icon name={ATTR_ICON[attr.id]} size={18} />
               <span className="text-[11px] font-bold uppercase tracking-wide text-white">{attr.path}</span>
             </div>
             <div className="mt-2">

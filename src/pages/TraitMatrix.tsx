@@ -7,6 +7,7 @@ import type { AttributeId } from '../data/types'
 import { PixelTitle, Pill, Modal } from '../components/ui'
 import { maxActiveTraits } from '../data/plus'
 import PlusUpsell from '../components/PlusUpsell'
+import Icon, { ATTR_ICON } from '../components/Icon'
 
 // ================================================================
 // MAIN QUESTS - decluttered: first you choose a Path (5 cards), then
@@ -73,7 +74,7 @@ export default function TraitMatrix() {
                     onClick={() => navigate(`/app/traits/${at.id}`)}
                     className="flex items-center gap-2 py-1.5 text-sm font-semibold text-white"
                   >
-                    <span>{a.icon}</span> {t.name}
+                    <Icon name={ATTR_ICON[a.id]} size={16} /> {t.name}
                     {at.mainQuestDone && <span className="text-exp">✓</span>}
                   </button>
                   <button
@@ -148,7 +149,7 @@ export default function TraitMatrix() {
                   className="flex h-12 w-12 items-center justify-center rounded-xl border text-2xl"
                   style={{ borderColor: a.color, boxShadow: `0 0 16px ${a.color}55` }}
                 >
-                  {a.icon}
+                  <Icon name={ATTR_ICON[a.id]} size={26} />
                 </div>
                 <h2 className="mt-4 font-display text-lg font-bold uppercase tracking-wide text-white">
                   {a.path}
