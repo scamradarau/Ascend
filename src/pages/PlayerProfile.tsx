@@ -185,7 +185,7 @@ export default function PlayerProfile() {
                     className="flex items-center gap-2 rounded-lg border border-cosmos-gold/30 bg-cosmos-gold/5 px-3 py-2"
                     title={b.desc}
                   >
-                    <Icon name="badge" size={20} />
+                    <Icon name="badge" size={26} />
                     <span className="text-sm font-semibold text-white">{b.name}</span>
                   </div>
                 ))}

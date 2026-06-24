@@ -75,7 +75,7 @@ export default function BodyFigure({ level }: { level: number }) {
         className="absolute left-3 top-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--edge)] bg-black/60 transition hover:shadow-glow"
         title="Customise avatar"
       >
-        <Icon name="cosmetics" size={22} />
+        <Icon name="cosmetics" size={28} />
       </button>    </div>
   )
 }
