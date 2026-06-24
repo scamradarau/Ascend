@@ -69,32 +69,32 @@ export interface PlusBenefit {
 
 export const PLUS_BENEFITS: PlusBenefit[] = [
   {
-    icon: '🌿',
+    icon: 'mind',
     title: '5 active traits',
     detail: 'Pursue five paths at once instead of three - put more of your life in play.',
   },
   {
-    icon: '◈',
+    icon: 'aether',
     title: 'Monthly Aether bonus',
     detail: '500 Aether every month, on the house - spend it on cosmetics, streak freezes or rewards.',
   },
   {
-    icon: '🧊',
+    icon: 'freeze',
     title: 'More Streak Freezes',
     detail: 'Bank up to 4 freezes (free players cap at 2). Miss a day without losing your streak.',
   },
   {
-    icon: '✦',
+    icon: 'plus',
     title: 'Exclusive cosmetics',
     detail: 'The Aether aura and Founders frame - Plus-only, and a visible ✦ mark on the leaderboard.',
   },
   {
-    icon: '📊',
+    icon: 'stats',
     title: 'Advanced stats',
     detail: 'Deeper progress insight across your traits and quests (rolling out through beta).',
   },
   {
-    icon: '🤝',
+    icon: 'handshake',
     title: 'Back the build',
     detail: "You're funding a solo-built, ad-free app. Plus keeps ASCEND independent.",
   },

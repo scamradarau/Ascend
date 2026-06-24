@@ -5,6 +5,7 @@ import { useAuth } from '../store/auth'
 import { isCloud, startPlusCheckout, fetchEarnedProgress } from '../lib/supabase'
 import { PLUS_PLANS, PLUS_BENEFITS, PLUS_NEVER, type PlusPlan } from '../data/plus'
 import { PixelTitle, Pill, Toast } from '../components/ui'
+import Icon, { type IconName } from '../components/Icon'
 
 export default function Plus() {
   const plus = useGame((s) => s.plus)
@@ -83,7 +84,7 @@ export default function Plus() {
         <ul className="mt-6 space-y-3">
           {PLUS_BENEFITS.map((b) => (
             <li key={b.title} className="flex gap-3 rounded-xl border border-white/8 bg-white/[0.02] p-3">
-              <span className="text-xl">{b.icon}</span>
+              <Icon name={b.icon as IconName} size={22} />
               <div>
                 <div className="text-sm font-semibold text-white">{b.title}</div>
                 <div className="text-xs text-[var(--muted)]">{b.detail}</div>

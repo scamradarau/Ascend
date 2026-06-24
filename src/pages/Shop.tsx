@@ -7,15 +7,16 @@ import {
   type CosmeticSlot,
 } from '../data/cosmetics'
 import { PixelTitle, Pill, Toast } from '../components/ui'
+import Icon, { type IconName } from '../components/Icon'
 
 // Low-cost, sustainable real rewards - mostly free digital perks to start.
 const REWARDS = [
-  { id: 'shoutout', name: 'Community Shout-out', icon: '📣', cost: 250, tier: 'LOW', reqLevel: 1 },
-  { id: 'ebook', name: 'Free Ebook (self-help classic)', icon: '📚', cost: 500, tier: 'LOW', reqLevel: 3 },
-  { id: 'meditation', name: 'Free Meditation App - 1 Month', icon: '🧘', cost: 800, tier: 'LOW', reqLevel: 5 },
-  { id: 'habit', name: 'Free Habit-Tracker Premium - 1 Month', icon: '✅', cost: 1000, tier: 'MID', reqLevel: 8 },
-  { id: 'fitness', name: 'Free Fitness App - 1 Month', icon: '🏃', cost: 1400, tier: 'MID', reqLevel: 12 },
-  { id: 'discount', name: 'Partner Discount Code', icon: '🏷️', cost: 1800, tier: 'MID', reqLevel: 15 },
+  { id: 'shoutout', name: 'Community Shout-out', icon: 'shoutout', cost: 250, tier: 'LOW', reqLevel: 1 },
+  { id: 'ebook', name: 'Free Ebook (self-help classic)', icon: 'book', cost: 500, tier: 'LOW', reqLevel: 3 },
+  { id: 'meditation', name: 'Free Meditation App - 1 Month', icon: 'calm', cost: 800, tier: 'LOW', reqLevel: 5 },
+  { id: 'habit', name: 'Free Habit-Tracker Premium - 1 Month', icon: 'proof', cost: 1000, tier: 'MID', reqLevel: 8 },
+  { id: 'fitness', name: 'Free Fitness App - 1 Month', icon: 'body', cost: 1400, tier: 'MID', reqLevel: 12 },
+  { id: 'discount', name: 'Partner Discount Code', icon: 'discount', cost: 1800, tier: 'MID', reqLevel: 15 },
 ]
 
 const TIER_TONE = { LOW: 'exp', MID: 'default', HIGH: 'gold' } as const
@@ -166,7 +167,7 @@ export default function Shop() {
               const reached = level >= r.reqLevel
               return (
                 <div key={r.id} className="panel p-5 text-center opacity-80">
-                  <div className="text-4xl">{r.icon}</div>
+                  <Icon name={r.icon as IconName} size={40} />
                   <h3 className="mt-2 font-display text-base font-bold text-white">{r.name}</h3>
                   <Pill tone={TIER_TONE[r.tier as keyof typeof TIER_TONE]}>{r.tier} reward</Pill>
                   <div className="mt-3 font-pixel text-sm text-cosmos-gold">

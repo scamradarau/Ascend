@@ -12,6 +12,7 @@ import { BADGES } from '../data/badges'
 import { classForLevel } from '../data/classes'
 import ClassAvatar from '../components/ClassAvatar'
 import { PixelTitle, Pill, ExpBar } from '../components/ui'
+import Icon from '../components/Icon'
 
 export default function PlayerProfile() {
   const { id } = useParams()
@@ -184,7 +185,7 @@ export default function PlayerProfile() {
                     className="flex items-center gap-2 rounded-lg border border-cosmos-gold/30 bg-cosmos-gold/5 px-3 py-2"
                     title={b.desc}
                   >
-                    <span className="text-xl">{b.icon}</span>
+                    <Icon name="badge" size={20} />
                     <span className="text-sm font-semibold text-white">{b.name}</span>
                   </div>
                 ))}

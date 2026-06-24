@@ -4,6 +4,7 @@ import { BADGES } from '../data/badges'
 import { badgeProgress } from '../data/badgeEngine'
 import { VERIFICATION_METHODS } from '../data/verification'
 import { ExpBar, PixelTitle, Pill, Modal } from '../components/ui'
+import Icon from '../components/Icon'
 
 const TABS = ['Badges', 'Items', 'Proof Log'] as const
 type Tab = (typeof TABS)[number]
@@ -109,7 +110,7 @@ export default function Inventory() {
                       complete ? 'border-cosmos-gold shadow-glow-gold' : 'border-white/10 grayscale'
                     }`}
                   >
-                    {b.icon}
+                    <Icon name="badge" size={30} />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between gap-2">
