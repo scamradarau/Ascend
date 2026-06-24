@@ -72,10 +72,10 @@ export default function BodyFigure({ level }: { level: number }) {
       {/* customize button */}
       <button
         onClick={() => navigate('/app/settings')}
-        className="absolute left-3 top-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--edge)] bg-black/60 transition hover:shadow-glow"
+        className="absolute left-3 top-3 z-20 flex h-14 w-14 items-center justify-center rounded-full border border-[var(--edge)] bg-black/60 transition hover:shadow-glow"
         title="Customise avatar"
       >
-        <Icon name="cosmetics" size={28} />
+        <Icon name="cosmetics" size={36} />
       </button>    </div>
   )
 }
