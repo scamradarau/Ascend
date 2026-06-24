@@ -24,6 +24,10 @@ export type IconName =
   | 'crown' | 'gift' | 'shoutout' | 'discount'
   | 'success' | 'locked' | 'share' | 'idea' | 'install' | 'handshake' | 'search' | 'report'
   | 'boss'
+  // themes, playstyle, misc UI
+  | 'theme-cosmos' | 'theme-rune' | 'theme-olympus'
+  | 'playstyle-casual' | 'playstyle-standard' | 'playstyle-hardcore'
+  | 'cosmetics' | 'hourglass' | 'calendar' | 'badge'
 
 // the 5 attribute/Path ids map straight onto the path icons
 export const ATTR_ICON: Record<string, IconName> = {

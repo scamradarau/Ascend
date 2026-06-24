@@ -17,6 +17,7 @@ import ClassAvatar from '../components/ClassAvatar'
 import InviteButton, { BROCHURE_URL } from '../components/InviteButton'
 import { PixelTitle, Pill } from '../components/ui'
 import { PLAYSTYLE_OPTIONS } from '../data/onboarding'
+import Icon, { type IconName } from '../components/Icon'
 
 // Helmet & skin are now driven by your CLASS (which evolves with rank), so the
 // only equippable cosmetics here are auras and frames.
@@ -314,7 +315,7 @@ export default function Settings() {
                 playstyle === o.id ? 'border-[var(--accent)] shadow-glow' : 'border-white/10 hover:border-white/25'
               }`}
             >
-              <div className="text-2xl">{o.icon}</div>
+              <Icon name={`playstyle-${o.id}` as IconName} size={30} />
               <div className="mt-2 font-display font-bold uppercase tracking-wide text-white">
                 {o.label}
               </div>
@@ -338,9 +339,9 @@ export default function Settings() {
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {(
             [
-              { id: 'cosmos', icon: '🌌', name: 'Cosmos', desc: 'Sci-fi / cosmic' },
-              { id: 'rune', icon: '🌿', name: 'Rune', desc: 'Mystic fantasy realm' },
-              { id: 'olympus', icon: '🏛️', name: 'Olympus', desc: 'Ancient Greece' },
+              { id: 'cosmos', name: 'Cosmos', desc: 'Sci-fi / cosmic' },
+              { id: 'rune', name: 'Rune', desc: 'Mystic fantasy realm' },
+              { id: 'olympus', name: 'Olympus', desc: 'Ancient Greece' },
             ] as const
           ).map((t) => (
             <button
@@ -350,7 +351,7 @@ export default function Settings() {
                 theme === t.id ? 'border-[var(--accent)] shadow-glow' : 'border-white/10 hover:border-white/25'
               }`}
             >
-              <div className="text-2xl">{t.icon}</div>
+              <Icon name={`theme-${t.id}` as IconName} size={30} />
               <div className="mt-2 font-display font-bold uppercase tracking-wide text-white">
                 {t.name}
               </div>
