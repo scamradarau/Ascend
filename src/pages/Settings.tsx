@@ -315,7 +315,7 @@ export default function Settings() {
                 playstyle === o.id ? 'border-[var(--accent)] shadow-glow' : 'border-white/10 hover:border-white/25'
               }`}
             >
-              <Icon name={`playstyle-${o.id}` as IconName} size={30} />
+              <Icon name={`playstyle-${o.id}` as IconName} size={52} />
               <div className="mt-2 font-display font-bold uppercase tracking-wide text-white">
                 {o.label}
               </div>
@@ -351,7 +351,7 @@ export default function Settings() {
                 theme === t.id ? 'border-[var(--accent)] shadow-glow' : 'border-white/10 hover:border-white/25'
               }`}
             >
-              <Icon name={`theme-${t.id}` as IconName} size={30} />
+              <Icon name={`theme-${t.id}` as IconName} size={52} />
               <div className="mt-2 font-display font-bold uppercase tracking-wide text-white">
                 {t.name}
               </div>
