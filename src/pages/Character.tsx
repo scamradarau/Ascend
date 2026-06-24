@@ -24,7 +24,7 @@ import BodyFigure from '../components/BodyFigure'
 import { VerificationModal } from '../components/VerificationModal'
 import { ExpBar, PixelTitle, Pill, Toast } from '../components/ui'
 import { maxActiveTraits, freezeCap } from '../data/plus'
-import Icon, { ATTR_ICON } from '../components/Icon'
+import Icon, { ATTR_ICON, type IconName } from '../components/Icon'
 
 interface PendingTask {
   traitId: string
@@ -364,7 +364,7 @@ export default function Character() {
                     <span className="mt-0.5 flex items-center gap-2 text-[11px] text-[var(--muted)]">
                       <span className="uppercase tracking-wide">{t.name}</span>
                       <span>· +{q.task.exp} EXP</span>
-                      <span className="opacity-70">· {VERIFICATION_METHODS[methodForTask(q.task)].icon} {VERIFICATION_METHODS[methodForTask(q.task)].label}</span>
+                      <span className="inline-flex items-center gap-1 opacity-70">· <Icon name={VERIFICATION_METHODS[methodForTask(q.task)].icon as IconName} size={13} /> {VERIFICATION_METHODS[methodForTask(q.task)].label}</span>
                     </span>
                     {q.task.hint && !done && (
                       <span className="mt-0.5 block text-[11px] italic text-[var(--muted)]/80">

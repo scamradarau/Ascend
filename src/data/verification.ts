@@ -41,7 +41,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
   'live-photo': {
     id: 'live-photo',
     label: 'Live Photo',
-    icon: '📸',
+    icon: 'camera',
     blurb: 'Capture a real-time photo in-app. No gallery, no uploads.',
     cheatVectors: [
       'Uploading an old photo from the camera roll',
@@ -62,7 +62,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
   'geo-photo': {
     id: 'geo-photo',
     label: 'Live Photo + Location',
-    icon: '📍',
+    icon: 'location',
     blurb: 'Live photo with GPS - proves you’re actually there.',
     cheatVectors: [
       'Submitting a gym photo from home',
@@ -84,7 +84,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
   'focus-timer': {
     id: 'focus-timer',
     label: 'Focus Session',
-    icon: '⏱️',
+    icon: 'focus',
     blurb: 'An in-app timer that voids if you leave the app.',
     cheatVectors: [
       'Starting the timer then scrolling TikTok',
@@ -104,7 +104,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
   'meditation-timer': {
     id: 'meditation-timer',
     label: 'Stillness Session',
-    icon: '🧘',
+    icon: 'calm',
     blurb: 'A foreground-locked stillness timer with reflection.',
     cheatVectors: [
       'Starting a timer and walking away / doing something else',
@@ -122,7 +122,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
   'reading-check': {
     id: 'reading-check',
     label: 'Reading Proof',
-    icon: '📖',
+    icon: 'book',
     blurb: 'Minimum reading time + your own summary + a comprehension check.',
     cheatVectors: [
       'Pasting a summary from Google / ChatGPT',
@@ -144,7 +144,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
   journal: {
     id: 'journal',
     label: 'Reflection',
-    icon: '✍️',
+    icon: 'reflection',
     blurb: 'A genuine written reflection - typed, not pasted.',
     cheatVectors: ['Pasting filler text', 'One-word entries', 'Copying a previous entry'],
     defenses: [
@@ -160,7 +160,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
   'sleep-window': {
     id: 'sleep-window',
     label: 'Sleep Window',
-    icon: '🌙',
+    icon: 'calm',
     blurb: 'Check in at night and again in the morning - within real windows.',
     cheatVectors: [
       'Logging "8 hours" at 3pm',
@@ -178,7 +178,7 @@ export const VERIFICATION_METHODS: Record<VerificationMethodId, VerificationMeth
   'check-in': {
     id: 'check-in',
     label: 'Quick Check-in',
-    icon: '✅',
+    icon: 'proof',
     blurb: 'A simple, honest tap to confirm you did it today.',
     cheatVectors: ['Tapping without doing it'],
     defenses: [
