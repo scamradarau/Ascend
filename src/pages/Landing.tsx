@@ -70,15 +70,18 @@ export default function Landing() {
         <div className="starfield absolute inset-0 opacity-40" />
 
         <div className="relative z-10 mx-auto max-w-4xl">
-          <div className="mb-6 flex items-center justify-center gap-3">
+          <div className="mb-7 flex items-center justify-center gap-3">
             <span className="chip border-white/40 text-white/80">Real life. Real quests. Real proof.</span>
           </div>
-          <h1 className="mb-6">
-            <PixelTitle className="block text-5xl text-white [text-shadow:0_2px_28px_rgba(34,211,238,0.28)] sm:text-7xl md:text-8xl">
-              ASCEND
-            </PixelTitle>
+          <img
+            src="/logo.png"
+            alt="ASCEND logo"
+            className="mx-auto mb-3 h-28 w-28 drop-shadow-[0_0_45px_rgba(34,211,238,0.4)] sm:h-40 sm:w-40"
+          />
+          <h1 className="mb-5 font-display text-5xl font-black uppercase tracking-[0.22em] text-white [text-shadow:0_2px_30px_rgba(34,211,238,0.3)] sm:text-7xl md:text-8xl">
+            ASCEND
           </h1>
-          <p className="font-display text-lg font-bold uppercase tracking-[0.2em] text-white sm:text-2xl">
+          <p className="font-display text-lg font-bold uppercase tracking-[0.28em] text-white/90 sm:text-2xl">
             Level up your real life
           </p>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">

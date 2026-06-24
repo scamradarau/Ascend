@@ -106,7 +106,7 @@ export default function PlatformLayout() {
             className="group flex items-center gap-2"
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--edge-strong)] bg-black/40 shadow-glow">
-              <span className="font-pixel text-[var(--accent)]">A</span>
+              <img src="/logo.png" alt="ASCEND" className="h-7 w-7" />
             </div>
             <PixelTitle className="hidden text-sm text-[var(--text)] sm:inline">
               ASCEND
