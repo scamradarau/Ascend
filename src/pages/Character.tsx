@@ -205,7 +205,7 @@ export default function Character() {
                 title={b.desc}
                 className="flex items-center gap-2 rounded-lg border border-cosmos-gold/40 bg-cosmos-gold/5 px-3 py-1.5"
               >
-                <Icon name="badge" size={26} />
+                <span className="text-lg">{b.icon}</span>
                 <span className="text-sm font-semibold text-white">{b.name}</span>
               </div>
             ))}
