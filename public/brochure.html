@@ -12,7 +12,7 @@
 <meta property="og:type" content="website" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@600;800;900&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
 <style>
   :root {
     --bg: #070b18;
@@ -88,14 +88,15 @@
     font-family: 'Press Start 2P', monospace; font-size: 15px;
   }
   .logo .name { font-family: 'Press Start 2P', monospace; font-size: 18px; letter-spacing: 1px; color: var(--text); }
+  .logo-img { width: 96px; height: 96px; display: block; margin: 0 auto 8px; filter: drop-shadow(0 0 30px rgba(56,225,255,0.45)); }
+  .brandname { font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: clamp(34px, 6vw, 58px); letter-spacing: 0.22em; color: var(--text); text-shadow: 0 2px 28px rgba(56,225,255,0.3); }
+  .card .ico img { width: 36px; height: 36px; object-fit: contain; }
+  .th-ico { width: 22px; height: 22px; object-fit: contain; vertical-align: -5px; }
   h1 {
     font-size: clamp(38px, 7vw, 72px); line-height: 1.02; margin: 26px 0 0; font-weight: 800;
     letter-spacing: -0.02em;
   }
-  h1 .grad {
-    background: linear-gradient(100deg, var(--cyan), var(--violet) 45%, var(--magenta));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
+  h1 .grad { color: var(--cyan); }
   .tag { color: var(--muted); font-size: clamp(16px, 2.4vw, 21px); margin: 18px auto 0; max-width: 660px; line-height: 1.55; }
   .cta-row { margin-top: 34px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
   .btn {
@@ -198,10 +199,8 @@
 
     <!-- HERO -->
     <header class="hero">
-      <div class="logo">
-        <span class="mark">A</span>
-        <span class="name">ASCEND</span>
-      </div>
+      <img class="logo-img" src="/logo.png" alt="ASCEND logo" />
+      <div class="brandname">ASCEND</div>
       <h1>Treat self-improvement<br/><span class="grad">like a game you can win.</span></h1>
       <p class="tag">Pick the traits you want to build. Get daily quests. Prove you actually did them. Earn EXP, level up, and climb a leaderboard of real people doing real work.</p>
 
@@ -227,32 +226,32 @@
 
       <div class="grid">
         <div class="card">
-          <div class="ico">🧬</div>
+          <div class="ico"><img src="/icons/character.png" alt="" /></div>
           <h3>Build your traits</h3>
           <p>Choose traits like Consistency, Gratitude, Strength or Focus. Each levels up as you put in the work, feeding your character's attributes.</p>
         </div>
         <div class="card">
-          <div class="ico">📜</div>
+          <div class="ico"><img src="/icons/quest.png" alt="" /></div>
           <h3>Daily &amp; weekly quests</h3>
           <p>Bite-sized daily tasks plus harder weekly and monthly challenges worth big rewards. A live countdown shows when each resets.</p>
         </div>
         <div class="card">
-          <div class="ico">🏆</div>
+          <div class="ico"><img src="/icons/leaderboard.png" alt="" /></div>
           <h3>Climb the leaderboard</h3>
           <p>Earn EXP and Aether, rise through ranks, and compare with friends - on a board built only from verified effort.</p>
         </div>
         <div class="card">
-          <div class="ico">🔥</div>
+          <div class="ico"><img src="/icons/streak.png" alt="" /></div>
           <h3>Keep your streak</h3>
           <p>Daily check-ins build a streak. Miss a day and the chain breaks - that little fire is weirdly motivating.</p>
         </div>
         <div class="card">
-          <div class="ico">📓</div>
+          <div class="ico"><img src="/icons/journal.png" alt="" /></div>
           <h3>Journal &amp; reflect</h3>
           <p>Every check-in is logged to a private journal you can revisit. Watch your own evidence pile up over time.</p>
         </div>
         <div class="card">
-          <div class="ico">✦</div>
+          <div class="ico"><img src="/icons/plus.png" alt="" /></div>
           <h3>Lumi, your guide</h3>
           <p>A little companion who floats on every screen. Stuck on discipline, fear or focus? Tap her and ask - she gives it to you straight, anytime.</p>
         </div>
@@ -281,9 +280,9 @@
       <div class="kicker">MAKE IT YOURS</div>
       <h2>Three worlds. One you.</h2>
       <div class="themes">
-        <div class="theme cosmos"><h4>✦ Cosmos</h4><p>Neon starfields and deep space - the default cyber-celestial vibe.</p></div>
-        <div class="theme rune"><h4>⛩ Rune</h4><p>Mystic jade temples, waterfalls and spirit-lights.</p></div>
-        <div class="theme olympus"><h4>🏛 Olympus</h4><p>Golden-hour marble and the halls of the gods.</p></div>
+        <div class="theme cosmos"><h4><img class="th-ico" src="/icons/theme-cosmos.png" alt="" /> Cosmos</h4><p>Neon starfields and deep space - the default cyber-celestial vibe.</p></div>
+        <div class="theme rune"><h4><img class="th-ico" src="/icons/theme-rune.png" alt="" /> Rune</h4><p>Mystic jade temples, waterfalls and spirit-lights.</p></div>
+        <div class="theme olympus"><h4><img class="th-ico" src="/icons/theme-olympus.png" alt="" /> Olympus</h4><p>Golden-hour marble and the halls of the gods.</p></div>
       </div>
     </section>
 
