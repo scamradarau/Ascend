@@ -4,6 +4,7 @@ import { useAuth } from '../store/auth'
 import { isOwnerEmail } from '../lib/supabase'
 import { resolveClass } from '../data/classes'
 import ClassAvatar from './ClassAvatar'
+import Icon from './Icon'
 
 // The centrepiece of the character page: the player's evolving class
 // portrait, with the brain node (→ Trait Matrix) and level badge (→ Level page).
@@ -59,8 +60,8 @@ export default function BodyFigure({ level }: { level: number }) {
         title="Discover traits"
       >
         <div className="flex flex-col items-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[var(--accent)] bg-black/60 text-2xl shadow-glow transition-transform group-hover:scale-110">
-            🧠
+          <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[var(--accent)] bg-black/60 shadow-glow transition-transform group-hover:scale-110">
+            <Icon name="mind" size={28} />
           </div>
           <span className="mt-1 rounded-full border border-[var(--edge)] bg-black/60 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--accent)]">
             Traits
@@ -71,10 +72,10 @@ export default function BodyFigure({ level }: { level: number }) {
       {/* customize button */}
       <button
         onClick={() => navigate('/app/settings')}
-        className="absolute left-3 top-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--edge)] bg-black/60 text-lg transition hover:shadow-glow"
+        className="absolute left-3 top-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--edge)] bg-black/60 transition hover:shadow-glow"
         title="Customise avatar"
       >
-        🎨
+        <Icon name="cosmetics" size={22} />
       </button>    </div>
   )
 }
