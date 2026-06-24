@@ -5,7 +5,7 @@ import { useAuth } from '../store/auth'
 import { getAllPlayers, getAllPlayersCloud, type PlayerRow, type TraitStat } from '../store/leaderboard'
 import { isCloud } from '../lib/supabase'
 import { rankForLevel } from '../data/ranks'
-import Icon from '../components/Icon'
+import Icon, { ATTR_ICON } from '../components/Icon'
 import { levelFromTotalExp } from '../data/leveling'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
@@ -272,7 +272,7 @@ export default function Leaderboards() {
                                 key={t.id}
                                 className="inline-flex items-center gap-1 rounded border border-white/10 px-1.5 py-0.5 text-[10px] text-[var(--muted)]"
                               >
-                                <span style={{ color: attr.color }}>{attr.icon}</span>
+                                <Icon name={ATTR_ICON[attr.id]} size={13} />
                                 {t.name} <span className="text-[var(--accent)]">Lv{t.level}</span>
                               </span>
                             )

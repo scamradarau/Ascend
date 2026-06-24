@@ -22,7 +22,7 @@ import { rankForLevel } from '../data/ranks'
 import type { AttributeId } from '../data/types'
 import { PixelTitle, ExpBar } from '../components/ui'
 import ThemeBackground from '../components/ThemeBackground'
-import Icon, { type IconName } from '../components/Icon'
+import Icon, { ATTR_ICON, type IconName } from '../components/Icon'
 import { flushCloud } from '../store/cloudSync'
 
 const STEPS = ['Identity', 'Self-Assessment', 'Goals', 'Obstacles', 'Lifestyle', 'Commitment', 'Your Build']
@@ -273,7 +273,7 @@ export default function Onboarding() {
                 <div key={attr.id}>
                   <div className="mb-1.5 flex items-center justify-between">
                     <span className="flex items-center gap-2 font-display font-bold uppercase tracking-wide text-white">
-                      <span>{attr.icon}</span> {attr.name}
+                      <Icon name={ATTR_ICON[attr.id]} size={18} /> {attr.name}
                       <span className="text-xs font-normal text-slate-500">{attr.blurb}</span>
                     </span>
                     <span className="font-pixel text-xs text-cosmos-cyan">

@@ -12,7 +12,7 @@ import { BADGES } from '../data/badges'
 import { classForLevel } from '../data/classes'
 import ClassAvatar from '../components/ClassAvatar'
 import { PixelTitle, Pill, ExpBar } from '../components/ui'
-import Icon from '../components/Icon'
+import Icon, { ATTR_ICON } from '../components/Icon'
 
 export default function PlayerProfile() {
   const { id } = useParams()
@@ -160,7 +160,7 @@ export default function PlayerProfile() {
                   <div key={t.id} className="rounded-lg border border-white/8 bg-white/[0.02] p-3">
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-2 font-display font-bold uppercase tracking-wide text-white">
-                        <span style={{ color: attr.color }}>{attr.icon}</span> {t.name}
+                        <Icon name={ATTR_ICON[attr.id]} size={14} /> {t.name}
                       </span>
                       <span className="font-pixel text-[11px] text-[var(--accent)]">Lv {t.level}</span>
                     </div>

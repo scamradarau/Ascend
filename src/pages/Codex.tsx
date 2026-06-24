@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PixelTitle, Pill } from '../components/ui'
+import Icon, { ATTR_ICON } from '../components/Icon'
 import { ATTRIBUTES } from '../data/attributes'
 import { VERIFICATION_METHODS } from '../data/verification'
 import { RANKS } from '../data/ranks'
@@ -118,7 +119,7 @@ const SECTIONS: Section[] = [
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {ATTRIBUTES.map((a) => (
             <div key={a.id} className="flex items-center gap-3 rounded-lg border border-white/8 bg-white/[0.02] p-3">
-              <span className="text-2xl" style={{ color: a.color }}>{a.icon}</span>
+              <Icon name={ATTR_ICON[a.id]} size={24} />
               <div>
                 <div className="font-display font-bold text-white">
                   {a.name} <span className="text-xs text-[var(--muted)]">/ {a.short}</span>

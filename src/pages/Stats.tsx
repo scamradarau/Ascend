@@ -7,6 +7,7 @@ import { levelFromTotalExp } from '../data/leveling'
 import { freezeCap } from '../data/plus'
 import { todayKey } from '../lib/time'
 import { PixelTitle, Pill, ExpBar } from '../components/ui'
+import Icon, { ATTR_ICON } from '../components/Icon'
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const DAY = 86400000
@@ -230,7 +231,7 @@ export default function Stats() {
           {s.attrVals.map((a) => (
             <div key={a.id} className="flex items-center gap-3">
               <span className="w-28 shrink-0 truncate text-xs" style={{ color: a.color }}>
-                {a.icon} {a.path.replace('Path ', '')}
+                <Icon name={ATTR_ICON[a.id]} size={14} /> {a.path.replace('Path ', '')}
               </span>
               <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-white/5">
                 <div
@@ -245,11 +246,11 @@ export default function Stats() {
         <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
           <div className="rounded-lg border border-white/8 bg-white/[0.02] p-2.5">
             <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">Strongest Path</div>
-            <div className="font-semibold" style={{ color: s.strongestPath.color }}>{s.strongestPath.icon} {s.strongestPath.name}</div>
+            <div className="flex items-center gap-1 font-semibold" style={{ color: s.strongestPath.color }}><Icon name={ATTR_ICON[s.strongestPath.id]} size={14} /> {s.strongestPath.name}</div>
           </div>
           <div className="rounded-lg border border-white/8 bg-white/[0.02] p-2.5">
             <div className="text-[10px] uppercase tracking-widest text-[var(--muted)]">Most neglected</div>
-            <div className="font-semibold" style={{ color: s.neglectedPath.color }}>{s.neglectedPath.icon} {s.neglectedPath.name}</div>
+            <div className="flex items-center gap-1 font-semibold" style={{ color: s.neglectedPath.color }}><Icon name={ATTR_ICON[s.neglectedPath.id]} size={14} /> {s.neglectedPath.name}</div>
           </div>
         </div>
       </section>
@@ -265,7 +266,7 @@ export default function Stats() {
               <div key={t.id}>
                 <div className="mb-1 flex items-center justify-between text-xs">
                   <span className="font-semibold text-white">
-                    <span style={{ color: attr.color }}>{attr.icon}</span> {t.name}
+                    <Icon name={ATTR_ICON[attr.id]} size={14} /> {t.name}
                   </span>
                   <span className="font-pixel text-[10px] text-[var(--accent)]">Lv {t.level} · {t.exp} EXP</span>
                 </div>
