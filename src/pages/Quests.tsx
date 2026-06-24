@@ -4,7 +4,7 @@ import { useGame, isTaskDoneToday, traitLevel } from '../store/useGame'
 import { useSocial } from '../store/social'
 import { useAuth } from '../store/auth'
 import { isCloud, isOwnerEmail } from '../lib/supabase'
-import Icon, { ATTR_ICON } from '../components/Icon'
+import Icon, { ATTR_ICON, type IconName } from '../components/Icon'
 import { serverSubmitQuest } from '../store/serverVerify'
 import { traitById } from '../data/traits'
 import { attributeById } from '../data/attributes'
@@ -355,8 +355,9 @@ export default function Quests() {
       {(['weekly', 'monthly'] as const).map((scope) => (
         <div key={scope} className="mt-8">
           <div className="mb-1 flex items-center justify-between">
-            <span className="font-pixel text-xs text-cosmos-gold glow-text">
-              {scope === 'weekly' ? '📅 WEEKLY CHALLENGES' : '🗓️ MONTHLY CHALLENGES'}
+            <span className="inline-flex items-center gap-1.5 font-pixel text-xs text-cosmos-gold glow-text">
+              <Icon name={scope === 'weekly' ? 'hourglass' : 'calendar'} size={16} />
+              {scope === 'weekly' ? 'WEEKLY CHALLENGES' : 'MONTHLY CHALLENGES'}
             </span>
             <Pill tone="gold">
               <ResetCountdown scope={scope} /> · big rewards
@@ -389,8 +390,8 @@ export default function Quests() {
                   className={`panel p-4 ${st.done ? 'border-cosmos-gold/50 shadow-glow-gold' : ''}`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 text-2xl">
-                      {c.icon}
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10">
+                      <Icon name={c.icon as IconName} size={24} />
                     </div>
                     <div className="flex-1">
                       <div className="font-display font-bold text-white">{c.title}</div>
