@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        pixel: ['"Press Start 2P"', 'monospace'],
+        pixel: ['Orbitron', 'sans-serif'],
         display: ['Orbitron', 'sans-serif'],
         sans: ['Rajdhani', 'system-ui', 'sans-serif'],
         rune: ['Cinzel', 'serif'],
