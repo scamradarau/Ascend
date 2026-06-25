@@ -26,11 +26,26 @@ export default function Feedback() {
     setTimeout(() => setToast(null), 2200)
   }
 
-  const submit = () => {
-    if (text.trim().length < 4) return
-    setList((p) => [{ text: text.trim(), type, votes: 1, status: 'Reviewing', voted: true }, ...p])
+  const submit = async () => {
+    const message = text.trim()
+    if (message.length < 4) return
+    setList((p) => [{ text: message, type, votes: 1, status: 'Reviewing', voted: true }, ...p])
     setText('')
     flash('Suggestion submitted - thank you!')
+    // Email it to the founder if an endpoint is configured (e.g. a Formspree
+    // form pointed at your inbox). Set VITE_FEEDBACK_ENDPOINT in Netlify.
+    const endpoint = import.meta.env.VITE_FEEDBACK_ENDPOINT as string | undefined
+    if (endpoint) {
+      try {
+        await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ _subject: `ASCEND feedback: ${type}`, type, message }),
+        })
+      } catch {
+        /* best-effort - the local list already reflects it */
+      }
+    }
   }
 
   const upvote = (i: number) =>
