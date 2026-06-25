@@ -71,7 +71,7 @@ export default function MainQuestCard({
         : 'reading-check'
 
   const isActive = !!active
-  const steps = variant === 'practical' ? 14 : 4
+  const steps = variant === 'practical' ? 14 : t.mainQuest.checkIns ?? 8
   const mqPct = active ? Math.round(active.mainQuestProgress * 100) : 0
   const stepCount = active ? Math.round(active.mainQuestProgress * steps) : 0
   const mqDone = !!active?.mainQuestDone

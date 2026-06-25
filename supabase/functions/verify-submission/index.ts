@@ -225,8 +225,9 @@ Deno.serve(async (req) => {
   let progressCount: number | null = null
   let progressTarget: number | null = null
   if (quest.scope === 'main') {
-    // book path = 4 check-ins; 14-day practical challenge = 14 (day-gated above)
-    const steps = isPracticalMain ? 14 : 4
+    // book path = 8 check-ins (quests.target overrides per-book); 14-day
+    // practical challenge = 14 (day-gated above)
+    const steps = isPracticalMain ? 14 : quest.target ?? 8
     const { data: qp } = await admin
       .from('quest_progress')
       .select('count, done')

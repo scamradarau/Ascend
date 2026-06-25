@@ -163,7 +163,9 @@ export async function serverSubmitQuest(a: ServerSubmitArgs): Promise<ServerSubm
         registerStreak = true
       }
       if (a.kind === 'main' && a.traitId) {
-        const step = a.questId.startsWith('main-practical:') ? 1 / 14 : 0.25
+        // book main quests = 8 check-ins (must match verify-submission's steps);
+        // the 14-day practical challenge = 14
+        const step = a.questId.startsWith('main-practical:') ? 1 / 14 : 1 / 8
         patch.activeTraits = s.activeTraits.map((t) =>
           t.id === a.traitId
             ? {

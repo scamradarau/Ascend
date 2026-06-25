@@ -50,6 +50,9 @@ export interface MainQuest {
   why: string
   checkIn: CheckInType
   exp: number
+  /** number of reading check-ins to finish the book (default 8). Tune up for
+   *  long/dense books, down for short ones. Practical challenges ignore this. */
+  checkIns?: number
   /** practical variants: the player must define & lock a specific commitment
    *  (e.g. their keystone habit) before they can check in. This is the prompt. */
   commitmentPrompt?: string
