@@ -22,7 +22,6 @@ const NAV_SECTIONS: { heading: string; items: { to: string; label: string; icon:
     items: [
       { to: '/app/character', label: 'Character', icon: 'character' },
       { to: '/app/quests', label: 'Quests', icon: 'quest' },
-      { to: '/app/world', label: 'World Map', icon: 'world' },
       { to: '/app/traits', label: 'Main Quests', icon: 'mainquest' },
     ],
   },

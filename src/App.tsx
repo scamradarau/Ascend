@@ -32,7 +32,6 @@ import PlayerProfile from './pages/PlayerProfile'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import Journal from './pages/Journal'
-import WorldMap from './pages/WorldMap'
 import NotFound from './pages/NotFound'
 
 function RequireAuth({ children }: { children: JSX.Element }) {
@@ -146,7 +145,8 @@ export default function App() {
         <Route path="traits" element={<TraitMatrix />} />
         <Route path="traits/:id" element={<TraitDetail />} />
         <Route path="quests" element={<Quests />} />
-        <Route path="world" element={<WorldMap />} />
+        {/* World Map retired - its job is now the constellation on Main Quests */}
+        <Route path="world" element={<Navigate to="/app/traits" replace />} />
         <Route path="level" element={<LevelExpectations />} />
         <Route path="inventory" element={<Inventory />} />
         <Route path="leaderboards" element={<Leaderboards />} />
