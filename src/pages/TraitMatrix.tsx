@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useGame } from '../store/useGame'
 import { ATTRIBUTES, attributeById } from '../data/attributes'
-import { TRAITS, traitById } from '../data/traits'
+import { traitById } from '../data/traits'
 import type { AttributeId } from '../data/types'
 import { PixelTitle, Pill, Modal } from '../components/ui'
 import { maxActiveTraits } from '../data/plus'
 import PlusUpsell from '../components/PlusUpsell'
 import Icon, { ATTR_ICON } from '../components/Icon'
+import QuestConstellation from '../components/QuestConstellation'
 
 // ================================================================
 // MAIN QUESTS - decluttered: first you choose a Path (5 cards), then
@@ -21,7 +22,6 @@ export default function TraitMatrix() {
   const activeTraits = useGame((s) => s.activeTraits)
   const plus = useGame((s) => s.plus)
   const dropTrait = useGame((s) => s.dropTrait)
-  const activeIds = new Set(activeTraits.map((t) => t.id))
   const traitCap = maxActiveTraits(plus)
   const slotsLeft = traitCap - activeTraits.length
   const [confirmDrop, setConfirmDrop] = useState<string | null>(null)
@@ -129,95 +129,17 @@ export default function TraitMatrix() {
         </Modal>
       )}
 
-      {!attr ? (
-        /* ---------------- PATH PICKER (uncluttered home view) ---------------- */
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {ATTRIBUTES.map((a) => {
-            const pathTraits = TRAITS.filter((t) => t.attribute === a.id)
-            const buildingHere = pathTraits.filter((t) => activeIds.has(t.id)).length
-            return (
-              <button
-                key={a.id}
-                onClick={() => setParams({ path: a.id })}
-                className="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] p-6 text-left transition-all hover:-translate-y-1 hover:border-white/25"
-              >
-                <div
-                  className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-25 blur-2xl transition-opacity group-hover:opacity-40"
-                  style={{ background: a.color }}
-                />
-                <div
-                  className="flex h-12 w-12 items-center justify-center rounded-xl border text-2xl"
-                  style={{ borderColor: a.color, boxShadow: `0 0 16px ${a.color}55` }}
-                >
-                  <Icon name={ATTR_ICON[a.id]} size={26} />
-                </div>
-                <h2 className="mt-4 font-display text-lg font-bold uppercase tracking-wide text-white">
-                  {a.path}
-                </h2>
-                <p className="mt-1 text-xs text-[var(--muted)]">{a.blurb}</p>
-                <div className="mt-4 flex items-center gap-2 text-[11px]">
-                  <span className="rounded-full border border-white/15 px-2 py-0.5 text-[var(--muted)]">
-                    {pathTraits.length} quests
-                  </span>
-                  {buildingHere > 0 && (
-                    <span
-                      className="rounded-full border px-2 py-0.5 font-semibold"
-                      style={{ borderColor: `${a.color}66`, color: a.color }}
-                    >
-                      {buildingHere} building
-                    </span>
-                  )}
-                  <span className="ml-auto text-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-100">
-                    Enter →
-                  </span>
-                </div>
-              </button>
-            )
-          })}
-        </div>
-      ) : (
-        /* ---------------- ONE PATH'S QUESTS ---------------- */
-        <div>
-          <button
-            onClick={() => setParams({})}
-            className="mb-4 text-xs uppercase tracking-widest text-[var(--muted)] hover:text-white"
-          >
-            ← All paths
-          </button>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {TRAITS.filter((t) => t.attribute === attr.id).map((t) => {
-              const active = activeIds.has(t.id)
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => navigate(`/app/traits/${t.id}`)}
-                  className={`group relative overflow-hidden rounded-xl border p-4 text-left transition-all hover:-translate-y-0.5 ${
-                    active
-                      ? 'border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] shadow-glow'
-                      : 'border-white/8 bg-white/[0.02] hover:border-white/25'
-                  }`}
-                >
-                  <div
-                    className="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full opacity-30 blur-xl"
-                    style={{ background: attr.color }}
-                  />
-                  <div className="flex items-start justify-between">
-                    <span className="font-display text-base font-bold text-white">{t.name}</span>
-                    {active && <span className="text-xs text-[var(--accent)]">●</span>}
-                  </div>
-                  <p className="mt-1 line-clamp-2 text-xs text-[var(--muted)]">{t.tagline}</p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <Pill tone={t.tier === 'low' ? 'exp' : t.tier === 'mid' ? 'default' : 'violet'}>
-                      {t.tier}
-                    </Pill>
-                    {active && <Pill tone="gold">Building</Pill>}
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
+      <p className="mb-2 text-center text-[11px] text-[var(--muted)]">
+        {attr
+          ? 'Tap a quest to begin it · tap your character to zoom out'
+          : 'Tap a Path to reveal its quests'}
+      </p>
+      <QuestConstellation
+        expandedId={pathParam}
+        onPath={(id) => setParams({ path: id })}
+        onTrait={(id) => navigate(`/app/traits/${id}`)}
+        onCollapse={() => setParams({})}
+      />
     </div>
   )
 }
