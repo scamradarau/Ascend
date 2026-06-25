@@ -471,7 +471,9 @@ export const useGame = create<GameState>()(
 
       dropTrait: (traitId) => {
         const t = get().activeTraits.find((x) => x.id === traitId)
-        if (t && (t.mainQuestProgress > 0 || t.mainQuestDone)) return
+        // block only a main quest that's mid-flight; a DONE one can be dropped
+        // (it's archived with its progress so re-adding keeps the completion)
+        if (t && t.mainQuestProgress > 0 && !t.mainQuestDone) return
         // keep the trait's progress so re-adding it later does NOT reset its level
         const archived = t
           ? {

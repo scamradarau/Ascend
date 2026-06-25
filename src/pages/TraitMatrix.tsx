@@ -63,7 +63,9 @@ export default function TraitMatrix() {
               const t = traitById(at.id)
               if (!t) return null
               const a = attributeById(t.attribute)
-              const locked = at.mainQuestProgress > 0 || at.mainQuestDone
+              // locked only while the main quest is mid-flight - once it's
+              // DONE you can freely drop it (re-adding restores its progress)
+              const locked = at.mainQuestProgress > 0 && !at.mainQuestDone
               return (
                 <div
                   key={at.id}
