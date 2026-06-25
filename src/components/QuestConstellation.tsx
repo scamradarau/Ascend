@@ -1,6 +1,8 @@
+import { useMemo } from 'react'
 import { useGame, usePlayerLevel } from '../store/useGame'
 import { ATTRIBUTES } from '../data/attributes'
 import { TRAITS, traitById } from '../data/traits'
+import { levelFromTotalExp } from '../data/leveling'
 import type { AttributeId } from '../data/types'
 import Icon, { ATTR_ICON } from './Icon'
 import ClassAvatar from './ClassAvatar'
@@ -26,10 +28,25 @@ export default function QuestConstellation({
   onCollapse: () => void
 }) {
   const activeTraits = useGame((s) => s.activeTraits)
+  const archivedTraits = useGame((s) => s.archivedTraits)
   const avatar = useGame((s) => s.avatar)
   const classId = useGame((s) => s.classId)
   const { level } = usePlayerLevel()
   const activeMap = new Map(activeTraits.map((t) => [t.id, t]))
+
+  // real verified EXP per Path -> a "region level" shown under each node
+  const regionExp = useMemo(() => {
+    const exp: Record<AttributeId, number> = { mind: 0, will: 0, heart: 0, charisma: 0, body: 0 }
+    for (const at of activeTraits) {
+      const t = traitById(at.id)
+      if (t) exp[t.attribute] += at.exp
+    }
+    for (const [id, saved] of Object.entries(archivedTraits)) {
+      const t = traitById(id)
+      if (t) exp[t.attribute] += (saved as { exp: number }).exp
+    }
+    return exp
+  }, [activeTraits, archivedTraits])
 
   const polar = (deg: number, r: number) => {
     const a = (deg * Math.PI) / 180
@@ -98,37 +115,56 @@ export default function QuestConstellation({
         const dim = expanded && expanded.a.id !== p.a.id
         const isOpen = expanded?.a.id === p.a.id
         const building = buildingIn(p.a.id)
+        const lv = levelFromTotalExp(regionExp[p.a.id])
+        const explored = regionExp[p.a.id] > 0
         return (
           <div
             key={p.a.id}
             className="absolute z-10 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300"
-            style={{ left: `${p.x}%`, top: `${p.y}%`, opacity: dim ? 0.32 : 1 }}
+            style={{ left: `${p.x}%`, top: `${p.y}%`, opacity: dim ? 0.4 : 1 }}
           >
             <button
               onClick={() => onPath(p.a.id)}
-              className="group flex flex-col items-center gap-1"
-              title={p.a.path}
+              className="group flex flex-col items-center gap-1.5"
+              title={`${p.a.path} - Region Lv ${lv.level}`}
             >
+              {/* node + EXP progress ring (fills with verified path EXP) */}
               <span
-                className="flex h-16 w-16 items-center justify-center rounded-full border-2 bg-[#070a18]/80 backdrop-blur transition group-hover:scale-110"
-                style={{
-                  borderColor: p.a.color,
-                  boxShadow: `0 0 ${isOpen ? 26 : 16}px ${p.a.color}${isOpen ? '99' : '66'}`,
-                }}
+                className="relative h-[72px] w-[72px] rounded-full transition group-hover:scale-110"
+                style={{ filter: `drop-shadow(0 0 ${isOpen ? 13 : 8}px ${p.a.color}${isOpen ? '99' : '66'})` }}
               >
-                <Icon name={ATTR_ICON[p.a.id]} size={30} />
+                <span
+                  className="block h-full w-full rounded-full"
+                  style={{
+                    background: `conic-gradient(from -90deg, ${p.a.color} ${lv.pct}%, ${p.a.color}26 ${lv.pct}%)`,
+                    padding: 4,
+                  }}
+                >
+                  <span
+                    className="flex h-full w-full items-center justify-center rounded-full bg-[#070a18]"
+                    style={{ boxShadow: `inset 0 0 9px ${p.a.color}33` }}
+                  >
+                    <Icon name={ATTR_ICON[p.a.id]} size={30} />
+                  </span>
+                </span>
               </span>
-              <span className="font-display text-[10px] font-bold uppercase tracking-wide text-white">
+              <span
+                className="font-display text-[13px] font-bold uppercase tracking-wide text-white"
+                style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}
+              >
                 {p.a.name}
               </span>
-              {building > 0 && (
-                <span
-                  className="rounded-full px-1.5 text-[9px] font-bold"
-                  style={{ background: `${p.a.color}22`, color: p.a.color }}
-                >
-                  {building} building
-                </span>
-              )}
+              <span
+                className="flex items-center gap-1.5 text-[11px] font-semibold"
+                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}
+              >
+                {explored ? (
+                  <span style={{ color: p.a.color }}>Lv {lv.level}</span>
+                ) : (
+                  <span className="text-white/45">Unexplored</span>
+                )}
+                {building > 0 && <span className="text-white/65">· {building} building</span>}
+              </span>
             </button>
           </div>
         )
@@ -175,7 +211,10 @@ export default function QuestConstellation({
                   </span>
                 )}
               </span>
-              <span className="max-w-[84px] text-center text-[9px] font-semibold leading-tight text-white/90">
+              <span
+                className="max-w-[96px] text-center text-[11px] font-semibold leading-tight text-white"
+                style={{ textShadow: '0 1px 4px rgba(0,0,0,0.95)' }}
+              >
                 {n.t.name}
               </span>
             </button>
