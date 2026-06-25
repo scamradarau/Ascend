@@ -3,6 +3,7 @@ import { levelFromTotalExp } from '../data/leveling'
 import { DEFAULT_AVATAR, type AvatarConfig } from '../data/cosmetics'
 import { traitById } from '../data/traits'
 import { fetchLeaderboard, fetchProfile, type CloudProfile } from '../lib/supabase'
+import { BOTS, botById } from '../data/bots'
 
 // Aggregate live leaderboard rows from every registered account's save.
 // Empty at launch; fills in as real users sign up and make progress.
@@ -77,13 +78,13 @@ export function getAllPlayers(): PlayerRow[] {
     const r = rowFromSave(acc.id, acc.username, acc.createdAt)
     if (r) rows.push(r)
   }
-  return rows
+  return [...rows, ...BOTS]
 }
 
 export function getPlayer(id: string): PlayerRow | null {
   const acc = getAccounts().find((a) => a.id === id)
-  if (!acc) return null
-  return rowFromSave(acc.id, acc.username, acc.createdAt)
+  if (acc) return rowFromSave(acc.id, acc.username, acc.createdAt)
+  return botById(id)
 }
 
 // ---------------------------------------------------------------
@@ -126,10 +127,11 @@ function cloudToRow(p: CloudProfile): PlayerRow {
 
 export async function getAllPlayersCloud(): Promise<PlayerRow[]> {
   const rows = await fetchLeaderboard()
-  return rows.map(cloudToRow)
+  return [...rows.map(cloudToRow), ...BOTS]
 }
 
 export async function getPlayerCloud(id: string): Promise<PlayerRow | null> {
+  if (id.startsWith('bot-')) return botById(id)
   const p = await fetchProfile(id)
   return p ? cloudToRow(p) : null
 }
