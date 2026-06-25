@@ -161,7 +161,7 @@ export default function QuestConstellation({
                 {explored ? (
                   <span style={{ color: p.a.color }}>Lv {lv.level}</span>
                 ) : (
-                  <span className="text-white/45">Unexplored</span>
+                  <span className="text-white/45">Lv 0</span>
                 )}
                 {building > 0 && <span className="text-white/65">· {building} building</span>}
               </span>
