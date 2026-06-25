@@ -177,6 +177,33 @@ body {
   display: none;
 }
 
+/* constellation nodes (QuestConstellation) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+.q-twinkle {
+  display: inline-block;
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+
 /* shooting stars (used by CosmosScenery) */
 @keyframes shoot {
   0% {

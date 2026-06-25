@@ -136,27 +136,44 @@ export default function QuestConstellation({
 
       {/* trait nodes (only for the open path) */}
       {expanded &&
-        tNodes.map((n) => {
+        tNodes.map((n, i) => {
           const at = activeMap.get(n.t.id)
           const done = at?.mainQuestDone
           const active = !!at
+          const c = expanded.a.color
           return (
             <button
               key={n.t.id}
               onClick={() => onTrait(n.t.id)}
               className="absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 transition hover:scale-110"
-              style={{ left: `${n.x}%`, top: `${n.y}%`, animation: 'fadeIn .25s ease' }}
+              style={{ left: `${n.x}%`, top: `${n.y}%`, animation: 'fadeIn .3s ease backwards' }}
               title={n.t.name}
             >
               <span
-                className="flex h-9 w-9 items-center justify-center rounded-full border bg-[#070a18]/85 text-[11px]"
+                className="flex h-9 w-9 items-center justify-center rounded-full border text-[11px]"
                 style={{
-                  borderColor: active ? expanded.a.color : 'rgba(255,255,255,0.18)',
-                  boxShadow: active ? `0 0 12px ${expanded.a.color}88` : 'none',
-                  color: expanded.a.color,
+                  borderColor: active ? c : 'rgba(255,255,255,0.22)',
+                  boxShadow: active ? `0 0 12px ${c}88` : `inset 0 0 9px ${c}26`,
+                  background: `radial-gradient(circle at 50% 36%, ${c}26, #070a18 72%)`,
+                  color: c,
                 }}
               >
-                {done ? '✓' : active ? '●' : ''}
+                {done ? (
+                  '✓'
+                ) : active ? (
+                  '●'
+                ) : (
+                  <span
+                    className="q-twinkle"
+                    style={{
+                      animationDelay: `${(i % 6) * 0.5}s`,
+                      opacity: 0.75,
+                      textShadow: `0 0 6px ${c}aa`,
+                    }}
+                  >
+                    ✦
+                  </span>
+                )}
               </span>
               <span className="max-w-[84px] text-center text-[9px] font-semibold leading-tight text-white/90">
                 {n.t.name}
